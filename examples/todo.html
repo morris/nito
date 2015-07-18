@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Todo example with nito</title>
+
+		<link rel="stylesheet" href="normalize.css">
+		<style type="text/css">
+			body {
+				padding: 30px;
+			}
+			.item.done .title {
+				color: #999;
+				text-decoration: line-through;
+			}
+			.item.edit .title {
+				display: none;
+			}
+			.item [name=title] {
+				display: none;
+			}
+			.item.edit [name=title] {
+				display: inline;
+			}
+		</style>
+	</head>
+	<body>
+
+		<h1>Todo example with <a href="https://github.com/morris/nito">nito</a></h1>
+		<div id="app"></div>
+
+		<script src="jquery-1.11.3.min.js"></script>
+		<script src="../nito.js"></script>
+
+		<script>
+
+			var Todo = $.nito( {
+
+				base: [
+					'<div>',
+						'<p>',
+						'<button class="add">Add</button>',
+						'<button class="sort">Sort</button>',
+						'</p>',
+						'<ul></ul>',
+					'</div>'
+				],
+
+				setup: function () {
+
+					this.data.items = [];
+					this.nextId = 1;
+
+					this.on( 'click', '.add', function () {
+
+						this.add( 'Get more $' );
+
+					} );
+
+					this.on( 'click', '.sort', function () {
+
+						this.sort();
+
+					} );
+
+				},
+
+				update: function () {
+
+					// clever use of $ in loop
+					// reuses dom better than most vdoms
+					this.find( 'ul' ).loop( this.data.items, Item, this );
+
+				},
+
+				// move these into a "store". if you must...
+
+				add: function ( title ) {
+
+					this.data.items.push( {
+						id: this.nextId,
+						title: title,
+						done: false
+					} );
+					++this.nextId;
+					this.update();
+
+				},
+
+				toggle: function ( item ) {
+
+					item.done = !item.done;
+					this.update();
+
+				},
+
+				trash: function ( item ) {
+
+					var items = this.data.items;
+					items.splice( items.indexOf( item ), 1 );
+					this.update();
+
+				},
+
+				title: function ( item, title ) {
+
+					item.title = title;
+					this.update();
+
+				},
+
+				sort: function () {
+
+					this.data.items.sort( function ( a, b ) {
+
+						return a.title.localeCompare( b.title );
+
+					} );
+					this.update();
+
+				}
+
+			} );
+
+			var Item = $.nito( {
+
+				base: [
+					'<li class="item">',
+						'<span class="title"></span>',
+						'<input type="text" name="title">',
+						' <input type="checkbox" name="done">',
+						' <button class="edit small">Edit</button>',
+						' <button class="trash small">Trash</button>',
+					'</li>'
+				],
+
+				setup: function () {
+
+					this.edit = false;
+
+					this.on( 'click', '[name=done]', function () {
+
+						this.parent.toggle( this.data );
+
+					} );
+
+					this.on( 'click', '.trash', function () {
+
+						this.parent.trash( this.data );
+
+					} );
+
+					this.on( 'click', '.edit', function () {
+
+						this.edit = true;
+						this.update();
+						this.find( '[name=title]' ).focus();
+
+					} );
+
+					this.on( 'blur', '[name=title]', function ( e ) {
+
+						this.edit = false;
+						this.parent.title( this.data, $( e.target ).val() );
+
+					} );
+
+				},
+
+				update: function () {
+
+					// weld and classes are nice, non-destructive use of $
+					this.$el.weld( this.data );
+
+					this.$el.classes( {
+						done: this.data.done,
+						edit: this.edit
+					} );
+
+					// fill is for form inputs
+					this.$el.fill( this.data );
+
+				}
+
+			} );
+
+			var todo = Todo.appendTo( '#app', {} );
+			todo.add( 'Get $' );
+			todo.add( 'Stop B$' );
+
+		</script>
+
+	</body>
+</html>

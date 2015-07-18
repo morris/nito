@@ -1,0 +1,21 @@
+{
+  "name": "nito",
+  "version": "0.1.0",
+  "repository": "https://github.com/morris/nito",
+  "description": "Lightweight components for your favorite $",
+  "author": {
+    "name": "Morris Brodersen",
+    "url": "http://morrisbrodersen.de"
+  },
+  "license": "MIT",
+  "main": "dist/nito.js",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-jshint": "^1.11.2",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.2.0"
+  },
+  "scripts": {
+    "gulp": "gulp"
+  }
+}
