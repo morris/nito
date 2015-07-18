@@ -1,4 +1,4 @@
-# nito
+# nito :skull:
 
 Lightweight components for your favorite $. Just an experiment. Or maybe not.
 
@@ -12,6 +12,16 @@ Lightweight components for your favorite $. Just an experiment. Or maybe not.
 ## Examples
 
 - [Todo](https://rawgit.com/morris/nito/master/examples/todo.html)
+
+
+## Getting started
+
+Include $ first, then nito:
+
+```
+<script src="jquery-1.11.3.min.js"></script>
+<script src="nito.min.js"></script>
+```
 
 
 ## Defining Components
