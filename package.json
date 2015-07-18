@@ -8,7 +8,7 @@
     "url": "http://morrisbrodersen.de"
   },
   "license": "MIT",
-  "main": "dist/nito.js",
+  "main": "nito.js",
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-jshint": "^1.11.2",
