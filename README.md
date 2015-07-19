@@ -45,7 +45,7 @@ Include $ first, then nito:
 		- Optional, defaults to `id`
 	- Add more methods and properties as needed
 
-```
+```js
 var Comp = $.nito( {
 
 	base: [
@@ -124,7 +124,7 @@ Use these methods in `update`, NOT in `setup`.
 - Minimal DOM impact
 - Returns $el
 
-```
+```js
 $el.loop( [
 	{ id: 1, title: 'Write code', done: true },
 	{ id: 2, title: 'Write readme', done: false }
@@ -148,7 +148,7 @@ These methods are soft, non-destructive, keep DOM mutations low.
 - Classes not present in map are not touched
 - Returns $set
 
-```
+```js
 $set.classes( { classA: truthy, classB: falsy } );
 ```
 
@@ -162,7 +162,7 @@ $set.classes( { classA: truthy, classB: falsy } );
 	- If selectors[ name ] is given, use that instead of #name, .name
 - Returns $set
 
-```
+```js
 $set.weld( 'hello' );
 $set.weld( { title: 'nito', contents: 'hello' }, { contents: '.post' } );
 ```
@@ -177,14 +177,14 @@ $set.weld( { title: 'nito', contents: 'hello' }, { contents: '.post' } );
 
 ## Router
 
-#### $.router( handler )
+#### `$.router( handler )`
 
 - Attach a handler to the `hashchange` event
 - The hash is split by `/`, empty parts are removed, and the result is passed to the handler
 - The handler is also immediately called once
 - Returns the (wrapped) handler
 
-```
+```js
 $.router( function ( action, id ) {
 
 	// handle <url>#<action>/<id>
@@ -192,6 +192,6 @@ $.router( function ( action, id ) {
 } );
 ```
 
-#### $.routerOff( handler )
+#### `$.routerOff( handler )`
 
 - Remove a handler previously returned by `$.router`
