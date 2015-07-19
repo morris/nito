@@ -24,60 +24,55 @@ Include $ first, then nito:
 ```
 
 
-## Defining Components
+## Defining components
 
 #### `$.nito( settings )`
 
 - Creates a component class
 - `settings` is an object that defines the prototype of the component class
-- `base`, `setup`, `update`, and `idProp` are the only nito-specific properties
+	- `base` is the base HTML for the component class
+		- Can be a string or an array of strings
+		- Arrays will be joined with `\n`
+		- Optional, if you only use `Comp.setup` (see below)
+	- `setup` will be called on creation of a component
+		- Define event handlers here
+		- Optional, defaults to noop
+	- `update` should update the component
+		- Has to be called explicitly (except for `loop`/`nest` components)
+		- Optional, defaults to noop
+	- `idProp` is the loop id property
+		- See `$el.loop` below
+		- Optional, defaults to `id`
+	- Add more methods and properties as needed
 
 ```
 var Comp = $.nito( {
 
-	// Base HTML for components
-	// Can be a string or an array of strings
-	// Arrays will be joined with \n
-	// Optional, if you only use Comp.setup (see below)
 	base: [
 		'<div>',
 			'<h1 class="title"></h1>',
 		'</div>'
 	],
 
-	// Function called after creating a component
-	// Optional, defaults to noop
 	setup: function () {
 
-		// the component root element
-		this.$el;
+		this.$el; // the component root element
 
-		// define event handlers here
-		// this.on is a shortcut to this.$el.on
+		// shortcut to this.$el.on
 		this.on( 'click', '.title', function () {
 
-			// bound to component
-			this.custom();
+			this.custom(); // bound to component
 
 		} );
 
 	},
 
-	// Function that updates the component
-	// Optional, defaults to noop
 	update: function () {
 
-		// this.find is a shortcut to this.$el.find
+		// shortcut to this.$el.find
 		this.find( '.title' ).weld( this.data.title );
 
 	},
-
-	// id property
-	// See $el.loop below
-	// Optional, defaults to 'id'
-	idProp: 'id',
-
-	// Add custom component methods here
 
 	custom: function () {
 
@@ -118,7 +113,7 @@ Use these methods in `update`, NOT in `setup`.
 
 #### `$el.loop( items, factory, parent )`
 
-- For each item, create a component from factory and append to `$el`
+- For each item, create a component using the factory and append to `$el`
 - `items` is an array of `data` passed to the components
 - Items must have distinct, truthy `id` properties, otherwise loop will throw
 - `factory` should be a component class, but may be anything that has a `create` method
