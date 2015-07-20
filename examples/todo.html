@@ -48,6 +48,7 @@
 
 				setup: function () {
 
+					this.data = {};
 					this.data.items = [];
 					this.nextId = 1;
 
@@ -134,8 +135,9 @@
 					'</li>'
 				],
 
-				setup: function () {
+				setup: function ( data ) {
 
+					this.data = data;
 					this.edit = false;
 
 					this.on( 'click', '[name=done]', function () {
