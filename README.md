@@ -54,7 +54,9 @@ var Comp = $.nito( {
 		'</div>'
 	],
 
-	setup: function () {
+	setup: function ( data ) {
+
+		this.title = data.title;
 
 		this.$el; // the component root element
 
@@ -70,13 +72,13 @@ var Comp = $.nito( {
 	update: function () {
 
 		// shortcut to this.$el.find
-		this.find( '.title' ).weld( this.data.title );
+		this.find( '.title' ).weld( this.title );
 
 	},
 
 	custom: function () {
 
-		this.data.title = 'nito';
+		this.title = 'nito';
 		this.update(); // always update explicitly
 
 	}
@@ -90,9 +92,9 @@ var Comp = $.nito( {
 #### `Comp.create( data, parent )`
 
 - Create a component using the component base HTML
-- `data` will be available in the component as `this.data`. Optional
+- `data` will be passed to `update` and `setup`. Optional
 - `parent` will be available as `this.parent`. Optional
-- `comp.setup()` and an initial `comp.update( data )` are called
+- `comp.setup( data )` and an initial `comp.update( data )` are called
 - Returns the created component
 
 #### `Comp.setup( base, data, parent )`

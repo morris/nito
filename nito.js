@@ -22,7 +22,7 @@
 			delete settings.idProp;
 			delete settings.base;
 
-			// create component class
+			// define component class
 			var Comp = function ( base, data, parent ) {
 
 				$.Comp.call( this, base, data, parent );
@@ -82,11 +82,10 @@
 	$.Comp = function ( base, data, parent ) {
 
 		this.$el = $( base ).data( 'comp', this );
-		this.data = data || {};
 		this.parent = parent;
 
-		this.setup();
-		this.update( this.data );
+		this.setup( data );
+		this.update( data );
 
 	};
 
