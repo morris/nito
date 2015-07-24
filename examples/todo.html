@@ -135,9 +135,10 @@
 					'</li>'
 				],
 
-				setup: function ( data ) {
+				setup: function ( data, parent ) {
 
 					this.data = data;
+					this.parent = parent;
 					this.edit = false;
 
 					this.on( 'click', '[name=done]', function () {

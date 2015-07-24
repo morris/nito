@@ -7,6 +7,8 @@
 
 } )( function ( $, window ) {
 
+	if ( $.nito ) return; // extend $ only once
+
 	var extend = $.extend;
 
 	extend( $, {
@@ -18,14 +20,10 @@
 			var base = settings.base;
 			if ( $.isArray( base ) ) base = base.join( '\n' );
 
-			// don't put these in the component prototype
-			delete settings.idProp;
-			delete settings.base;
-
 			// define component class
-			var Comp = function ( base, data, parent ) {
+			var Comp = function ( base, data, extra ) {
 
-				$.Comp.call( this, base, data, parent );
+				$.Comp.call( this, base, data, extra );
 
 			};
 
@@ -63,6 +61,7 @@
 			handler._router = true;
 
 			$( window ).on( 'hashchange', handler );
+
 			handler(); // initial call
 
 			return handler;
@@ -79,34 +78,33 @@
 
 	//
 
-	$.Comp = function ( base, data, parent ) {
+	$.Comp = function ( base, data, extra ) {
 
 		this.$el = $( base ).data( 'comp', this );
-		this.parent = parent;
-
-		this.setup( data );
-		this.update( data );
+		this.setup( data, extra );
+		this.update( data, extra );
 
 	};
 
 	extend( $.Comp, {
 
-		create: function ( data, parent ) {
+		create: function ( data, extra ) {
 
-			return this.setup( this.base, data, parent );
-
-		},
-
-		setup: function ( base, data, parent ) {
-
-			return new this( base, data, parent );
+			return this.setup( this.base, data, extra );
 
 		},
 
-		appendTo: function ( container, data, parent ) {
+		setup: function ( base, data, extra ) {
 
-			var comp = this.create( data, parent );
+			return new this( base, data, extra );
+
+		},
+
+		appendTo: function ( container, data, extra ) {
+
+			var comp = this.create( data, extra );
 			comp.$el.appendTo( container );
+
 			return comp;
 
 		},
@@ -128,7 +126,7 @@
 		on: function ( event, handler ) {
 
 			var self = this;
-			var args = Array.prototype.map.call( arguments, function ( arg ) {
+			var args = [].map.call( arguments, function ( arg ) {
 
 				return typeof arg === 'function' ? arg.bind( self ) : arg;
 
@@ -152,18 +150,17 @@
 
 	extend( $.fn, {
 
-		nest: function ( item, factory, parent ) {
+		nest: function ( item, factory, extra ) {
 
-			return this.loop( [ item ], factory, parent );
+			return this.loop( [ item ], factory, extra );
 
 		},
 
-		loop: function ( items, factory, parent ) {
+		loop: function ( items, factory, extra ) {
 
 			var idProp = factory.idProp || 'id';
 			var remove = factory.remove.bind( factory ) || function ( child ) { child.$el.remove(); };
 			var childMapKey = '_childMap';
-
 			var $container = $( this );
 			var itemMap = {};
 
@@ -207,12 +204,12 @@
 
 				if ( make ) {
 
-					child = factory.create( item, parent );
+					child = factory.create( item, extra );
 					childMap[ id ] = child;
 
 				}
 
-				child.update( item );
+				child.update( item, extra );
 				var $child = child.$el;
 
 				if ( index >= $container.children().length ) {
