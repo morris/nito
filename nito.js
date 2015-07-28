@@ -1,11 +1,22 @@
 /*! nito v0.1.0 - https://github.com/morris/nito */
 
-( function ( nito ) {
+( function ( root, factory ) {
 
-	if ( typeof module !== 'undefined' ) module.exports = nito; // server
-	else nito( $, window ); // browser
+	if ( typeof define === 'function' && define.am ) {
 
-} )( function ( $, window ) {
+		define( [], factory );
+
+    } else if ( typeof module === 'object' && module.exports ) {
+
+		module.exports = factory; // server
+
+	} else {
+
+		factory( root, $ ); // browser
+
+	}
+
+} )( this, function ( window, $ ) {
 
 	if ( $.nito ) return; // extend $ only once
 
