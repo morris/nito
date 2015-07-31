@@ -1,4 +1,4 @@
-# nito :skull:
+# Nito :skull:
 
 Lightweight components for your favorite $. Just an experiment. Or maybe not.
 
@@ -6,7 +6,6 @@ Lightweight components for your favorite $. Just an experiment. Or maybe not.
 - No templating, just $
 - No virtual DOM, only $
 - No JSX... $
-- Just no B$
 
 
 ## Examples
@@ -16,7 +15,7 @@ Lightweight components for your favorite $. Just an experiment. Or maybe not.
 
 ## Getting started
 
-Include $ first, then nito:
+Include $ first, then Nito:
 
 ```
 <script src="jquery-1.11.3.min.js"></script>
