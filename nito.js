@@ -2,17 +2,21 @@
 
 ;( function ( root, factory ) {
 
-	if ( typeof define === 'function' && define.am ) {
+	if ( typeof define === 'function' && define.amd ) {
 
-		define( [], factory );
+		define( [], function () {
+
+			return factory;
+
+		} );
 
     } else if ( typeof module === 'object' && module.exports ) {
 
-		module.exports = factory; // server
+		module.exports = factory;
 
 	} else {
 
-		factory( root, $ ); // browser
+		factory( root, root.$ );
 
 	}
 
