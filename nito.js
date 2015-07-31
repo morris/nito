@@ -1,6 +1,6 @@
-/*! nito v0.1.0 - https://github.com/morris/nito */
+/*! Nito v0.3.1 - https://github.com/morris/nito */
 
-( function ( root, factory ) {
+;( function ( root, factory ) {
 
 	if ( typeof define === 'function' && define.am ) {
 
@@ -91,7 +91,8 @@
 
 	$.Comp = function ( base, data, extra ) {
 
-		this.$el = $( base ).data( 'comp', this );
+		this.$el = $( base );
+		if ( this.$el.length > 0 ) this.$el[ 0 ].nitoComp = this;
 		this.setup( data, extra );
 		this.update( data, extra );
 
@@ -171,8 +172,8 @@
 
 			var idProp = factory.idProp || 'id';
 			var remove = factory.remove.bind( factory ) || function ( child ) { child.$el.remove(); };
-			var childMapKey = '_childMap';
-			var $container = $( this );
+			var $container = this;
+			var container = this[ 0 ];
 			var itemMap = {};
 
 			items = items.filter( function ( item ) {
@@ -188,7 +189,7 @@
 
 			} );
 
-			var childMap = $container.data( childMapKey ) || {};
+			var childMap = container.nitoChildMap || {};
 
 			// remove unmapped children
 
@@ -250,7 +251,7 @@
 
 			} );
 
-			$container.data( childMapKey, childMap );
+			container.nitoChildMap = childMap;
 
 			return children;
 
