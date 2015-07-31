@@ -1,4 +1,4 @@
-/*! Nito v0.3.1 - https://github.com/morris/nito */
+/*! Nito v0.3.2 - https://github.com/morris/nito */
 
 ;( function ( root, factory ) {
 
