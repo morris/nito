@@ -10,7 +10,7 @@
 
 		} );
 
-    } else if ( typeof module === 'object' && module.exports ) {
+	} else if ( typeof module === 'object' && module.exports ) {
 
 		module.exports = factory;
 
@@ -233,7 +233,7 @@
 					$child.appendTo( $container );
 					$child.trigger( 'moved' );
 
-				} else if ( make || $child.index() !== index )  {
+				} else if ( make || $child.index() !== index ) {
 
 					if ( index === 0 ) {
 
