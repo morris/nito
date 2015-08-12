@@ -144,7 +144,7 @@ QUnit.test( 'style', function ( assert ) {
 
 	$el.style( {
 		color: 'red',
-		'font-size': '2em'
+		fontSize: '2em'
 	} );
 
 	assert.equal( $el[ 0 ].style.color, 'red' );

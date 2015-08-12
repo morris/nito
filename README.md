@@ -147,12 +147,32 @@ These methods are soft, non-destructive, keep DOM mutations low.
 
 #### `$set.classes( map )`
 
-- Add classes on $set softly
+- Set classes on $set softly
 - Classes not present in map are not touched
 - Returns $set
 
 ```js
 $set.classes( { classA: truthy, classB: falsy } );
+```
+
+#### `$set.style( map )`
+
+- Set CSS styles on $set softly
+- Properties not present in map are not touched
+- Returns $set
+
+```js
+$set.style( { color: 'red', fontSize: '2em' } );
+```
+
+#### `$set.attrs( map )`
+
+- Set attributes on $set softly
+- Attributes not present in map are not touched
+- Returns $set
+
+```js
+$set.attrs( { width: 80, height: 60 } );
 ```
 
 #### `$set.weld( data, selectors )`
@@ -176,25 +196,3 @@ $set.weld( { title: 'nito', contents: 'hello' }, { contents: '.post' } );
 - Form controls must have proper `name` attributes
 - Supports all controls, nested data, `name="a[b][c]"`, etc.
 - Returns $set
-
-
-## Router
-
-#### `$.router( handler )`
-
-- Attach a handler to the `hashchange` event
-- The hash is split by `/`, empty parts are removed, and the result is passed to the handler
-- The handler is also immediately called once
-- Returns the (wrapped) handler
-
-```js
-$.router( function ( action, id ) {
-
-	// handle <url>#<action>/<id>
-
-} );
-```
-
-#### `$.routerOff( handler )`
-
-- Remove a handler previously returned by `$.router`
