@@ -116,3 +116,84 @@ QUnit.test( 'loop', function ( assert ) {
 	assert.equal( stats.moved, 5 );
 
 } );
+
+QUnit.test( 'classes', function ( assert ) {
+
+	var $el = $( '<div></div>' );
+
+	$el.classes( {
+		foo: true,
+		bar: true,
+		baz: false
+	} );
+
+	assert.equal( $el[ 0 ].className, 'foo bar' );
+
+	$el.classes( {
+		foo: false,
+		baz: true
+	} );
+
+	assert.equal( $el[ 0 ].className, 'bar baz' );
+
+} );
+
+QUnit.test( 'style', function ( assert ) {
+
+	var $el = $( '<div></div>' );
+
+	$el.style( {
+		color: 'red',
+		'font-size': '2em'
+	} );
+
+	assert.equal( $el[ 0 ].style.color, 'red' );
+	assert.equal( $el[ 0 ].style.fontSize, '2em' );
+
+	$el.style( {
+		color: 'blue'
+	} );
+
+	assert.equal( $el[ 0 ].style.color, 'blue' );
+	assert.equal( $el[ 0 ].style.fontSize, '2em' );
+
+} );
+
+QUnit.test( 'attrs', function ( assert ) {
+
+	var $el = $( '<div></div>' );
+
+	$el.attrs( {
+		foo: 'bar',
+		style: 'color: red'
+	} );
+
+	assert.equal( $el[ 0 ].style.color, 'red' );
+	assert.equal( $el.attr( 'foo' ), 'bar' );
+
+	$el.attrs( {
+		style: null
+	} );
+
+	assert.notOk( $el.is( '[style]' ) );
+	assert.equal( $el.attr( 'foo' ), 'bar' );
+
+} );
+
+QUnit.test( 'weld', function ( assert ) {
+
+	var $el = $( '<div><i class="foo"></i><b class="bar"></b></div>' );
+
+	$el.weld( {
+		foo: 'hello',
+		bar: 'world'
+	} );
+
+	assert.equal( $el.find( 'i' ).html(), 'hello' );
+	assert.equal( $el.find( 'b' ).html(), 'world' );
+
+	$el.weld( 'hi' );
+
+	assert.equal( $el.html(), 'hi' );
+
+} );

@@ -1,4 +1,4 @@
-/*! Nito v0.3.2 - https://github.com/morris/nito */
+/*! Nito v0.4.0 - https://github.com/morris/nito */
 
 ;( function ( root, factory ) {
 
@@ -56,36 +56,6 @@
 			Comp.idProp = idProp;
 
 			return Comp;
-
-		},
-
-		router: function ( router, context ) {
-
-			var handler = router._router ? router : function () {
-
-				var path = window.location.href.split( '#' )[ 1 ] || '';
-				var args = path.split( '/' ).filter( function ( arg ) {
-
-					return arg !== '';
-
-				} );
-				router.apply( context, args );
-
-			};
-
-			handler._router = true;
-
-			$( window ).on( 'hashchange', handler );
-
-			handler(); // initial call
-
-			return handler;
-
-		},
-
-		routerOff: function ( handler ) {
-
-			$( window ).off( 'hashchange', handler );
 
 		}
 
@@ -278,6 +248,38 @@
 						if ( condition ) $el.addClass( name );
 
 					}
+
+				} );
+
+			} );
+
+		},
+
+		style: function ( css ) {
+
+			return this.each( function () {
+
+				var $el = $( this );
+
+				$.each( css, function ( prop, value ) {
+
+					if ( $el.css( prop ) !== value ) $el.css( prop, value );
+
+				} );
+
+			} );
+
+		},
+
+		attrs: function ( attrs ) {
+
+			return this.each( function () {
+
+				var $el = $( this );
+
+				$.each( attrs, function ( name, value ) {
+
+					if ( $el.attr( name ) !== value ) $el.attr( name, value );
 
 				} );
 
