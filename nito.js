@@ -290,7 +290,9 @@
 		// original idea: https://github.com/tmpvar/weld - thanks!
 		weld: function ( data, selectors ) {
 
-			if ( data === null || typeof data !== 'object' ) {
+			if ( data === null || typeof data === 'undefined' ) data = '';
+
+			if ( typeof data !== 'object' ) {
 
 				data += '';
 
@@ -321,6 +323,8 @@
 		fill: function ( data, base ) {
 
 			var $container = this;
+
+			if ( !data ) return this;
 
 			$.each( data, function ( name, value ) {
 

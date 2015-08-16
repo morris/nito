@@ -197,3 +197,17 @@ QUnit.test( 'weld', function ( assert ) {
 	assert.equal( $el.html(), 'hi' );
 
 } );
+
+QUnit.test( 'weld edge', function ( assert ) {
+
+	var $el = $( '<div></div>' );
+
+	assert.equal( $el.weld( undefined ).html(), '' );
+	assert.equal( $el.weld( null ).html(), '' );
+	assert.equal( $el.weld( '' ).html(), '' );
+	assert.equal( $el.weld( false ).html(), 'false' );
+	assert.equal( $el.weld( true ).html(), 'true' );
+	assert.equal( $el.weld( 0 ).html(), '0' );
+	assert.equal( $el.weld( 1 ).html(), '1' );
+
+} );
