@@ -211,3 +211,200 @@ QUnit.test( 'weld edge', function ( assert ) {
 	assert.equal( $el.weld( 1 ).html(), '1' );
 
 } );
+
+QUnit.test( 'fill text', function ( assert ) {
+
+	var $form = $( '<form><input type="text" name="foo"></form>' );
+	var $control = $form.find( 'input' );
+
+	assert.equal( $control.val(), '' );
+	assert.equal( $control.prop( 'value' ), '' );
+
+	$form.fill( { foo: 'bar' } );
+
+	assert.equal( $control.attr( 'value' ), 'bar' );
+	assert.equal( $control.val(), 'bar' );
+
+	$control.prop( 'value', 'baz' );
+
+	assert.equal( $control.attr( 'value' ), 'bar' );
+	assert.equal( $control.val(), 'baz' );
+
+	$form[ 0 ].reset();
+
+	assert.equal( $control.attr( 'value' ), 'bar' );
+	assert.equal( $control.val(), 'bar' );
+
+} );
+
+QUnit.test( 'fill textarea', function ( assert ) {
+
+	var $form = $( '<form><textarea name="foo"></textarea></form>' );
+	var $control = $form.find( 'textarea' );
+
+	assert.equal( $control.val(), '' );
+	assert.equal( $control.prop( 'value' ), '' );
+
+	$form.fill( { foo: 'bar' } );
+
+	assert.equal( $control.html(), 'bar' );
+	assert.equal( $control.val(), 'bar' );
+
+	$control.prop( 'value', 'baz' );
+
+	assert.equal( $control.html(), 'bar' );
+	assert.equal( $control.val(), 'baz' );
+
+	$form[ 0 ].reset();
+
+	assert.equal( $control.html(), 'bar' );
+	assert.equal( $control.val(), 'bar' );
+
+} );
+
+QUnit.test( 'fill select', function ( assert ) {
+
+	var $form = $( '<form><select name="foo"><option value="bar">bar</option><option value="baz">baz</option></form>' );
+	var $control = $form.find( 'select' );
+	var $bar = $form.find( 'option' ).eq( 0 );
+	var $baz = $form.find( 'option' ).eq( 1 );
+
+	assert.equal( $control.val(), 'bar' );
+	assert.equal( $control.prop( 'value' ), 'bar' );
+
+	$form.fill( { foo: 'baz' } );
+
+	assert.notOk( $control.is( '[value]' ) );
+	assert.ok( $baz.is( '[selected]' ) );
+	assert.equal( $control.val(), 'baz' );
+
+	$control.val( 'bar' );
+
+	assert.ok( $baz.is( '[selected]' ) );
+	assert.equal( $control.val(), 'bar' );
+
+	$form[ 0 ].reset();
+
+	assert.ok( $baz.is( '[selected]' ) );
+	assert.equal( $control.val(), 'baz' );
+
+} );
+
+QUnit.test( 'fill select multiple', function ( assert ) {
+
+	var $form = $( '<form><select name="foo[]" multiple><option value="bar">bar</option><option value="baz">baz</option></form>' );
+	var $bar = $form.find( 'option' ).eq( 0 );
+	var $baz = $form.find( 'option' ).eq( 1 );
+
+	$form.fill( {
+		foo: []
+	} );
+
+	assert.notOk( $bar.is( '[selected]' ) );
+	assert.notOk( $baz.is( '[selected]' ) );
+
+	$form.fill( {
+		foo: [ 'bar' ]
+	} );
+
+	assert.ok( $bar.is( '[selected]' ) );
+	assert.notOk( $baz.is( '[selected]' ) );
+
+	$form.fill( {
+		foo: [ 'baz' ]
+	} );
+
+	assert.notOk( $bar.is( '[selected]' ) );
+	assert.ok( $baz.is( '[selected]' ) );
+
+	$form.fill( {
+		foo: [ 'bar', 'baz' ]
+	} );
+
+	assert.ok( $bar.is( '[selected]' ) );
+	assert.ok( $baz.is( '[selected]' ) );
+
+} );
+
+QUnit.test( 'fill checkbox', function ( assert ) {
+
+	var $form = $( '<form><input type="checkbox" name="foo"></form>' );
+	var $control = $form.find( 'input' );
+
+	$form.fill( {
+		foo: true
+	} );
+
+	assert.ok( $control.is( '[checked]' ) );
+	assert.ok( $control.prop( 'checked' ) );
+
+	$form.fill( {
+		foo: false
+	} );
+
+	assert.notOk( $control.is( '[checked]' ) );
+	assert.notOk( $control.prop( 'checked' ) );
+
+	$control.prop( 'checked', true );
+
+	assert.notOk( $control.is( '[checked]' ) );
+	assert.ok( $control.prop( 'checked' ) );
+
+} );
+
+QUnit.test( 'fill checkbox multiple', function ( assert ) {
+
+	var $form = $( '<form><input type="checkbox" name="foo[]" value="bar"><input type="checkbox" name="foo[]" value="baz"></form>' );
+	var $bar = $form.find( 'input' ).eq( 0 );
+	var $baz = $form.find( 'input' ).eq( 1 );
+
+	$form.fill( {
+		foo: []
+	} );
+
+	assert.notOk( $bar.is( '[checked]' ) );
+	assert.notOk( $baz.is( '[checked]' ) );
+
+	$form.fill( {
+		foo: [ 'bar' ]
+	} );
+
+	assert.ok( $bar.is( '[checked]' ) );
+	assert.notOk( $baz.is( '[checked]' ) );
+
+	$form.fill( {
+		foo: [ 'baz' ]
+	} );
+
+	assert.notOk( $bar.is( '[checked]' ) );
+	assert.ok( $baz.is( '[checked]' ) );
+
+	$form.fill( {
+		foo: [ 'bar', 'baz' ]
+	} );
+
+	assert.ok( $bar.is( '[checked]' ) );
+	assert.ok( $baz.is( '[checked]' ) );
+
+} );
+
+QUnit.test( 'fill radio', function ( assert ) {
+
+	var $form = $( '<form><input type="radio" name="foo" value="bar"><input type="radio" name="foo" value="baz"></form>' );
+	var $bar = $form.find( 'input' ).eq( 0 );
+	var $baz = $form.find( 'input' ).eq( 1 );
+
+	assert.equal( $bar.attr( 'value' ), 'bar' );
+	assert.equal( $baz.attr( 'value' ), 'baz' );
+
+	$form.fill( { foo: 'baz' } );
+
+	assert.notOk( $bar.is( '[checked]' ) );
+	assert.ok( $baz.is( '[checked]' ) );
+
+	$form.fill( { foo: 'bar' } );
+
+	assert.ok( $bar.is( '[checked]' ) );
+	assert.notOk( $baz.is( '[checked]' ) );
+
+} );

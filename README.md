@@ -111,7 +111,7 @@ var Comp = $.nito( {
 
 ## Nesting components
 
-Use these methods in `update`, NOT in `setup`.
+Use these methods in `update`, *not* in `setup`.
 
 #### `$el.loop( items, factory, extra )`
 
@@ -147,9 +147,9 @@ These methods are soft, non-destructive, keep DOM mutations low.
 
 #### `$set.classes( map )`
 
-- Set classes on $set softly
+- Set classes on `$set` softly
 - Classes not present in map are not touched
-- Returns $set
+- Returns `$set`
 
 ```js
 $set.classes( { classA: truthy, classB: falsy } );
@@ -157,9 +157,9 @@ $set.classes( { classA: truthy, classB: falsy } );
 
 #### `$set.style( map )`
 
-- Set CSS styles on $set softly
+- Set CSS styles on `$set` softly
 - Properties not present in map are not touched
-- Returns $set
+- Returns `$set`
 
 ```js
 $set.style( { color: 'red', fontSize: '2em' } );
@@ -167,9 +167,9 @@ $set.style( { color: 'red', fontSize: '2em' } );
 
 #### `$set.attrs( map )`
 
-- Set attributes on $set softly
+- Set attributes on `$set` softly
 - Attributes not present in map are not touched
-- Returns $set
+- Returns `$set`
 
 ```js
 $set.attrs( { width: 80, height: 60 } );
@@ -177,13 +177,13 @@ $set.attrs( { width: 80, height: 60 } );
 
 #### `$set.weld( data, selectors )`
 
-- Set data on $set
-- If data is not an object, set data as $set's innerHTML softly
+- Set data on `$set`
+- If data is not an object, set data as `$set`'s inner HTML softly
 - If data is a map of ( name: html ) pairs:
 	- Will find #name or .name and set the given HTML softly
 	- selectors is an optional map of ( name: selector ) pairs
 	- If selectors[ name ] is given, use that instead of #name, .name
-- Returns $set
+- Returns `$set`
 
 ```js
 $set.weld( 'hello' );
@@ -195,4 +195,7 @@ $set.weld( { title: 'nito', contents: 'hello' }, { contents: '.post' } );
 - Fill form controls contained in `$set` with given data
 - Form controls must have proper `name` attributes
 - Supports all controls, nested data, `name="a[b][c]"`, etc.
-- Returns $set
+- Fills the DOM, e.g. `value` or `selected` attributes, *not* the properties
+	- Inputs modified by the user will still reflect the user input after `fill`
+	- Use `reset` to discard user input and return to the state created by `fill`
+- Returns `$set`

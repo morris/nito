@@ -1,4 +1,4 @@
-/*! Nito v0.4.0 - https://github.com/morris/nito */
+/*! Nito v0.5.0 - https://github.com/morris/nito */
 
 ;( function ( root, factory ) {
 
@@ -146,7 +146,7 @@
 
 			var idProp = factory.idProp || 'id';
 			var remove = factory.remove.bind( factory ) || function ( child ) { child.$el.remove(); };
-			var $container = this;
+			var $container = this.eq( 0 );
 			var container = this[ 0 ];
 			var itemMap = {};
 
@@ -330,8 +330,6 @@
 
 				if ( base ) name = base + '[' + name + ']';
 
-				if ( value && typeof value === 'object' ) return $container.fill( value, name );
-
 				var $control;
 
 				if ( $.isArray( value ) ) {
@@ -344,7 +342,10 @@
 
 						$control.each( function () {
 
-							$( this ).prop( 'checked', value.indexOf( $( this ).attr( 'value' ) ) >= 0 );
+							var $this = $( this );
+							$this.attrs( {
+								checked: ba( value.indexOf( $this.attr( 'value' ) ) >= 0 )
+							} );
 
 						} );
 
@@ -352,11 +353,20 @@
 
 						$control.find( 'option' ).each( function () {
 
-							$( this ).prop( 'selected', value.indexOf( $( this ).attr( 'value' ) ) >= 0 );
+							var $this = $( this );
+							$this.attrs( {
+								selected: ba( value.indexOf( $this.attr( 'value' ) ) >= 0 )
+							} );
 
 						} );
 
 					}
+
+				} else if ( value && typeof value === 'object' ) {
+
+					// nested values
+					
+					return $container.fill( value, name );
 
 				} else {
 
@@ -364,22 +374,40 @@
 
 					$control = $container.find( '[name="' + name + '"]' );
 
-					if ( $control.is( 'input[type=text], input[type=password], select, textarea' ) ) {
+					if ( $control.is( 'input[type=text], input[type=password]' ) ) {
 
-						$control.val( value );
+						$control.attrs( { value: value } );
+
+					} else if ( $control.is( 'textarea' ) ) {
+
+						$control.weld( value );
+
+					} else if ( $control.is( 'select' ) ) {
+
+						$control.find( 'option' ).each( function () {
+
+							var $this = $( this );
+							$this.attrs( {
+								selected: ba( value === $this.attr( 'value' ) )
+							} );
+
+						} );
 
 					} else if ( $control.is( 'input[type=radio]' ) ) {
 
 						$control.each( function () {
 
-							$( this ).prop( 'checked', $( this ).attr( 'value' ) === value );
+							var $this = $( this );
+							$this.attrs( {
+								checked: ba( $this.attr( 'value' ) === value )
+							} );
 
 						} );
 
 					} else if ( $control.is( 'input[type=checkbox]' ) ) {
 
 						if ( typeof value === 'string' ) value = !!parseInt( value );
-						$control.prop( 'checked', value );
+						$control.attrs( { checked: ba( value ) } );
 
 					}
 
@@ -388,6 +416,12 @@
 			} );
 
 			return this;
+
+			function ba( value ) {
+
+				return value ? '' : null;
+
+			}
 
 		}
 

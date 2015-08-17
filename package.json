@@ -15,8 +15,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-uglify": "^1.2.0",
     "jquery": "^2.1.4",
-    "qunitjs": "^1.18.0",
-    "zepto": "0.0.4"
+    "qunitjs": "^1.18.0"
   },
   "scripts": {
     "gulp": "gulp"
