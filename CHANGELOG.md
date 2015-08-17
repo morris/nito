@@ -10,7 +10,7 @@
 
 - Improved `fill` and `weld`
 
-## v0.4.0
+## 0.4.0
 
 - Added `style` and `attrs` methods
 - Added tests
