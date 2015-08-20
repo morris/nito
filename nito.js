@@ -24,7 +24,7 @@
 
 	if ( $.nito ) return; // extend $ only once
 
-	var extend = $.extend;
+	var extend = $.extend, isArray = $.isArray, each = $.each;
 
 	extend( $, {
 
@@ -33,7 +33,7 @@
 			// parse settings
 			var idProp = settings.idProp || 'id';
 			var base = settings.base;
-			if ( $.isArray( base ) ) base = base.join( '\n' );
+			if ( isArray( base ) ) base = base.join( '\n' );
 
 			// define component class
 			var Comp = function ( base, data, extra ) {
@@ -46,10 +46,10 @@
 			Comp.prototype = Object.create( $.Comp.prototype );
 
 			// extend prototype with settings
-			$.extend( Comp.prototype, settings );
+			extend( Comp.prototype, settings );
 
 			// inherit static methods
-			$.extend( Comp, $.Comp );
+			extend( Comp, $.Comp );
 
 			// set static settings
 			Comp.base = base;
@@ -138,7 +138,7 @@
 
 		nest: function ( item, factory, extra ) {
 
-			return this.loop( [ item ], factory, extra );
+			return this.loop( [ item ], factory, extra )[ 0 ];
 
 		},
 
@@ -167,7 +167,7 @@
 
 			// remove unmapped children
 
-			$.each( childMap, function ( id, child ) {
+			each( childMap, function ( id, child ) {
 
 				if ( !itemMap[ id ] ) {
 
@@ -237,7 +237,7 @@
 
 				var el = this, $el = $( el );
 
-				$.each( classes, function ( name, condition ) {
+				each( classes, function ( name, condition ) {
 
 					$el.toggleClass( name, funcValue( condition, el ) );
 
@@ -253,7 +253,7 @@
 
 				var el = this, $el = $( el );
 
-				$.each( css, function ( prop, value ) {
+				each( css, function ( prop, value ) {
 
 					value = funcValue( value, el );
 					if ( $el.css( prop ) !== value ) $el.css( prop, value );
@@ -270,7 +270,7 @@
 
 				var el = this, $el = $( el );
 
-				$.each( attrs, function ( name, value ) {
+				each( attrs, function ( name, value ) {
 
 					value = funcValue( value, el );
 					if ( $el.attr( name ) !== value ) $el.attr( name, value );
@@ -302,7 +302,7 @@
 			selectors = selectors || {};
 			var $set = this;
 
-			$.each( data, function ( name, value ) {
+			each( data, function ( name, value ) {
 
 				var selector = selectors[ name ] || ( '#' + name + ', ' + '.' + name );
 				$set.find( selector ).not( 'input, textarea, select' ).weld( value );
@@ -313,94 +313,101 @@
 
 		},
 
-		fill: function ( data, base ) {
-
-			var $container = this;
+		fill: function ( data, user, base ) {
 
 			if ( !data ) return this;
 
-			$.each( data, function ( name, value ) {
+			var $container = this;
+			var valueProp = 'defaultValue';
+			var checkedProp = 'defaultChecked';
+			var selectedProp = 'defaultSelected';
+
+			if ( user ) {
+
+				valueProp = 'value';
+				checkedProp = 'checked';
+				selectedProp = 'selected';
+
+			}
+
+			each( data, function ( name, value ) {
 
 				if ( base ) name = base + '[' + name + ']';
 
 				var $control;
 
-				if ( $.isArray( value ) ) {
+				if ( isArray( value ) ) {
 
 					// multiple values
 
 					$control = $container.find( '[name="' + name + '[]"]' );
+					$control.each( function () {
 
-					if ( $control.is( 'input[type=checkbox]' ) ) {
+						if ( this.type === 'checkbox' ) {
 
-						$control.each( function () {
+							setModified( this, checkedProp, value.indexOf( this.getAttribute( 'value' ) ) >= 0 );
 
-							var $this = $( this );
-							$this.attrs( {
-								checked: boolAttr( value.indexOf( $this.attr( 'value' ) ) >= 0 )
+						} else if ( this.multiple ) {
+
+							$( this ).children().each( function () {
+
+								setModified( this, selectedProp, value.indexOf( this.getAttribute( 'value' ) ) >= 0 );
+
 							} );
 
-						} );
+						}
 
-					} else if ( $control.is( 'select[multiple]' ) ) {
-
-						$control.find( 'option' ).each( function () {
-
-							var $this = $( this );
-							$this.attrs( {
-								selected: boolAttr( value.indexOf( $this.attr( 'value' ) ) >= 0 )
-							} );
-
-						} );
-
-					}
+					} );
 
 				} else if ( value && typeof value === 'object' ) {
 
 					// nested values
 
-					return $container.fill( value, name );
+					return $container.fill( value, user, name );
 
 				} else {
 
 					// single values
 
 					$control = $container.find( '[name="' + name + '"]' );
+					if ( $control.length === 0 ) return this;
 
-					if ( $control.is( 'input[type=text], input[type=password]' ) ) {
+					var control = $control[ 0 ];
+					var tagName = control.tagName;
+					var type = control.type;
 
-						$control.attrs( { value: value } );
-
-					} else if ( $control.is( 'textarea' ) ) {
-
-						$control.weld( value );
-
-					} else if ( $control.is( 'select' ) ) {
+					if ( tagName === 'SELECT' ) {
 
 						$control.find( 'option' ).each( function () {
 
-							var $this = $( this );
-							$this.attrs( {
-								selected: boolAttr( value === $this.attr( 'value' ) )
-							} );
+							setModified( this, selectedProp, value === this.getAttribute( 'value' ) );
 
 						} );
 
-					} else if ( $control.is( 'input[type=radio]' ) ) {
+					} else if ( type === 'radio' ) {
 
 						$control.each( function () {
 
-							var $this = $( this );
-							$this.attrs( {
-								checked: boolAttr( $this.attr( 'value' ) === value )
-							} );
+							setModified( this, checkedProp, value === this.getAttribute( 'value' ) );
 
 						} );
 
-					} else if ( $control.is( 'input[type=checkbox]' ) ) {
+					} else if ( type === 'checkbox' ) {
 
-						if ( typeof value === 'string' ) value = !!parseInt( value );
-						$control.attrs( { checked: boolAttr( value ) } );
+						control[ checkedProp ] = value;
+
+					} else if (
+						type === 'text' ||
+						type === 'password' ||
+						type === 'hidden'
+					) {
+
+						setModified( control, valueProp, value );
+
+					} else if ( tagName === 'TEXTAREA' ) {
+
+						setModified( control, valueProp, value );
+						if ( !user ) $control.html( value ); // IE needs this
 
 					}
 
@@ -410,23 +417,65 @@
 
 			return this;
 
+		},
 
+		reset: function () {
+
+			this.each( function () {
+
+				switch ( this.tagName ) {
+
+				case 'FORM':
+					this.reset();
+					break;
+
+				case 'INPUT':
+					var type = this.type;
+
+					if ( type === 'checkbox' || type === 'radio' ) {
+
+						this.checked = this.defaultChecked;
+
+					} else {
+
+						// text, password, hidden
+						this.value = this.defaultValue;
+
+					}
+
+					break;
+
+				case 'TEXTAREA':
+					this.value = this.defaultValue;
+					break;
+
+				case 'OPTION':
+					this.selected = this.defaultSelected;
+					break;
+
+				case 'SELECT':
+					$( this ).find( 'option' ).reset();
+					break;
+
+				}
+
+			} );
+
+			return this;
 
 		}
 
 	} );
 
-	// convert bool to boolean attribute value
-	function boolAttr( value ) {
-
-		return value ? '' : null;
-
-	}
-
-	// if a value is a function, compute it first
 	function funcValue( value, context ) {
 
 		return typeof value === 'function' ? value.call( context ) : value;
+
+	}
+
+	function setModified( object, property, value ) {
+
+		if ( object[ property ] !== value ) object[ property ] = value;
 
 	}
 
