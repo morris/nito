@@ -10,7 +10,7 @@ Lightweight components for your favorite $. Just an experiment. Or maybe not.
 
 ## Examples
 
-- [Todo](https://rawgit.com/morris/nito/master/examples/todo/)
+- [Todo](https://rawgit.com/morris/nito/master/examples/todo.html)
 
 
 ## Getting started
@@ -194,12 +194,21 @@ $set.weld( 'hello' );
 $set.weld( { title: 'nito', contents: 'hello' }, { contents: '.post' } );
 ```
 
-#### `$set.fill( data )`
+#### `$set.fill( data, user )`
 
 - Fill form controls contained in `$set` with given data
 - Form controls must have proper `name` attributes
 - Supports all controls, nested data, `name="a[b][c]"`, etc.
-- Fills the DOM, e.g. `value` or `selected` attributes, *not* the properties
-	- Inputs modified by the user will still reflect the user input after `fill`
-	- Use `reset` to discard user input and return to the state created by `fill`
+- If `user` is falsy, fills the DOM (form defaults)
+ 	- Modifies DOM attributes like `value` and `selected`, *not* the properties
+	- Inputs modified by the user will still reflect the user input
+- If `user` is truthy, fills the properties (user input)
+	- User input will be overwritten
+	- Form defaults are not modified
+- Use `reset` to discard user input
+- Returns `$set`
+
+#### `$set.reset()`
+
+- Resets each form or individual form control in `$set`
 - Returns `$set`
