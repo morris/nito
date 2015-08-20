@@ -235,19 +235,11 @@
 
 			return this.each( function () {
 
-				var $el = $( this );
+				var el = this, $el = $( el );
 
 				$.each( classes, function ( name, condition ) {
 
-					if ( $el.hasClass( name ) ) {
-
-						if ( !condition ) $el.removeClass( name );
-
-					} else {
-
-						if ( condition ) $el.addClass( name );
-
-					}
+					$el.toggleClass( name, funcValue( condition, el ) );
 
 				} );
 
@@ -259,10 +251,11 @@
 
 			return this.each( function () {
 
-				var $el = $( this );
+				var el = this, $el = $( el );
 
 				$.each( css, function ( prop, value ) {
 
+					value = funcValue( value, el );
 					if ( $el.css( prop ) !== value ) $el.css( prop, value );
 
 				} );
@@ -275,10 +268,11 @@
 
 			return this.each( function () {
 
-				var $el = $( this );
+				var el = this, $el = $( el );
 
 				$.each( attrs, function ( name, value ) {
 
+					value = funcValue( value, el );
 					if ( $el.attr( name ) !== value ) $el.attr( name, value );
 
 				} );
@@ -294,13 +288,12 @@
 
 			if ( typeof data !== 'object' ) {
 
-				data += '';
-
 				return this.each( function () {
 
+					var value = funcValue( data, this ) + '';
 					var $el = $( this );
 					var html = $el.html();
-					if ( html !== data ) $el.html( data );
+					if ( html !== value ) $el.html( value );
 
 				} );
 
@@ -344,7 +337,7 @@
 
 							var $this = $( this );
 							$this.attrs( {
-								checked: ba( value.indexOf( $this.attr( 'value' ) ) >= 0 )
+								checked: boolAttr( value.indexOf( $this.attr( 'value' ) ) >= 0 )
 							} );
 
 						} );
@@ -355,7 +348,7 @@
 
 							var $this = $( this );
 							$this.attrs( {
-								selected: ba( value.indexOf( $this.attr( 'value' ) ) >= 0 )
+								selected: boolAttr( value.indexOf( $this.attr( 'value' ) ) >= 0 )
 							} );
 
 						} );
@@ -365,7 +358,7 @@
 				} else if ( value && typeof value === 'object' ) {
 
 					// nested values
-					
+
 					return $container.fill( value, name );
 
 				} else {
@@ -388,7 +381,7 @@
 
 							var $this = $( this );
 							$this.attrs( {
-								selected: ba( value === $this.attr( 'value' ) )
+								selected: boolAttr( value === $this.attr( 'value' ) )
 							} );
 
 						} );
@@ -399,7 +392,7 @@
 
 							var $this = $( this );
 							$this.attrs( {
-								checked: ba( $this.attr( 'value' ) === value )
+								checked: boolAttr( $this.attr( 'value' ) === value )
 							} );
 
 						} );
@@ -407,7 +400,7 @@
 					} else if ( $control.is( 'input[type=checkbox]' ) ) {
 
 						if ( typeof value === 'string' ) value = !!parseInt( value );
-						$control.attrs( { checked: ba( value ) } );
+						$control.attrs( { checked: boolAttr( value ) } );
 
 					}
 
@@ -417,14 +410,24 @@
 
 			return this;
 
-			function ba( value ) {
 
-				return value ? '' : null;
-
-			}
 
 		}
 
 	} );
+
+	// convert bool to boolean attribute value
+	function boolAttr( value ) {
+
+		return value ? '' : null;
+
+	}
+
+	// if a value is a function, compute it first
+	function funcValue( value, context ) {
+
+		return typeof value === 'function' ? value.call( context ) : value;
+
+	}
 
 } );
