@@ -10,7 +10,7 @@ Lightweight components for your favorite $. Just an experiment. Or maybe not.
 
 ## Examples
 
-- [Todo](https://rawgit.com/morris/nito/master/examples/todo.html)
+- [Todo](https://rawgit.com/morris/nito/master/examples/todo/)
 
 
 ## Getting started
@@ -149,6 +149,7 @@ These methods are soft, non-destructive, keep DOM mutations low.
 
 - Set classes on `$set` softly
 - Classes not present in map are not touched
+- Function values are computed using each node as `this`
 - Returns `$set`
 
 ```js
@@ -159,6 +160,7 @@ $set.classes( { classA: truthy, classB: falsy } );
 
 - Set CSS styles on `$set` softly
 - Properties not present in map are not touched
+- Function values are computed using each node as `this`
 - Returns `$set`
 
 ```js
@@ -169,6 +171,7 @@ $set.style( { color: 'red', fontSize: '2em' } );
 
 - Set attributes on `$set` softly
 - Attributes not present in map are not touched
+- Function values are computed using each node as `this`
 - Returns `$set`
 
 ```js
@@ -177,12 +180,13 @@ $set.attrs( { width: 80, height: 60 } );
 
 #### `$set.weld( data, selectors )`
 
-- Set data on `$set`
-- If data is not an object, set data as `$set`'s inner HTML softly
-- If data is a map of ( name: html ) pairs:
-	- Will find #name or .name and set the given HTML softly
-	- selectors is an optional map of ( name: selector ) pairs
-	- If selectors[ name ] is given, use that instead of #name, .name
+- Set `data` on `$set`
+- If `data` is not an object, set `data` as `$set`'s inner HTML softly
+	- Function values are computed using each node as `this`
+- If `data` is a map of `name: html` pairs:
+	- Will find `#name, .name` and set the given HTML softly
+	- selectors is an optional map of `name: selector` pairs
+	- If `selectors[ name ]` is given, use that instead of `#name, .name`
 - Returns `$set`
 
 ```js
