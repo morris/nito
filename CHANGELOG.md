@@ -1,6 +1,6 @@
 # Changelog
 
-## master
+## v0.6.0
 
 - Improved todo example
 - `fill` can now set both default values and user values using a boolean parameter
