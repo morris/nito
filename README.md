@@ -10,7 +10,7 @@ Lightweight components for your favorite $. Just an experiment. Or maybe not.
 
 ## Examples
 
-- [Todo](https://rawgit.com/morris/nito/master/examples/todo.html)
+- [Todo](https://rawgit.com/morris/nito/master/examples/todo/) with TodoMVC-like features
 
 
 ## Getting started

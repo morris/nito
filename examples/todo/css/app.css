@@ -1,0 +1,63 @@
+.container {
+	width: 600px;
+}
+
+.line {
+	position: relative;
+	height: 40px;
+	line-height: 40px;
+	border-bottom: 1px solid #ccc;
+}
+
+.check {
+	float: left;
+	width: 40px;
+	text-align: center;
+}
+
+.block {
+	display: block;
+	width: 80%;
+	border: 0;
+	padding: 0;
+	background: transparent;
+}
+
+.controls {
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 40px;
+	text-align: center;
+}
+
+.items {
+	padding: 0;
+	margin: 0 0 100px 0;
+	list-style-type: none;
+}
+
+	.item .controls {
+		display: none;
+	}
+
+	.item:hover .controls {
+		display: block;
+	}
+
+	.item.completed .title {
+		color: #999;
+		text-decoration: line-through;
+	}
+
+	.item.editing .title {
+		display: none;
+	}
+
+	.item [name=title] {
+		display: none;
+	}
+
+	.item.editing [name=title] {
+		display: block;
+	}
