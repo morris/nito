@@ -1,4 +1,4 @@
-/*! Nito v0.5.0 - https://github.com/morris/nito */
+/*! Nito v0.7.0 - https://github.com/morris/nito */
 
 ;( function ( root, factory ) {
 
@@ -31,14 +31,14 @@
 		nito: function ( settings ) {
 
 			// parse settings
-			var idProp = settings.idProp || 'id';
+			var keyProp = settings.keyProp || 'key';
 			var base = settings.base;
-			if ( isArray( base ) ) base = base.join( '\n' );
+			var $base = $( isArray( base ) ? base.join( '\n' ) : base ).eq( 0 );
 
 			// define component class
-			var Comp = function ( base, data, extra ) {
+			var Comp = function ( el, data, extra ) {
 
-				$.Comp.call( this, base, data, extra );
+				$.Comp.call( this, el, data, extra );
 
 			};
 
@@ -52,8 +52,8 @@
 			extend( Comp, $.Comp );
 
 			// set static settings
-			Comp.base = base;
-			Comp.idProp = idProp;
+			Comp.$base = $base;
+			Comp.keyProp = keyProp;
 
 			return Comp;
 
@@ -63,10 +63,12 @@
 
 	//
 
-	$.Comp = function ( base, data, extra ) {
+	$.Comp = function ( el, data, extra ) {
 
-		this.$el = $( base );
-		if ( this.$el.length > 0 ) this.$el[ 0 ].nitoComp = this;
+		this.$el = $( el ).eq( 0 );
+		this.el = this.$el[ 0 ];
+		if ( this.el ) this.el.nitoComp = this;
+
 		this.setup( data, extra );
 		this.update( data, extra );
 
@@ -76,13 +78,13 @@
 
 		create: function ( data, extra ) {
 
-			return this.setup( this.base, data, extra );
+			return this.setup( this.$base.clone(), data, extra );
 
 		},
 
-		setup: function ( base, data, extra ) {
+		setup: function ( el, data, extra ) {
 
-			return new this( base, data, extra );
+			return new this( el, data, extra );
 
 		},
 
@@ -92,12 +94,6 @@
 			comp.$el.appendTo( container );
 
 			return comp;
-
-		},
-
-		remove: function ( comp ) {
-
-			comp.$el.remove();
 
 		}
 
@@ -136,98 +132,92 @@
 
 	extend( $.fn, {
 
-		nest: function ( item, factory, extra ) {
-
-			return this.loop( [ item ], factory, extra )[ 0 ];
-
-		},
-
 		loop: function ( items, factory, extra ) {
 
-			var idProp = factory.idProp || 'id';
-			var remove = factory.remove.bind( factory ) || function ( child ) { child.$el.remove(); };
-			var $container = this.eq( 0 );
+			var keyProp = factory.keyProp || 'key';
 			var container = this[ 0 ];
-			var itemMap = {};
-
-			items = items.filter( function ( item ) {
-
-				if ( !item ) return false;
-
-				var id = item[ idProp ];
-				if ( !id ) throw new Error( 'Undefined id "' + idProp + '" in loop' );
-				if ( itemMap[ id ] ) throw new Error( 'Non-distinct id "' + id + '" in loop' );
-				itemMap[ id ] = item;
-
-				return true;
-
-			} );
-
-			var childMap = container.nitoChildMap || {};
-
-			// remove unmapped children
-
-			each( childMap, function ( id, child ) {
-
-				if ( !itemMap[ id ] ) {
-
-					remove( child );
-					delete childMap[ id ];
-
-				}
-
-			} );
-
-			// reorder existing and append new children
-
+			var children = container.children;
+			var compMap = container.nitoCompMap = container.nitoCompMap || {};
 			var index = 0;
 
-			var children = items.map( function ( item ) {
+			var comps = items.map( function ( item ) {
 
-				var id = item[ idProp ];
-				var child = childMap[ id ];
-				var make = !child;
+				var key = item[ keyProp ];
+				if ( !key ) throw new Error( 'Undefined key "' + keyProp + '" in loop' );
+				var comp = compMap[ key ];
 
-				if ( make ) {
+				if ( comp ) {
 
-					child = factory.create( item, extra );
-					childMap[ id ] = child;
+					comp._sort = Math.abs( index - comp._index );
 
-				}
+				} else {
 
-				child.update( item, extra );
-				var $child = child.$el;
-
-				if ( index >= $container.children().length ) {
-
-					$child.appendTo( $container );
-					$child.trigger( 'moved' );
-
-				} else if ( make || $child.index() !== index ) {
-
-					if ( index === 0 ) {
-
-						$child.prependTo( $container );
-
-					} else {
-
-						$child.insertAfter( $container.children().eq( index - 1 ) );
-
-					}
-
-					$child.trigger( 'moved' );
+					comp = factory.create( item, extra );
+					compMap[ key ] = comp;
+					comp._sort = -index;
 
 				}
+
+				comp._index = index;
+				comp.el.nitoKeep = true;
+				comp.el.nitoKey = key;
+				comp.update( item, extra );
 
 				++index;
 
-				return child;
+				return comp;
 
 			} );
 
-			container.nitoChildMap = childMap;
+			index = 0;
 
-			return children;
+			while ( index < children.length ) {
+
+				var child = children[ index ];
+
+				if ( !child.nitoKeep ) {
+
+					container.removeChild( child );
+					delete compMap[ child.nitoKey ];
+
+				} else {
+
+					++index;
+
+				}
+
+			}
+
+			comps.slice( 0 ).sort( function ( a, b ) {
+
+				return b._sort - a._sort || b._index - a._index;
+
+			} ).forEach( function ( comp ) {
+
+				var el = comp.el;
+				var other = children[ comp._index ];
+
+				if ( !other ) {
+
+					container.appendChild( el );
+
+				} else if ( el !== other ) {
+
+					container.insertBefore( el, other );
+
+				}
+
+				el.nitoKeep = false;
+
+			} );
+
+			return comps;
+
+		},
+
+		nest: function ( item, factory, extra ) {
+
+			return this.loop( [ item ], factory, extra )[ 0 ];
 
 		},
 
@@ -247,53 +237,33 @@
 
 		},
 
-		style: function ( css ) {
-
-			return this.each( function () {
-
-				var el = this, $el = $( el );
-
-				each( css, function ( prop, value ) {
-
-					value = funcValue( value, el );
-					if ( $el.css( prop ) !== value ) $el.css( prop, value );
-
-				} );
-
-			} );
-
-		},
-
-		attrs: function ( attrs ) {
-
-			return this.each( function () {
-
-				var el = this, $el = $( el );
-
-				each( attrs, function ( name, value ) {
-
-					value = funcValue( value, el );
-					if ( $el.attr( name ) !== value ) $el.attr( name, value );
-
-				} );
-
-			} );
-
-		},
-
 		// original idea: https://github.com/tmpvar/weld - thanks!
 		weld: function ( data, selectors ) {
 
-			if ( data === null || typeof data === 'undefined' ) data = '';
+			if ( data === null || data === undefined ) data = '';
 
 			if ( typeof data !== 'object' ) {
 
 				return this.each( function () {
 
-					var value = funcValue( data, this ) + '';
-					var $el = $( this );
-					var html = $el.html();
-					if ( html !== value ) $el.html( value );
+					switch ( this.tagName ) {
+
+					case 'INPUT':
+					case 'TEXTAREA':
+					case 'SELECT':
+						break;
+
+					case 'IMG':
+						this.src = funcValue( data, this ) + '';
+						break;
+
+					default:
+						var value = funcValue( data, this ) + '';
+						var $el = $( this );
+						var html = $el.html();
+						if ( html !== value ) $el.html( value );
+
+					}
 
 				} );
 
@@ -304,8 +274,8 @@
 
 			each( data, function ( name, value ) {
 
-				var selector = selectors[ name ] || ( '#' + name + ', ' + '.' + name );
-				$set.find( selector ).not( 'input, textarea, select' ).weld( value );
+				var selector = selectors[ name ] || ( '.' + name );
+				$set.find( selector ).weld( value );
 
 			} );
 
@@ -345,13 +315,13 @@
 
 						if ( this.type === 'checkbox' ) {
 
-							setModified( this, checkedProp, value.indexOf( this.getAttribute( 'value' ) ) >= 0 );
+							this[ checkedProp ] =value.indexOf( this.getAttribute( 'value' ) ) >= 0;
 
 						} else if ( this.multiple ) {
 
 							$( this ).children().each( function () {
 
-								setModified( this, selectedProp, value.indexOf( this.getAttribute( 'value' ) ) >= 0 );
+								this[ selectedProp ] = value.indexOf( this.getAttribute( 'value' ) ) >= 0;
 
 							} );
 
@@ -378,9 +348,9 @@
 
 					if ( tagName === 'SELECT' ) {
 
-						$control.find( 'option' ).each( function () {
+						$control.children().each( function () {
 
-							setModified( this, selectedProp, value === this.getAttribute( 'value' ) );
+							this[ selectedProp ] = value === this.getAttribute( 'value' );
 
 						} );
 
@@ -388,7 +358,7 @@
 
 						$control.each( function () {
 
-							setModified( this, checkedProp, value === this.getAttribute( 'value' ) );
+							this[ checkedProp ] = value === this.getAttribute( 'value' );
 
 						} );
 
@@ -402,12 +372,12 @@
 						type === 'hidden'
 					) {
 
-						setModified( control, valueProp, value );
+						control[ valueProp ] = value;
 
 					} else if ( tagName === 'TEXTAREA' ) {
 
-						setModified( control, valueProp, value );
-						if ( !user ) $control.html( value ); // IE needs this
+						control[ valueProp ] = value;
+						if ( !user ) $control.html( value ); // IE fix
 
 					}
 
@@ -454,7 +424,7 @@
 					break;
 
 				case 'SELECT':
-					$( this ).find( 'option' ).reset();
+					$( this ).children().reset();
 					break;
 
 				}
@@ -470,12 +440,6 @@
 	function funcValue( value, context ) {
 
 		return typeof value === 'function' ? value.call( context ) : value;
-
-	}
-
-	function setModified( object, property, value ) {
-
-		if ( object[ property ] !== value ) object[ property ] = value;
 
 	}
 
