@@ -181,6 +181,13 @@ QUnit.test( 'weld edge', function ( assert ) {
 
 } );
 
+QUnit.test( 'weld img', function ( assert ) {
+
+	var $el = $( '<img>' );
+
+	assert.equal( $el.weld( 'foo.png' ).attr( 'src' ), 'foo.png' );
+} );
+
 QUnit.test( 'fill text', function ( assert ) {
 
 	var $form = $( '<form><input type="text" name="foo"></form>' );

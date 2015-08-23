@@ -33,7 +33,7 @@
 			// parse settings
 			var keyProp = settings.keyProp || 'key';
 			var base = settings.base;
-			var $base = $( isArray( base ) ? base.join( '\n' ) : base ).eq( 0 );
+			base = $( isArray( base ) ? base.join( '\n' ) : base )[ 0 ];
 
 			// define component class
 			var Comp = function ( el, data, extra ) {
@@ -52,7 +52,7 @@
 			extend( Comp, $.Comp );
 
 			// set static settings
-			Comp.$base = $base;
+			Comp.base = base;
 			Comp.keyProp = keyProp;
 
 			return Comp;
@@ -78,7 +78,7 @@
 
 		create: function ( data, extra ) {
 
-			return this.setup( this.$base.clone(), data, extra );
+			return this.setup( this.base ? this.base.cloneNode( true ) : null, data, extra );
 
 		},
 
@@ -123,6 +123,12 @@
 		find: function () {
 
 			return this.$el.find.apply( this.$el, arguments );
+
+		},
+
+		weld: function () {
+
+			return this.$el.weld.apply( this.$el, arguments );
 
 		}
 
@@ -246,6 +252,8 @@
 
 				return this.each( function () {
 
+					var value = funcValue( data, this ) + '';
+
 					switch ( this.tagName ) {
 
 					case 'INPUT':
@@ -254,14 +262,11 @@
 						break;
 
 					case 'IMG':
-						this.src = funcValue( data, this ) + '';
+						if ( this.src !== value ) this.src = value;
 						break;
 
 					default:
-						var value = funcValue( data, this ) + '';
-						var $el = $( this );
-						var html = $el.html();
-						if ( html !== value ) $el.html( value );
+						if ( this.innerHTML !== value ) this.innerHTML = value;
 
 					}
 
