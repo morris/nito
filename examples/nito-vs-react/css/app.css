@@ -1,0 +1,9 @@
+.dashboard {
+	overflow: hidden;
+}
+
+.item {
+	width: 80px;
+	height: 80px;
+	float: left;
+}
