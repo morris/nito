@@ -10,13 +10,13 @@
   "license": "MIT",
   "main": "nito.js",
   "devDependencies": {
-    "domino": "^1.0.19",
     "gulp": "^3.9.0",
     "gulp-jshint": "^1.11.2",
     "gulp-rename": "^1.2.2",
     "gulp-uglify": "^1.2.0",
     "jquery": "^2.1.4",
-    "qunitjs": "^1.18.0"
+    "qunitjs": "^1.18.0",
+    "domino": "^1.0.19"
   },
   "scripts": {
     "gulp": "gulp"
