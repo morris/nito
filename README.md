@@ -11,6 +11,7 @@ Lightweight components for your favorite $. Just an experiment. Or maybe not.
 ## Examples
 
 - [Todo](https://rawgit.com/morris/nito/master/examples/todo/) with TodoMVC-like features
+- [Nito vs. React](https://rawgit.com/morris/nito/master/examples/nito-vs-react/) with benchmark
 
 
 ## Getting started
