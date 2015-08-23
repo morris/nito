@@ -11,6 +11,8 @@ var Item = $.nito( {
 		'</li>'
 	],
 
+	keyProp: 'id',
+
 	setup: function ( item, app ) {
 
 		this.item = item;

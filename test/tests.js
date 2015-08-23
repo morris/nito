@@ -26,47 +26,20 @@ var Todo = $.nito( {
 var Item = $.nito( {
 
 	base: [
-		'<div class="item">',
-			'<h1 class="title">Hello World!</h1>',
-			'<div class="items"></div>',
-		'</div>'
+		'<div class="item"></div>'
 	],
+
+	keyProp: 'id',
 
 	setup: function () {
 
 	},
 
-	update: function () {
+	update: function ( data ) {
+
+		this.$el.weld( data.label )
 
 	}
-
-} );
-
-var stats = {
-	create: 0,
-	remove: 0,
-	moved: 0
-};
-
-Item._create = Item.create;
-Item.create = function () {
-
-	++stats.create;
-	return Item._create.apply( Item, arguments );
-
-};
-
-Item._remove = Item.remove;
-Item.remove = function () {
-
-	++stats.remove;
-	return Item._remove.apply( Item, arguments );
-
-};
-
-$( '#qunit-fixture' ).on( 'moved', '.item', function () {
-
-	++stats.moved;
 
 } );
 
@@ -74,46 +47,84 @@ QUnit.test( 'loop', function ( assert ) {
 
 	var todo = Todo.appendTo( '#qunit-fixture' );
 	var $items = todo.find( '.items' );
-	$items.loop( [
-		{ id: 1, label: 'A' },
-		{ id: 2, label: 'B' },
-		{ id: 3, label: 'C' }
-	], Item );
-
-	assert.equal( $items.children().length, 3 );
-	assert.equal( stats.create, 3 );
-	assert.equal( stats.remove, 0 );
-	assert.equal( stats.moved, 3 );
 
 	$items.loop( [
 		{ id: 1, label: 'A' },
 		{ id: 2, label: 'B' },
-		{ id: 3, label: 'C' }
-	], Item );
-
-	assert.equal( stats.create, 3 );
-	assert.equal( stats.remove, 0 );
-	assert.equal( stats.moved, 3 );
-
-	$items.loop( [
-		{ id: 2, label: 'B' },
-		{ id: 1, label: 'A' },
-		{ id: 3, label: 'C' }
-	], Item );
-
-	assert.equal( stats.create, 3 );
-	assert.equal( stats.remove, 0 );
-	assert.equal( stats.moved, 4 );
-
-	$items.loop( [
-		{ id: 2, label: 'B' },
+		{ id: 3, label: 'C' },
 		{ id: 4, label: 'D' },
-		{ id: 3, label: 'C' }
+		{ id: 5, label: 'E' },
+		{ id: 6, label: 'F' },
+		{ id: 7, label: 'G' }
 	], Item );
 
-	assert.equal( stats.create, 4 );
-	assert.equal( stats.remove, 1 );
-	assert.equal( stats.moved, 5 );
+	assert.equal( $items.children().length, 7 );
+	assert.equal( join(), 'ABCDEFG' );
+
+	$items.loop( [
+		{ id: 1, label: 'A' },
+		{ id: 2, label: 'B' },
+		{ id: 3, label: 'C' },
+		{ id: 4, label: 'D' },
+		{ id: 5, label: 'E' },
+		{ id: 6, label: 'F' },
+		{ id: 7, label: 'G' }
+	], Item );
+
+	assert.equal( $items.children().length, 7 );
+	assert.equal( join(), 'ABCDEFG' );
+
+	$items.loop( [
+		{ id: 1, label: 'A' },
+		{ id: 3, label: 'C' },
+		{ id: 4, label: 'D' },
+		{ id: 5, label: 'E' },
+		{ id: 6, label: 'F' },
+		{ id: 2, label: 'B' },
+		{ id: 7, label: 'G' }
+	], Item );
+
+	assert.equal( $items.children().length, 7 );
+	assert.equal( join(), 'ACDEFBG' );
+
+	$items.loop( [
+		{ id: 1, label: 'A' },
+		{ id: 2, label: 'B' },
+		{ id: 8, label: 'X' },
+		{ id: 3, label: 'C' },
+		{ id: 6, label: 'F' },
+		{ id: 9, label: 'Y' },
+		{ id: 4, label: 'D' },
+		{ id: 5, label: 'E' },
+		{ id: 7, label: 'G' }
+	], Item );
+
+	assert.equal( $items.children().length, 9 );
+	assert.equal( join(), 'ABXCFYDEG' );
+
+	$items.loop( [
+		{ id: 9, label: 'Y' },
+		{ id: 8, label: 'X' },
+		{ id: 3, label: 'C' },
+		{ id: 1, label: 'A' }
+	], Item );
+
+	assert.equal( $items.children().length, 4 );
+	assert.equal( join(), 'YXCA' );
+
+	function join() {
+
+		var s = [];
+
+		$items.children().each( function () {
+
+			s.push( $( this ).html() );
+
+		} )
+
+		return s.join( '' );
+
+	}
 
 } );
 
@@ -135,48 +146,6 @@ QUnit.test( 'classes', function ( assert ) {
 	} );
 
 	assert.equal( $el[ 0 ].className, 'bar baz' );
-
-} );
-
-QUnit.test( 'style', function ( assert ) {
-
-	var $el = $( '<div></div>' );
-
-	$el.style( {
-		color: 'red',
-		fontSize: '2em'
-	} );
-
-	assert.equal( $el[ 0 ].style.color, 'red' );
-	assert.equal( $el[ 0 ].style.fontSize, '2em' );
-
-	$el.style( {
-		color: 'blue'
-	} );
-
-	assert.equal( $el[ 0 ].style.color, 'blue' );
-	assert.equal( $el[ 0 ].style.fontSize, '2em' );
-
-} );
-
-QUnit.test( 'attrs', function ( assert ) {
-
-	var $el = $( '<div></div>' );
-
-	$el.attrs( {
-		foo: 'bar',
-		style: 'color: red'
-	} );
-
-	assert.equal( $el[ 0 ].style.color, 'red' );
-	assert.equal( $el.attr( 'foo' ), 'bar' );
-
-	$el.attrs( {
-		style: null
-	} );
-
-	assert.notOk( $el.is( '[style]' ) );
-	assert.equal( $el.attr( 'foo' ), 'bar' );
 
 } );
 
