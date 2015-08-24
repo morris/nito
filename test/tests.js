@@ -112,6 +112,10 @@ QUnit.test( 'loop', function ( assert ) {
 	assert.equal( $items.children().length, 4 );
 	assert.equal( join(), 'YXCA' );
 
+	$items.loop( [], Item );
+
+	assert.equal( $items.children().length, 0 );
+
 	function join() {
 
 		var s = [];
@@ -125,6 +129,22 @@ QUnit.test( 'loop', function ( assert ) {
 		return s.join( '' );
 
 	}
+
+} );
+
+QUnit.test( 'nest', function ( assert ) {
+
+	var todo = Todo.appendTo( '#qunit-fixture' );
+	var $items = todo.find( '.items' );
+
+	$items.nest( { id: 1, label: 'A' }, Item );
+
+	assert.equal( $items.children().length, 1 );
+	assert.equal( $items.children().eq( 0 ).html(), 'A' );
+
+	$items.nest( null, Item );
+
+	assert.equal( $items.children().length, 0 );
 
 } );
 

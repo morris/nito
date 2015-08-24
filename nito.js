@@ -26,40 +26,36 @@
 
 	var extend = $.extend, isArray = $.isArray, each = $.each;
 
-	extend( $, {
+	$.nito = function ( settings ) {
 
-		nito: function ( settings ) {
+		// parse settings
+		var keyProp = settings.keyProp || 'key';
+		var base = settings.base;
+		base = $( isArray( base ) ? base.join( '\n' ) : base )[ 0 ];
 
-			// parse settings
-			var keyProp = settings.keyProp || 'key';
-			var base = settings.base;
-			base = $( isArray( base ) ? base.join( '\n' ) : base )[ 0 ];
+		// define component class
+		var Comp = function ( el, data, extra ) {
 
-			// define component class
-			var Comp = function ( el, data, extra ) {
+			$.Comp.call( this, el, data, extra );
 
-				$.Comp.call( this, el, data, extra );
+		};
 
-			};
+		// inherit instance methods
+		Comp.prototype = Object.create( $.Comp.prototype );
 
-			// inherit instance methods
-			Comp.prototype = Object.create( $.Comp.prototype );
+		// extend prototype with settings
+		extend( Comp.prototype, settings );
 
-			// extend prototype with settings
-			extend( Comp.prototype, settings );
+		// inherit static methods
+		extend( Comp, $.Comp );
 
-			// inherit static methods
-			extend( Comp, $.Comp );
+		// set static settings
+		Comp.base = base;
+		Comp.keyProp = keyProp;
 
-			// set static settings
-			Comp.base = base;
-			Comp.keyProp = keyProp;
+		return Comp;
 
-			return Comp;
-
-		}
-
-	} );
+	};
 
 	//
 
@@ -123,12 +119,6 @@
 		find: function () {
 
 			return this.$el.find.apply( this.$el, arguments );
-
-		},
-
-		weld: function () {
-
-			return this.$el.weld.apply( this.$el, arguments );
 
 		}
 
@@ -223,7 +213,9 @@
 
 		nest: function ( item, factory, extra ) {
 
-			return this.loop( [ item ], factory, extra )[ 0 ];
+			if ( item ) return this.loop( [ item ], factory, extra )[ 0 ];
+
+			this.loop( [], factory, extra );
 
 		},
 
@@ -320,7 +312,7 @@
 
 						if ( this.type === 'checkbox' ) {
 
-							this[ checkedProp ] =value.indexOf( this.getAttribute( 'value' ) ) >= 0;
+							this[ checkedProp ] = value.indexOf( this.getAttribute( 'value' ) ) >= 0;
 
 						} else if ( this.multiple ) {
 
