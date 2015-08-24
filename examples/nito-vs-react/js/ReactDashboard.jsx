@@ -1,3 +1,6 @@
+// originally written by Jonathan Miles
+// https://github.com/jonmiles/react-performance-tests
+
 var ReactDashboard = React.createClass( {
 
 	getInitialState: function () {
