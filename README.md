@@ -1,10 +1,10 @@
 # Nito :skull:
 
 React-like components for jQuery.
-Just an experiment. [Or maybe not.]((https://rawgit.com/morris/nito/master/examples/nito-vs-react/)
+Just an experiment. [Or maybe not.](https://rawgit.com/morris/nito/master/examples/nito-vs-react/)
 
 ```js
-var Todo = $.nito( 
+var Todo = $.nito(
 
 	base: [
 		'<div>',
@@ -15,8 +15,8 @@ var Todo = $.nito(
 
 	setup: function () {
 		this.items = [
-			{ id: 1, title: 'Get Nito', completed: false },
-			{ id: 2, title: 'Write apps', completed: false }
+			{ key: 1, title: 'Get Nito', completed: false },
+			{ key: 2, title: 'Write apps', completed: false }
 		];
 	},
 
@@ -33,8 +33,6 @@ var Item = $.nito( {
 			'<strong class="title"></strong>',
 		'</li>'
 	],
-
-	keyProp: 'id',
 
 	setup: function ( item, todo ) {
 		this.item = item;
@@ -75,7 +73,7 @@ var Item = $.nito( {
 
 Include $ first, then Nito:
 
-```
+```html
 <script src="jquery-1.11.3.min.js"></script>
 <script src="nito.min.js"></script>
 ```
