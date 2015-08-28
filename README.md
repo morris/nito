@@ -174,6 +174,7 @@ $el.loop( [
 - If item is given, needs a valid key
 - Returns child component, if any
 
+
 ## Updating components
 
 The following methods are helpful and/or speed optimized
