@@ -1,9 +1,3 @@
-QUnit.test( 'defined', function ( assert ) {
-
-	assert.equal( typeof $.nito, 'function' );
-
-} );
-
 var Todo = $.nito( {
 
 	base: [
@@ -11,15 +5,7 @@ var Todo = $.nito( {
 			'<h1 class="title">Todo</h1>',
 			'<div class="items"></div>',
 		'</div>'
-	],
-
-	setup: function () {
-
-	},
-
-	update: function () {
-
-	}
+	]
 
 } );
 
@@ -31,15 +17,19 @@ var Item = $.nito( {
 
 	keyProp: 'id',
 
-	setup: function () {
-
-	},
-
 	update: function ( data ) {
 
-		this.$el.weld( data.label )
+		this.$el.weld( data.title )
 
 	}
+
+} );
+
+//
+
+QUnit.test( 'defined', function ( assert ) {
+
+	assert.equal( typeof $.nito, 'function' );
 
 } );
 
@@ -49,64 +39,64 @@ QUnit.test( 'loop', function ( assert ) {
 	var $items = todo.find( '.items' );
 
 	$items.loop( [
-		{ id: 1, label: 'A' },
-		{ id: 2, label: 'B' },
-		{ id: 3, label: 'C' },
-		{ id: 4, label: 'D' },
-		{ id: 5, label: 'E' },
-		{ id: 6, label: 'F' },
-		{ id: 7, label: 'G' }
+		{ id: 1, title: 'A' },
+		{ id: 2, title: 'B' },
+		{ id: 3, title: 'C' },
+		{ id: 4, title: 'D' },
+		{ id: 5, title: 'E' },
+		{ id: 6, title: 'F' },
+		{ id: 7, title: 'G' }
 	], Item );
 
 	assert.equal( $items.children().length, 7 );
 	assert.equal( join(), 'ABCDEFG' );
 
 	$items.loop( [
-		{ id: 1, label: 'A' },
-		{ id: 2, label: 'B' },
-		{ id: 3, label: 'C' },
-		{ id: 4, label: 'D' },
-		{ id: 5, label: 'E' },
-		{ id: 6, label: 'F' },
-		{ id: 7, label: 'G' }
+		{ id: 1, title: 'A' },
+		{ id: 2, title: 'B' },
+		{ id: 3, title: 'C' },
+		{ id: 4, title: 'D' },
+		{ id: 5, title: 'E' },
+		{ id: 6, title: 'F' },
+		{ id: 7, title: 'G' }
 	], Item );
 
 	assert.equal( $items.children().length, 7 );
 	assert.equal( join(), 'ABCDEFG' );
 
 	$items.loop( [
-		{ id: 1, label: 'A' },
-		{ id: 3, label: 'C' },
-		{ id: 4, label: 'D' },
-		{ id: 5, label: 'E' },
-		{ id: 6, label: 'F' },
-		{ id: 2, label: 'B' },
-		{ id: 7, label: 'G' }
+		{ id: 1, title: 'A' },
+		{ id: 3, title: 'C' },
+		{ id: 4, title: 'D' },
+		{ id: 5, title: 'E' },
+		{ id: 6, title: 'F' },
+		{ id: 2, title: 'B' },
+		{ id: 7, title: 'G' }
 	], Item );
 
 	assert.equal( $items.children().length, 7 );
 	assert.equal( join(), 'ACDEFBG' );
 
 	$items.loop( [
-		{ id: 1, label: 'A' },
-		{ id: 2, label: 'B' },
-		{ id: 8, label: 'X' },
-		{ id: 3, label: 'C' },
-		{ id: 6, label: 'F' },
-		{ id: 9, label: 'Y' },
-		{ id: 4, label: 'D' },
-		{ id: 5, label: 'E' },
-		{ id: 7, label: 'G' }
+		{ id: 1, title: 'A' },
+		{ id: 2, title: 'B' },
+		{ id: 8, title: 'X' },
+		{ id: 3, title: 'C' },
+		{ id: 6, title: 'F' },
+		{ id: 9, title: 'Y' },
+		{ id: 4, title: 'D' },
+		{ id: 5, title: 'E' },
+		{ id: 7, title: 'G' }
 	], Item );
 
 	assert.equal( $items.children().length, 9 );
 	assert.equal( join(), 'ABXCFYDEG' );
 
 	$items.loop( [
-		{ id: 9, label: 'Y' },
-		{ id: 8, label: 'X' },
-		{ id: 3, label: 'C' },
-		{ id: 1, label: 'A' }
+		{ id: 9, title: 'Y' },
+		{ id: 8, title: 'X' },
+		{ id: 3, title: 'C' },
+		{ id: 1, title: 'A' }
 	], Item );
 
 	assert.equal( $items.children().length, 4 );
@@ -115,6 +105,32 @@ QUnit.test( 'loop', function ( assert ) {
 	$items.loop( [], Item );
 
 	assert.equal( $items.children().length, 0 );
+
+	$items.loop( [
+		{ id: 1, title: 'A' },
+		{ id: 2, title: 'B' },
+		{ id: 3, title: 'C' },
+		{ id: 4, title: 'D' },
+		{ id: 5, title: 'E' },
+		{ id: 6, title: 'F' },
+		{ id: 7, title: 'G' }
+	], Item );
+
+	assert.equal( $items.children().length, 7 );
+	assert.equal( join(), 'ABCDEFG' );
+
+	$items.loop( [
+		{ id: 1, title: 'A' },
+		{ id: 3, title: 'C' },
+		{ id: 4, title: 'D' },
+		{ id: 5, title: 'E' },
+		{ id: 7, title: 'G' },
+		{ id: 6, title: 'F' },
+		{ id: 2, title: 'B' },
+	], Item );
+
+	assert.equal( $items.children().length, 7 );
+	assert.equal( join(), 'ACDEGFB' );
 
 	function join() {
 
@@ -137,7 +153,7 @@ QUnit.test( 'nest', function ( assert ) {
 	var todo = Todo.appendTo( '#qunit-fixture' );
 	var $items = todo.find( '.items' );
 
-	$items.nest( { id: 1, label: 'A' }, Item );
+	$items.nest( { id: 1, title: 'A' }, Item );
 
 	assert.equal( $items.children().length, 1 );
 	assert.equal( $items.children().eq( 0 ).html(), 'A' );
