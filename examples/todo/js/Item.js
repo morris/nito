@@ -80,7 +80,7 @@ var Item = $.nito( {
 			editing: this.editing
 		} );
 
-		this.$el.fill( { completed: this.item.completed }, true );
+		this.$el.values( { completed: this.item.completed } );
 
 	}
 
