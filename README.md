@@ -1,6 +1,6 @@
 # Nito :skull:
 
-React-like components for jQuery.
+Minimal component library for jQuery, inspired by React and Riot.
 Just an experiment. [Or maybe not.](https://rawgit.com/morris/nito/master/examples/nito-vs-react/)
 
 ```js
@@ -16,7 +16,7 @@ var Todo = $.nito(
 	setup: function () {
 		this.items = [
 			{ key: 1, title: 'Get Nito', completed: false },
-			{ key: 2, title: 'Write apps', completed: false }
+			{ key: 2, title: 'Create something', completed: false }
 		];
 	},
 
@@ -54,13 +54,14 @@ var Item = $.nito( {
 ```
 
 - For people who know and like jQuery or Zepto
-- [KISS](http://people.apache.org/~fhanik/kiss.html): <500 lines, 1 class, 9 functions
+- Simple: 1 class, 9 functions, <500 lines
 - [No templating](http://blog.nodejitsu.com/micro-templates-are-dead/),
 [no virtual DOM](http://blog.500tech.com/is-reactjs-fast/),
 [no JSX](https://www.pandastrike.com/posts/20150311-react-bad-idea)
 - Just $ and standard JavaScript
 - Favors explicit code over implicit magic
 - Never gets in the way
+- Pairs well with [Bootstrap](http://getbootstrap.com)
 
 
 ## Examples
@@ -99,6 +100,8 @@ Include $ first, then Nito:
 		- See `$el.loop` below
 		- Optional, defaults to `key`
 	- Add more methods and properties as needed
+- `this.$el` and `this.el` (DOM node) point to the root element of the component, if any
+- Returns the created class
 
 ## Creating components
 
