@@ -100,7 +100,6 @@ Include $ first, then Nito:
 		- See `$el.loop` below
 		- Optional, defaults to `key`
 	- Add more methods and properties as needed
-- `this.$el` and `this.el` (DOM node) point to the root element of the component, if any
 - Returns the created class
 
 ## Creating components
@@ -124,6 +123,24 @@ Include $ first, then Nito:
 
 - Create a component using Comp.create and then append it to `$( selector )`
 - See above
+
+
+## Component members and methods
+
+#### `comp.$el` and `comp.el`
+
+-  jQuery object and DOM node pointing to the root element of the component, if any
+
+#### `comp.find( selector )`
+
+- Shortcut to `comp.$el.find`
+
+#### `comp.on( [selector,] event, handler )`
+
+- Shortcut to `comp.$el.on`
+- `handler` is bound to `comp`, *not* to the element
+- Returns `comp`
+
 
 ## Nesting components
 
