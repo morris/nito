@@ -189,17 +189,17 @@ $els.weld( 'hello' );
 $els.weld( { title: 'nito', contents: 'hello' }, { contents: '.post' } );
 ```
 
-#### `$els.fill( data, user )`
+#### `$els.values( data, defaults )`
 
 - Fill form controls contained in `$els` with given data
 - Form controls must have proper `name` attributes
 - Supports all controls, nested data, `name="a[b][c]"`, etc.
-- If `user` is falsy, fills the DOM (form defaults)
- 	- Modifies DOM attributes like `value` and `selected`, *not* the properties
-	- Inputs modified by the user will still reflect the user input
-- If `user` is truthy, fills the properties (user input)
+- If `defaults` is falsy, sets the value properties (user input)
 	- User input will be overwritten
 	- Form defaults are not modified
+- If `defaults` is truthy, sets values on the DOM (form defaults)
+	- Modifies DOM attributes like `value` and `selected`, *not* the properties
+	- Inputs modified by the user will still reflect the user input
 - Use `reset` to discard user input
 - Returns `$els`
 

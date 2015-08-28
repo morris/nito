@@ -280,20 +280,21 @@
 
 		},
 
-		fill: function ( data, user, base ) {
+		values: function ( data, defaults, base ) {
 
 			if ( !data ) return this;
 
 			var $container = this;
-			var valueProp = 'defaultValue';
-			var checkedProp = 'defaultChecked';
-			var selectedProp = 'defaultSelected';
 
-			if ( user ) {
+			var valueProp = 'value';
+			var checkedProp = 'checked';
+			var selectedProp = 'selected';
 
-				valueProp = 'value';
-				checkedProp = 'checked';
-				selectedProp = 'selected';
+			if ( defaults ) {
+
+				valueProp = 'defaultValue';
+				checkedProp = 'defaultChecked';
+				selectedProp = 'defaultSelected';
 
 			}
 
@@ -330,7 +331,7 @@
 
 					// nested values
 
-					return $container.fill( value, user, name );
+					return $container.fill( value, defaults, name );
 
 				} else {
 
@@ -374,7 +375,7 @@
 					} else if ( tagName === 'TEXTAREA' ) {
 
 						control[ valueProp ] = value;
-						if ( !user ) $control.html( value ); // IE fix
+						if ( defaults ) $control.html( value ); // IE fix
 
 					}
 
