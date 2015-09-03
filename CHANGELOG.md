@@ -12,6 +12,7 @@
 - Components are now created via `clone`
 - Optimized `loop`
 - Renamed `idProp` to `keyProp` and default to `key`
+- Renamed `fill` to `values`
 - `weld` now only selects `.name`
 - Removed `$.fn.style` and `$.fn.attrs`
 	- Benchmarks show that `$.fn.css` and `$.fn.attr` are faster
