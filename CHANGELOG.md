@@ -2,7 +2,10 @@
 
 ## v0.7.1
 
-- Fixed `classes` edge case with test
+- Fixed `classes` edge cases
+- Fixed `values` edge cases
+- Fixed `values` nested bug
+- Added tests
 
 ## v0.7.0
 

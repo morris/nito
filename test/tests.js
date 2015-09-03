@@ -193,16 +193,18 @@ QUnit.test( 'classes edge', function ( assert ) {
 		foo: true,
 		bar: true,
 		baz: true,
-		bla: true
+		bla: true,
+		bli: true
 	} );
 
-	assert.equal( $el[ 0 ].className, 'foo bar baz bla' );
+	assert.equal( $el[ 0 ].className, 'foo bar baz bla bli' );
 
 	$el.classes( {
 		foo: false,
 		bar: null,
 		baz: 0,
-		bla: undefined
+		bla: undefined,
+		bli: ''
 	} );
 
 	assert.equal( $el[ 0 ].className, '' );
@@ -213,7 +215,8 @@ QUnit.test( 'classes edge', function ( assert ) {
 		foo: false,
 		bar: false,
 		baz: false,
-		bla: false
+		bla: false,
+		bli: false
 	} );
 
 	assert.equal( $el[ 0 ].className, '' );
@@ -222,7 +225,8 @@ QUnit.test( 'classes edge', function ( assert ) {
 		foo: false,
 		bar: null,
 		baz: 0,
-		bla: undefined
+		bla: undefined,
+		bli: ''
 	} );
 
 	assert.equal( $el[ 0 ].className, '' );
@@ -293,6 +297,24 @@ QUnit.test( 'values text defaults', function ( assert ) {
 
 } );
 
+QUnit.test( 'values text defaults edge', function ( assert ) {
+
+	var $form = $( '<form><input type="text" name="foo"></form>' );
+	var $control = $form.find( 'input' );
+
+	assert.equal( $control.val(), '' );
+
+	$form.values( { foo: 0 }, true );
+	assert.equal( $control.val(), '0' );
+
+	$form.values( { foo: null }, true );
+	assert.equal( $control.val(), '' );
+
+	$form.values( { foo: undefined }, true );
+	assert.equal( $control.val(), '' );
+
+} );
+
 QUnit.test( 'values textarea defaults', function ( assert ) {
 
 	var $form = $( '<form><textarea name="foo"></textarea></form>' );
@@ -315,6 +337,31 @@ QUnit.test( 'values textarea defaults', function ( assert ) {
 
 	assert.equal( $control.html(), 'bar' );
 	assert.equal( $control.val(), 'bar' );
+
+} );
+
+QUnit.test( 'values textarea defaults edge', function ( assert ) {
+
+	var $form = $( '<form><textarea name="foo"></textarea></form>' );
+	var $control = $form.find( 'textarea' );
+
+	assert.equal( $control.val(), '' );
+	assert.equal( $control.prop( 'value' ), '' );
+
+	$form.values( { foo: 0 }, true );
+
+	assert.equal( $control.html(), '0' );
+	assert.equal( $control.val(), '0' );
+
+	$form.values( { foo: null }, true );
+
+	assert.equal( $control.html(), '' );
+	assert.equal( $control.val(), '' );
+
+	$form.values( { foo: undefined }, true );
+
+	assert.equal( $control.html(), '' );
+	assert.equal( $control.val(), '' );
 
 } );
 
@@ -522,6 +569,63 @@ QUnit.test( 'reset/integration', function ( assert ) {
 	assert.equal( $bar.prop( 'checked' ), true );
 	assert.equal( $baz.val(), 'test' );
 	assert.equal( $select.val(), 'b' );
+
+	assert.equal( $foo.reset().val(), 'foo' );
+	assert.equal( $bar.reset().prop( 'checked' ), false );
+	assert.equal( $baz.reset().val(), 'baz' );
+	assert.equal( $select.reset().val(), 'a' );
+
+} );
+
+QUnit.test( 'values nested', function ( assert ) {
+
+	var $form = $(
+		'<form>' +
+			'<input type="text" name="foo[bar][bar]">' +
+			'<input type="checkbox" name="foo[bar][baz]" value="1">' +
+			'<textarea name="baz[foo]"></textarea>' +
+			'<select name="select[]" multiple><option value="a"></option><option value="b"></option></select>' +
+		'</form>'
+	);
+	var $foo = $form.children().eq( 0 );
+	var $bar = $form.children().eq( 1 );
+	var $baz = $form.children().eq( 2 );
+	var $select = $form.children().eq( 3 );
+
+	$form.values( {
+		foo: {
+			bar: {
+				bar: 'foo',
+				baz: false
+			}
+		},
+		baz: {
+			foo: 'baz',
+		},
+		select: [ 'a' ]
+	}, true );
+
+	$form.values( {
+		foo: {
+			bar: {
+				bar: 'test',
+				baz: true
+			}
+		},
+		baz: {
+			foo: 'test',
+		},
+		select: [ 'a', 'b' ]
+	} );
+
+	assert.equal( $foo.val(), 'test' );
+	assert.equal( $bar.prop( 'checked' ), true );
+	assert.equal( $baz.val(), 'test' );
+	assert.equal( $select.val().length, 2 );
+	assert.equal( $select.val()[ 0 ], 'a' );
+	assert.equal( $select.val()[ 1 ], 'b' );
+	assert.equal( $select.children()[0].selected, true );
+	assert.equal( $select.children()[1].selected, true );
 
 	assert.equal( $foo.reset().val(), 'foo' );
 	assert.equal( $bar.reset().prop( 'checked' ), false );

@@ -331,7 +331,7 @@
 
 					// nested values
 
-					return $container.fill( value, defaults, name );
+					return $container.values( value, defaults, name );
 
 				} else {
 
@@ -344,11 +344,13 @@
 					var tagName = control.tagName;
 					var type = control.type;
 
+					if ( value === undefined || value === null ) value = '';
+
 					if ( tagName === 'SELECT' ) {
 
 						$control.children().each( function () {
 
-							this[ selectedProp ] = value === this.getAttribute( 'value' );
+							this[ selectedProp ] = value == this.getAttribute( 'value' );
 
 						} );
 
@@ -356,26 +358,28 @@
 
 						$control.each( function () {
 
-							this[ checkedProp ] = value === this.getAttribute( 'value' );
+							this[ checkedProp ] = value == this.getAttribute( 'value' );
 
 						} );
 
 					} else if ( type === 'checkbox' ) {
 
-						control[ checkedProp ] = value;
+						control[ checkedProp ] = !!value;
 
 					} else if (
-						type === 'text' ||
-						type === 'password' ||
-						type === 'hidden'
+						type !== 'button' &&
+						type !== 'file' &&
+						type !== 'image' &&
+						type !== 'reset' &&
+						type !== 'submit'
 					) {
 
-						control[ valueProp ] = value;
+						control[ valueProp ] = value + '';
 
 					} else if ( tagName === 'TEXTAREA' ) {
 
-						control[ valueProp ] = value;
-						if ( defaults ) $control.html( value ); // IE fix
+						control[ valueProp ] = value + '';
+						if ( defaults ) $control.html( value + '' ); // IE fix
 
 					}
 
