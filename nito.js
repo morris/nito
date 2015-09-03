@@ -1,4 +1,4 @@
-/*! Nito v0.7.0 - https://github.com/morris/nito */
+/*! Nito v0.7.1 - https://github.com/morris/nito */
 
 ;( function ( root, factory ) {
 
@@ -227,7 +227,7 @@
 
 				each( classes, function ( name, condition ) {
 
-					$el.toggleClass( name, funcValue( condition, el ) );
+					$el.toggleClass( name, !!funcValue( condition, el ) );
 
 				} );
 

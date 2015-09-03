@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.7.1
+
+- Fixed `classes` edge case with test
+
 ## v0.7.0
 
 - Components are now created via `clone`

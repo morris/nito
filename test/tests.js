@@ -185,6 +185,50 @@ QUnit.test( 'classes', function ( assert ) {
 
 } );
 
+QUnit.test( 'classes edge', function ( assert ) {
+
+	var $el = $( '<div></div>' );
+
+	$el.classes( {
+		foo: true,
+		bar: true,
+		baz: true,
+		bla: true
+	} );
+
+	assert.equal( $el[ 0 ].className, 'foo bar baz bla' );
+
+	$el.classes( {
+		foo: false,
+		bar: null,
+		baz: 0,
+		bla: undefined
+	} );
+
+	assert.equal( $el[ 0 ].className, '' );
+
+	//
+
+	$el.classes( {
+		foo: false,
+		bar: false,
+		baz: false,
+		bla: false
+	} );
+
+	assert.equal( $el[ 0 ].className, '' );
+
+	$el.classes( {
+		foo: false,
+		bar: null,
+		baz: 0,
+		bla: undefined
+	} );
+
+	assert.equal( $el[ 0 ].className, '' );
+
+} );
+
 QUnit.test( 'weld', function ( assert ) {
 
 	var $el = $( '<div><i class="foo"></i><b class="bar"></b></div>' );
