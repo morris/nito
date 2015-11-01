@@ -1,4 +1,4 @@
-var Item = $.nito( {
+var TodoItem = $.nito( {
 
 	base: [
 		'<li class="line item">',
@@ -11,7 +11,9 @@ var Item = $.nito( {
 		'</li>'
 	],
 
-	keyProp: 'id',
+	identify: function ( item ) {
+    return item.id;
+  },
 
 	setup: function ( item, app ) {
 
@@ -46,14 +48,12 @@ var Item = $.nito( {
 
 			switch ( e.which ) {
 			case ESCAPE_KEY:
-
 				e.preventDefault();
 				input.value = this.item.title;
 				$( input ).blur();
 				break;
 
 			case ENTER_KEY:
-
 				e.preventDefault();
 				$( input ).blur();
 				break;

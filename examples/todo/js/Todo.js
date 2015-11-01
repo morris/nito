@@ -58,8 +58,8 @@ var Todo = $.nito( {
 		this.store();
 		this.route();
 
-		// loop reuses/reorders existing DOM
-		this.find( 'ul.items' ).loop( this.items, Item, this );
+		// $el.loop reconciles with existing DOM
+		this.find( 'ul.items' ).loop( this.items, TodoItem, this );
 
 		var left = this.left().length;
 		var items = left === 1 ? 'item' : 'items';
@@ -119,51 +119,39 @@ var Todo = $.nito( {
 	},
 
 	check: function ( item, completed ) {
-
 		item.completed = completed;
 		this.update();
-
 	},
 
 	destroy: function ( item ) {
-
 		var items = this.data.items;
 		items.splice( items.indexOf( item ), 1 );
 		this.update();
-
 	},
 
 	title: function ( item, title ) {
-
 		item.title = title;
 		this.update();
-
 	},
 
 	sort: function () {
 
 		this.data.items.sort( function ( a, b ) {
-
 			return a.title.localeCompare( b.title );
-
 		} );
 		this.update();
 
 	},
 
 	clear: function () {
-
 		this.data.items = this.left();
 		this.update();
-
 	},
 
 	left: function () {
 
 		return this.data.items.filter( function ( item ) {
-
 			return !item.completed;
-
 		} );
 
 	},
@@ -171,9 +159,7 @@ var Todo = $.nito( {
 	completed: function () {
 
 		return this.data.items.filter( function ( item ) {
-
 			return item.completed;
-
 		} );
 
 	},
@@ -183,9 +169,7 @@ var Todo = $.nito( {
 	load: function () {
 
 		try {
-
 			this.data = JSON.parse( localStorage.todo );
-
 		} catch ( ex ) {}
 
 		// default data
@@ -199,9 +183,7 @@ var Todo = $.nito( {
 	store: function () {
 
 		try {
-
 			localStorage.todo = JSON.stringify( this.data );
-
 		} catch ( ex ) {}
 
 	}

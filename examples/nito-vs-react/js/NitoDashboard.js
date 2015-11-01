@@ -5,15 +5,11 @@ var NitoDashboard = $.nito( {
 	],
 
 	setup: function ( store ) {
-
 		this.store = store;
-
 	},
 
 	update: function () {
-
 		this.$el.loop( this.store.data, NitoItem );
-
 	}
 
 } );
@@ -27,21 +23,19 @@ var NitoItem = $.nito( {
 		'</item>'
 	],
 
-	keyProp: 'id',
+	identify: function ( item ) {
+		return item.id;
+	},
 
 	setup: function () {
-
 		this.$name = this.find( '.name' );
 		this.$score = this.find( '.score' );
-
 	},
 
 	update: function ( data ) {
-
 		this.$name.weld( data.name );
 		this.$score.weld( data.score );
 		this.$el.css( 'color', data.color );
-
 	}
 
 } );

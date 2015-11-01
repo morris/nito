@@ -9,18 +9,18 @@ var Todo = $.nito( {
 
 } );
 
-var Item = $.nito( {
+var TodoItem = $.nito( {
 
 	base: [
 		'<div class="item"></div>'
 	],
 
-	keyProp: 'id',
+	identify: function ( item ) {
+		return item.id;
+	},
 
 	update: function ( data ) {
-
-		this.$el.weld( data.title )
-
+		this.$el.weld( data.title );
 	}
 
 } );
@@ -46,7 +46,7 @@ QUnit.test( 'loop', function ( assert ) {
 		{ id: 5, title: 'E' },
 		{ id: 6, title: 'F' },
 		{ id: 7, title: 'G' }
-	], Item );
+	], TodoItem );
 
 	assert.equal( $items.children().length, 7 );
 	assert.equal( join(), 'ABCDEFG' );
@@ -59,7 +59,7 @@ QUnit.test( 'loop', function ( assert ) {
 		{ id: 5, title: 'E' },
 		{ id: 6, title: 'F' },
 		{ id: 7, title: 'G' }
-	], Item );
+	], TodoItem );
 
 	assert.equal( $items.children().length, 7 );
 	assert.equal( join(), 'ABCDEFG' );
@@ -72,7 +72,7 @@ QUnit.test( 'loop', function ( assert ) {
 		{ id: 6, title: 'F' },
 		{ id: 2, title: 'B' },
 		{ id: 7, title: 'G' }
-	], Item );
+	], TodoItem );
 
 	assert.equal( $items.children().length, 7 );
 	assert.equal( join(), 'ACDEFBG' );
@@ -87,7 +87,7 @@ QUnit.test( 'loop', function ( assert ) {
 		{ id: 4, title: 'D' },
 		{ id: 5, title: 'E' },
 		{ id: 7, title: 'G' }
-	], Item );
+	], TodoItem );
 
 	assert.equal( $items.children().length, 9 );
 	assert.equal( join(), 'ABXCFYDEG' );
@@ -97,12 +97,12 @@ QUnit.test( 'loop', function ( assert ) {
 		{ id: 8, title: 'X' },
 		{ id: 3, title: 'C' },
 		{ id: 1, title: 'A' }
-	], Item );
+	], TodoItem );
 
 	assert.equal( $items.children().length, 4 );
 	assert.equal( join(), 'YXCA' );
 
-	$items.loop( [], Item );
+	$items.loop( [], TodoItem );
 
 	assert.equal( $items.children().length, 0 );
 
@@ -114,7 +114,7 @@ QUnit.test( 'loop', function ( assert ) {
 		{ id: 5, title: 'E' },
 		{ id: 6, title: 'F' },
 		{ id: 7, title: 'G' }
-	], Item );
+	], TodoItem );
 
 	assert.equal( $items.children().length, 7 );
 	assert.equal( join(), 'ABCDEFG' );
@@ -127,7 +127,7 @@ QUnit.test( 'loop', function ( assert ) {
 		{ id: 7, title: 'G' },
 		{ id: 6, title: 'F' },
 		{ id: 2, title: 'B' },
-	], Item );
+	], TodoItem );
 
 	assert.equal( $items.children().length, 7 );
 	assert.equal( join(), 'ACDEGFB' );
@@ -153,12 +153,12 @@ QUnit.test( 'nest', function ( assert ) {
 	var todo = Todo.appendTo( '#qunit-fixture' );
 	var $items = todo.find( '.items' );
 
-	$items.nest( { id: 1, title: 'A' }, Item );
+	$items.nest( { id: 1, title: 'A' }, TodoItem );
 
 	assert.equal( $items.children().length, 1 );
 	assert.equal( $items.children().eq( 0 ).html(), 'A' );
 
-	$items.nest( null, Item );
+	$items.nest( null, TodoItem );
 
 	assert.equal( $items.children().length, 0 );
 
