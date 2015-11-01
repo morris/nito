@@ -10,13 +10,10 @@ var ReactDashboard = React.createClass( {
 	},
 
 	update: function () {
-
 		this.setState( { elapsed: this.state.elapsed + 1 } );
-
 	},
 
 	render: function() {
-
 		var items = this.props.store.data;
 
 		return (
@@ -26,7 +23,6 @@ var ReactDashboard = React.createClass( {
 				})}
 			</div>
 		);
-
 	}
 
 } );
@@ -34,7 +30,6 @@ var ReactDashboard = React.createClass( {
 var ReactItem = React.createClass( {
 
 	render: function () {
-
 		var style = {
 			color: this.props.color
 		};
@@ -45,7 +40,6 @@ var ReactItem = React.createClass( {
 				S{this.props.score}
 			</div>
 		);
-
 	}
 
 } );
