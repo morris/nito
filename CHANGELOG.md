@@ -2,7 +2,7 @@
 
 ## v0.8.0
 
-- Deprecate `keyProp` in favor of new `identify` method
+- Deprecated `keyProp` in favor of new `identify` method
 - Optimized `weld`
 
 ## v0.7.1
