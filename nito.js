@@ -1,14 +1,10 @@
-/*! Nito v0.7.1 - https://github.com/morris/nito */
+/*! Nito v0.8.0 - https://github.com/morris/nito */
 
 ;( function ( root, factory ) {
 
 	if ( typeof define === 'function' && define.amd ) {
 
-		define( [], function () {
-
-			return factory;
-
-		} );
+		define( [], function () { return factory; } );
 
 	} else if ( typeof module === 'object' && module.exports ) {
 
@@ -29,15 +25,14 @@
 	$.nito = function ( settings ) {
 
 		// parse settings
-		var keyProp = settings.keyProp || 'key';
+		var keyProp = settings.keyProp || 'key'; // deprecated, remove at 1.0.0
+		var identify = settings.identify || function ( item ) { return item[ keyProp ]; };
 		var base = settings.base;
 		base = $( isArray( base ) ? base.join( '\n' ) : base )[ 0 ];
 
 		// define component class
 		var Comp = function ( el, data, extra ) {
-
 			$.Comp.call( this, el, data, extra );
-
 		};
 
 		// inherit instance methods
@@ -51,7 +46,7 @@
 
 		// set static settings
 		Comp.base = base;
-		Comp.keyProp = keyProp;
+		Comp.identify = identify;
 
 		return Comp;
 
@@ -60,37 +55,29 @@
 	//
 
 	$.Comp = function ( el, data, extra ) {
-
 		this.$el = $( el ).eq( 0 );
 		this.el = this.$el[ 0 ];
 		if ( this.el ) this.el.nitoComp = this;
 
 		this.setup( data, extra );
 		this.update( data, extra );
-
 	};
 
 	extend( $.Comp, {
 
 		create: function ( data, extra ) {
-
 			return this.setup( this.base ? this.base.cloneNode( true ) : null, data, extra );
-
 		},
 
 		setup: function ( el, data, extra ) {
-
 			return new this( el, data, extra );
-
 		},
 
 		appendTo: function ( container, data, extra ) {
-
 			var comp = this.create( data, extra );
 			comp.$el.appendTo( container );
 
 			return comp;
-
 		}
 
 	} );
@@ -117,9 +104,7 @@
 		},
 
 		find: function () {
-
 			return this.$el.find.apply( this.$el, arguments );
-
 		}
 
 	} );
@@ -130,7 +115,7 @@
 
 		loop: function ( items, factory, extra ) {
 
-			var keyProp = factory.keyProp || 'key';
+			var identify = factory.identify || function ( item ) { return item.key; };
 			var container = this[ 0 ];
 			var children = container.children;
 			var compMap = container.nitoCompMap = container.nitoCompMap || {};
@@ -138,20 +123,16 @@
 
 			var comps = items.map( function ( item ) {
 
-				var key = item[ keyProp ];
-				if ( !key ) throw new Error( 'Undefined key "' + keyProp + '" in loop' );
+				var key = identify( item );
+				if ( !key ) throw new Error( 'Undefined key in loop' );
 				var comp = compMap[ key ];
 
 				if ( comp ) {
-
 					comp._sort = Math.abs( index - comp._index );
-
 				} else {
-
 					comp = factory.create( item, extra );
 					compMap[ key ] = comp;
 					comp._sort = -index;
-
 				}
 
 				comp._index = index;
@@ -172,14 +153,10 @@
 				var child = children[ index ];
 
 				if ( !child.nitoKeep ) {
-
 					container.removeChild( child );
 					delete compMap[ child.nitoKey ];
-
 				} else {
-
 					++index;
-
 				}
 
 			}
@@ -194,13 +171,9 @@
 				var other = children[ comp._index ];
 
 				if ( !other ) {
-
 					container.appendChild( el );
-
 				} else if ( el !== other ) {
-
 					container.insertBefore( el, other );
-
 				}
 
 				el.nitoKeep = false;
@@ -214,7 +187,6 @@
 		nest: function ( item, factory, extra ) {
 
 			if ( item ) return this.loop( [ item ], factory, extra )[ 0 ];
-
 			this.loop( [], factory, extra );
 
 		},
@@ -226,9 +198,7 @@
 				var el = this, $el = $( el );
 
 				each( classes, function ( name, condition ) {
-
 					$el.toggleClass( name, !!funcValue( condition, el ) );
-
 				} );
 
 			} );
@@ -258,7 +228,9 @@
 						break;
 
 					default:
-						if ( this.innerHTML !== value ) this.innerHTML = value;
+						if ( ( this.nitoHTML || this.innerHTML ) !== value ) {
+							this.innerHTML = this.nitoHTML = value;
+						}
 
 					}
 
@@ -270,10 +242,8 @@
 			var $set = this;
 
 			each( data, function ( name, value ) {
-
 				var selector = selectors[ name ] || ( '.' + name );
 				$set.find( selector ).weld( value );
-
 			} );
 
 			return this;
@@ -318,9 +288,7 @@
 						} else if ( this.multiple ) {
 
 							$( this ).children().each( function () {
-
 								this[ selectedProp ] = value.indexOf( this.getAttribute( 'value' ) ) >= 0;
-
 							} );
 
 						}
@@ -330,13 +298,11 @@
 				} else if ( value && typeof value === 'object' ) {
 
 					// nested values
-
 					return $container.values( value, defaults, name );
 
 				} else {
 
 					// single values
-
 					$control = $container.find( '[name="' + name + '"]' );
 					if ( $control.length === 0 ) return this;
 
@@ -440,9 +406,7 @@
 	} );
 
 	function funcValue( value, context ) {
-
 		return typeof value === 'function' ? value.call( context ) : value;
-
 	}
 
 } );
