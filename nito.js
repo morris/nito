@@ -261,11 +261,9 @@
 			var selectedProp = 'selected';
 
 			if ( defaults ) {
-
 				valueProp = 'defaultValue';
 				checkedProp = 'defaultChecked';
 				selectedProp = 'defaultSelected';
-
 			}
 
 			each( data, function ( name, value ) {
@@ -277,7 +275,6 @@
 				if ( isArray( value ) ) {
 
 					// multiple values
-
 					$control = $container.find( '[name="' + name + '[]"]' );
 					$control.each( function () {
 
@@ -315,17 +312,13 @@
 					if ( tagName === 'SELECT' ) {
 
 						$control.children().each( function () {
-
 							this[ selectedProp ] = value == this.getAttribute( 'value' );
-
 						} );
 
 					} else if ( type === 'radio' ) {
 
 						$control.each( function () {
-
 							this[ checkedProp ] = value == this.getAttribute( 'value' );
-
 						} );
 
 					} else if ( type === 'checkbox' ) {
@@ -371,14 +364,10 @@
 					var type = this.type;
 
 					if ( type === 'checkbox' || type === 'radio' ) {
-
 						this.checked = this.defaultChecked;
-
 					} else {
-
 						// text, password, hidden
 						this.value = this.defaultValue;
-
 					}
 
 					break;
