@@ -248,7 +248,7 @@
 
 		},
 
-		values: function ( values, defaults, base ) {
+		values: function ( values, defaults ) {
 
 			function parse( name ) {
 				return name.replace( /\]/g, '' ).split( /\[/g );

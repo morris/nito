@@ -205,11 +205,16 @@ $els.weld( 'hello' );
 $els.weld( { title: 'nito', contents: 'hello' }, { contents: '.post' } );
 ```
 
+#### `$els.values()`
+
+- Serialize named form controls in `$els` into an object
+- Supports all controls, nested names like `a[b][c]`, `multiple[]`, etc.
+- Returns an object containing the values
+
 #### `$els.values( data, defaults )`
 
-- Fill form controls contained in `$els` with given data
-- Form controls must have proper `name` attributes
-- Supports all controls, nested data, `name="a[b][c]"`, etc.
+- Fill named form controls in `$els` with given data
+- Supports all controls and nested data
 - If `defaults` is falsy, sets the value properties (user input)
 	- User input will be overwritten
 	- Form defaults are not modified
