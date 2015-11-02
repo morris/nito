@@ -217,7 +217,6 @@
 					var value = funcValue( data, this ) + '';
 
 					switch ( this.tagName ) {
-
 					case 'INPUT':
 					case 'TEXTAREA':
 					case 'SELECT':
@@ -231,7 +230,6 @@
 						if ( ( this.nitoHTML || this.innerHTML ) !== value ) {
 							this.innerHTML = this.nitoHTML = value;
 						}
-
 					}
 
 				} );
@@ -250,12 +248,47 @@
 
 		},
 
-		values: function ( data, defaults, base ) {
+		values: function ( values, defaults, base ) {
 
-			if ( !data ) return this;
+			function parse( name ) {
+				return name.replace( /\]/g, '' ).split( /\[/g );
+			}
 
-			var $container = this;
+			function tryInt( name ) {
+				return name.match( /^\d+$/ ) ? parseInt( name ) : name;
+			}
 
+			var $controls = this.filter( '[name]' ).add( this.find( '[name]' ) );
+
+			if ( values === undefined ) { // get values
+
+				values = {};
+				$controls.serializeArray().forEach( function ( entry ) {
+
+					var path = parse( entry.name );
+					var name = path[ 0 ];
+					var current = values;
+
+					for ( var i = 0, l = path.length - 1; i < l; ++i ) {
+						var part = path[ i ];
+						name = path[ i + 1 ];
+						var container = name.match( /^\d*$/ ) ? [] : {};
+						current = current[ part ] = current[ part ] || container;
+					}
+
+					if ( name === '' ) {
+						current.push( entry.value );
+					} else {
+						current[ tryInt( name ) ] = entry.value;
+					}
+
+				} );
+
+				return values;
+
+			}
+
+			// set values
 			var valueProp = 'value';
 			var checkedProp = 'checked';
 			var selectedProp = 'selected';
@@ -266,46 +299,32 @@
 				selectedProp = 'defaultSelected';
 			}
 
-			each( data, function ( name, value ) {
+			$controls.each( function () {
 
-				if ( base ) name = base + '[' + name + ']';
+				var value = values;
+				parse( this.name ).forEach( function ( part ) {
+					if ( value && part !== '' ) value = value[ tryInt( part ) ];
+				} );
 
-				var $control;
+				var $control = $( this );
+				var tagName = this.tagName;
+				var type = this.type;
 
 				if ( isArray( value ) ) {
 
-					// multiple values
-					$control = $container.find( '[name="' + name + '[]"]' );
-					$control.each( function () {
+					if ( type === 'checkbox' ) {
 
-						if ( this.type === 'checkbox' ) {
+						this[ checkedProp ] = value.indexOf( this.getAttribute( 'value' ) ) >= 0;
 
-							this[ checkedProp ] = value.indexOf( this.getAttribute( 'value' ) ) >= 0;
+					} else if ( this.multiple ) { // select[multiple]
 
-						} else if ( this.multiple ) {
+						$control.children().each( function () {
+							this[ selectedProp ] = value.indexOf( this.getAttribute( 'value' ) ) >= 0;
+						} );
 
-							$( this ).children().each( function () {
-								this[ selectedProp ] = value.indexOf( this.getAttribute( 'value' ) ) >= 0;
-							} );
-
-						}
-
-					} );
-
-				} else if ( value && typeof value === 'object' ) {
-
-					// nested values
-					return $container.values( value, defaults, name );
+					}
 
 				} else {
-
-					// single values
-					$control = $container.find( '[name="' + name + '"]' );
-					if ( $control.length === 0 ) return this;
-
-					var control = $control[ 0 ];
-					var tagName = control.tagName;
-					var type = control.type;
 
 					if ( value === undefined || value === null ) value = '';
 
@@ -317,13 +336,16 @@
 
 					} else if ( type === 'radio' ) {
 
-						$control.each( function () {
-							this[ checkedProp ] = value == this.getAttribute( 'value' );
-						} );
+						this[ checkedProp ] = value == this.getAttribute( 'value' );
 
 					} else if ( type === 'checkbox' ) {
 
-						control[ checkedProp ] = !!value;
+						this[ checkedProp ] = !!value;
+
+					} else if ( tagName === 'TEXTAREA' ) {
+
+						this[ valueProp ] = value + '';
+						if ( defaults ) $control.html( value + '' ); // Support: IE
 
 					} else if (
 						type !== 'button' &&
@@ -333,12 +355,7 @@
 						type !== 'submit'
 					) {
 
-						control[ valueProp ] = value + '';
-
-					} else if ( tagName === 'TEXTAREA' ) {
-
-						control[ valueProp ] = value + '';
-						if ( defaults ) $control.html( value + '' ); // IE fix
+						this[ valueProp ] = value + '';
 
 					}
 

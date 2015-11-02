@@ -585,12 +585,16 @@ QUnit.test( 'values nested', function ( assert ) {
 			'<input type="checkbox" name="foo[bar][baz]" value="1">' +
 			'<textarea name="baz[foo]"></textarea>' +
 			'<select name="select[]" multiple><option value="a"></option><option value="b"></option></select>' +
+			'<input type="text" name="indexed[0]">' +
+			'<input type="text" name="indexed[1]">' +
 		'</form>'
 	);
 	var $foo = $form.children().eq( 0 );
 	var $bar = $form.children().eq( 1 );
 	var $baz = $form.children().eq( 2 );
 	var $select = $form.children().eq( 3 );
+	var $i0 = $form.children().eq( 4 );
+	var $i1 = $form.children().eq( 5 );
 
 	$form.values( {
 		foo: {
@@ -602,7 +606,8 @@ QUnit.test( 'values nested', function ( assert ) {
 		baz: {
 			foo: 'baz',
 		},
-		select: [ 'a' ]
+		select: [ 'a' ],
+		indexed: [ 'a' ]
 	}, true );
 
 	$form.values( {
@@ -615,7 +620,8 @@ QUnit.test( 'values nested', function ( assert ) {
 		baz: {
 			foo: 'test',
 		},
-		select: [ 'a', 'b' ]
+		select: [ 'a', 'b' ],
+		indexed: [ 'a', 'b' ]
 	} );
 
 	assert.equal( $foo.val(), 'test' );
@@ -626,10 +632,49 @@ QUnit.test( 'values nested', function ( assert ) {
 	assert.equal( $select.val()[ 1 ], 'b' );
 	assert.equal( $select.children()[0].selected, true );
 	assert.equal( $select.children()[1].selected, true );
+	assert.equal( $i0.val(), 'a' );
+	assert.equal( $i1.val(), 'b' );
 
 	assert.equal( $foo.reset().val(), 'foo' );
 	assert.equal( $bar.reset().prop( 'checked' ), false );
 	assert.equal( $baz.reset().val(), 'baz' );
 	assert.equal( $select.reset().val(), 'a' );
+
+} );
+
+QUnit.test( 'get values', function ( assert ) {
+
+	var $form = $(
+		'<form>' +
+			'<input type="text" name="text" value="1">' +
+			'<input type="text" name="nested[text]" value="1">' +
+			'<input type="text" name="nested[object][text]" value="1">' +
+			'<input type="text" name="indexed[0]" value="2">' +
+			'<input type="text" name="indexed[1]" value="3">' +
+			'<input type="checkbox" name="check" value="4" checked>' +
+			'<input type="checkbox" name="checkArray[]" value="5" checked>' +
+			'<input type="checkbox" name="checkArray[]" value="6" checked>' +
+			'<input type="checkbox" name="checkArray[]" value="7">' +
+			'<select name="select[]" multiple><option value="a" selected></option><option value="b" selected></option></select>' +
+			'<input type="radio" name="radio" value="5">' +
+			'<input type="radio" name="radio" value="6" checked>' +
+			'<input type="radio" name="radio" value="7">' +
+		'</form>'
+	);
+
+	assert.deepEqual( $form.values(), {
+		text: '1',
+		nested: {
+			text: '1',
+			object: {
+				text: '1'
+			}
+		},
+		indexed: [ '2', '3' ],
+		check: '4',
+		checkArray: [ '5', '6' ],
+		select: [ 'a', 'b' ],
+		radio: '6'
+	} );
 
 } );
