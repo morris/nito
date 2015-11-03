@@ -2,6 +2,7 @@
 
 ## v0.8.0
 
+- `values` is now able to serializes form controls
 - Deprecated `keyProp` in favor of new `identify` method
 - Optimized `weld`
 

@@ -3,17 +3,11 @@
 ;( function ( root, factory ) {
 
 	if ( typeof define === 'function' && define.amd ) {
-
 		define( [], function () { return factory; } );
-
 	} else if ( typeof module === 'object' && module.exports ) {
-
 		module.exports = factory;
-
 	} else {
-
 		factory( root, root.$ );
-
 	}
 
 } )( this, function ( window, $ ) {
@@ -90,11 +84,9 @@
 
 		on: function ( event, handler ) {
 
-			var self = this;
+			var comp = this;
 			var args = [].map.call( arguments, function ( arg ) {
-
-				return typeof arg === 'function' ? arg.bind( self ) : arg;
-
+				return typeof arg === 'function' ? arg.bind( comp ) : arg;
 			} );
 
 			this.$el.on.apply( this.$el, args );
@@ -248,7 +240,7 @@
 
 		},
 
-		values: function ( values, defaults ) {
+		values: function ( data, defaults ) {
 
 			function parse( name ) {
 				return name.replace( /\]/g, '' ).split( /\[/g );
@@ -260,14 +252,14 @@
 
 			var $controls = this.filter( '[name]' ).add( this.find( '[name]' ) );
 
-			if ( values === undefined ) { // get values
+			if ( data === undefined ) { // get values
 
-				values = {};
+				data = {};
 				$controls.serializeArray().forEach( function ( entry ) {
 
 					var path = parse( entry.name );
 					var name = path[ 0 ];
-					var current = values;
+					var current = data;
 
 					for ( var i = 0, l = path.length - 1; i < l; ++i ) {
 						var part = path[ i ];
@@ -284,7 +276,7 @@
 
 				} );
 
-				return values;
+				return data;
 
 			}
 
@@ -301,7 +293,7 @@
 
 			$controls.each( function () {
 
-				var value = values;
+				var value = data;
 				parse( this.name ).forEach( function ( part ) {
 					if ( value && part !== '' ) value = value[ tryInt( part ) ];
 				} );

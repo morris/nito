@@ -5,6 +5,7 @@ Just an experiment. [Or maybe not.](https://rawgit.com/morris/nito/master/exampl
 
 ```js
 var Todo = $.nito(
+
 	base: [
 		'<div>',
 			'<h1>Todo</h1>',
@@ -22,9 +23,11 @@ var Todo = $.nito(
 	update: function () {
 		this.find( '.items' ).loop( this.items, TodoItem, this );
 	}
+
 } );
 
 var TodoItem = $.nito( {
+
 	base: [
 		'<li>',
 			'<strong class="title"></strong>',
@@ -46,6 +49,7 @@ var TodoItem = $.nito( {
 		this.item.completed = !this.item.completed;
 		this.todo.update(); // always update explicitly
 	}
+
 } );
 ```
 
@@ -159,7 +163,7 @@ Use these methods in `update`, *not* in `setup`.
 - Returns array of child components
 
 ```js
-$el.loop( [
+$( '<ul></ul>' ).loop( [
 	{ key: 1, title: 'Write code', done: true },
 	{ key: 2, title: 'Write readme', done: false }
 ], TodoItem );
@@ -186,7 +190,10 @@ for usage in component `update` methods.
 - Returns `$els`
 
 ```js
-$els.classes( { classA: truthy, classB: falsy } );
+$( '.form-group' ).classes( {
+	'has-success': true,
+	'has-error': false
+} );
 ```
 
 #### `$els.weld( data, selectors )`
@@ -195,20 +202,21 @@ $els.classes( { classA: truthy, classB: falsy } );
 - If `data` is not an object, set `data` as `$els`'s inner HTML softly
 	- Function values are computed using each element as `this`
 - If `data` is a map of `name: html` pairs:
-	- Will find `#name, .name` and set the given HTML softly
-	- selectors is an optional map of `name: selector` pairs
-	- If `selectors[ name ]` is given, use that instead of `#name, .name`
+	- Will find `.name` and set the given HTML softly
+	- `selectors` is an optional map of `name: selector` pairs
+	- If `selectors[ name ]` is given, use that instead of `.name`
 - Returns `$els`
 
 ```js
-$els.weld( 'hello' );
-$els.weld( { title: 'nito', contents: 'hello' }, { contents: '.post' } );
+$( '<h1></h1>' ).weld( 'hello' );
+$( '<div><h1 class="title"></h1><p class="post"></p></div>' )
+	.weld( { title: 'hello', contents: 'world' }, { contents: '.post' } );
 ```
 
 #### `$els.values()`
 
 - Serialize named form controls in `$els` into an object
-- Supports all controls, nested names like `a[b][c]`, `multiple[]`, etc.
+- Supports all controls and nested names like `object[key]`, `array[index]`, `multiple[]`
 - Returns an object containing the values
 
 #### `$els.values( data, defaults )`
@@ -226,5 +234,5 @@ $els.weld( { title: 'nito', contents: 'hello' }, { contents: '.post' } );
 
 #### `$els.reset()`
 
-- Resets each form or individual form control in `$els`
+- Resets each form or individual form control in `$els` (without children)
 - Returns `$els`
