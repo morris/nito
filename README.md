@@ -153,7 +153,7 @@ Use these methods in `update`, *not* in `setup`.
 
 - For each item, create a component using the factory and append to `$el`
 - `items` is an array of `data` passed to the components
-- `factory` should be a component factory, but may be anything that has a `create( item, extra )` method
+- `factory` should be a component factory
 - `extra` is passed to each component. Optional
 - Items must have distinct, truthy keys
 	- By default, the `item.key` property is used as a key
