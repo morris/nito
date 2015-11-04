@@ -18,29 +18,24 @@
 
 	$.nito = function ( settings ) {
 
-		// parse settings
-		var keyProp = settings.keyProp || 'key'; // deprecated, remove at 1.0.0
-		var identify = settings.identify || function ( item ) { return item[ keyProp ]; };
-		var base = settings.base;
-		base = $( isArray( base ) ? base.join( '\n' ) : base )[ 0 ];
-
 		// define component class
 		var Comp = function ( el, data, extra ) {
 			$.Comp.call( this, el, data, extra );
 		};
 
-		// inherit instance methods
+		// derive from $.Comp
 		Comp.prototype = Object.create( $.Comp.prototype );
 
 		// extend prototype with settings
 		extend( Comp.prototype, settings );
 
-		// inherit static methods
+		// extend with static methods
 		extend( Comp, $.Comp );
 
-		// set static settings
-		Comp.base = base;
-		Comp.identify = identify;
+		// set static members
+		var base = settings.base;
+		Comp.base = $( isArray( base ) ? base.join( '\n' ) : base )[ 0 ];
+		Comp.identify = settings.identify;
 
 		return Comp;
 
@@ -51,7 +46,6 @@
 	$.Comp = function ( el, data, extra ) {
 		this.$el = $( el ).eq( 0 );
 		this.el = this.$el[ 0 ];
-		if ( this.el ) this.el.nitoComp = this;
 
 		this.setup( data, extra );
 		this.update( data, extra );
@@ -59,19 +53,18 @@
 
 	extend( $.Comp, {
 
+		appendTo: function ( container, data, extra ) {
+			var comp = this.create( data, extra );
+			comp.$el.appendTo( container );
+			return comp;
+		},
+
 		create: function ( data, extra ) {
 			return this.setup( this.base ? this.base.cloneNode( true ) : null, data, extra );
 		},
 
 		setup: function ( el, data, extra ) {
 			return new this( el, data, extra );
-		},
-
-		appendTo: function ( container, data, extra ) {
-			var comp = this.create( data, extra );
-			comp.$el.appendTo( container );
-
-			return comp;
 		}
 
 	} );
@@ -84,6 +77,7 @@
 
 		on: function ( event, handler ) {
 
+			// bind any function in arguments to the component
 			var comp = this;
 			var args = [].map.call( arguments, function ( arg ) {
 				return typeof arg === 'function' ? arg.bind( comp ) : arg;
@@ -107,30 +101,33 @@
 
 		loop: function ( items, factory, extra ) {
 
-			var identify = factory.identify || function ( item ) { return item.key; };
 			var container = this[ 0 ];
+			if ( !container ) return;
 			var children = container.children;
-			var compMap = container.nitoCompMap = container.nitoCompMap || {};
+			var map = container.nitoMap = container.nitoMap || {};
+			var identify = factory.identify;
 			var index = 0;
 
+			// reconcile items with existing components via index or identify()
 			var comps = items.map( function ( item ) {
 
-				var key = identify( item );
-				if ( !key ) throw new Error( 'Undefined key in loop' );
-				var comp = compMap[ key ];
+				var key = identify ? identify( item ) : index + 1;
+				if ( !key ) throw new Error( 'Invalid key in loop' );
+				var comp = map[ key ];
 
 				if ( comp ) {
+					// store distance between actual and target index
 					comp._sort = Math.abs( index - comp._index );
+					comp.update( item, extra );
 				} else {
 					comp = factory.create( item, extra );
-					compMap[ key ] = comp;
+					map[ key ] = comp;
 					comp._sort = -index;
 				}
 
-				comp._index = index;
+				comp._index = index; // target index;
 				comp.el.nitoKeep = true;
 				comp.el.nitoKey = key;
-				comp.update( item, extra );
 
 				++index;
 
@@ -138,27 +135,31 @@
 
 			} );
 
+			// remove obsolete components
 			index = 0;
-
 			while ( index < children.length ) {
 
 				var child = children[ index ];
 
 				if ( !child.nitoKeep ) {
 					container.removeChild( child );
-					delete compMap[ child.nitoKey ];
+					delete map[ child.nitoKey ];
 				} else {
 					++index;
 				}
 
 			}
 
+			// append and/or reorder components
 			comps.slice( 0 ).sort( function ( a, b ) {
 
+				// sort by distance between actual index and target index
+				// sorting keeps number of appends/inserts low
 				return b._sort - a._sort || b._index - a._index;
 
 			} ).forEach( function ( comp ) {
 
+				// move each component to its target index
 				var el = comp.el;
 				var other = children[ comp._index ];
 
@@ -212,6 +213,7 @@
 					case 'INPUT':
 					case 'TEXTAREA':
 					case 'SELECT':
+						// skip form controls
 						break;
 
 					case 'IMG':
@@ -364,7 +366,6 @@
 			this.each( function () {
 
 				switch ( this.tagName ) {
-
 				case 'FORM':
 					this.reset();
 					break;
@@ -392,7 +393,6 @@
 				case 'SELECT':
 					$( this ).children().reset();
 					break;
-
 				}
 
 			} );
