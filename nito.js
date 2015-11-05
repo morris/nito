@@ -16,6 +16,8 @@
 
 	var extend = $.extend, isArray = $.isArray, each = $.each;
 
+	// factory
+
 	$.nito = function ( settings ) {
 
 		// define component class
@@ -41,7 +43,7 @@
 
 	};
 
-	//
+	// component
 
 	$.Comp = function ( el, data, extra ) {
 		this.$el = $( el ).eq( 0 );
@@ -95,7 +97,7 @@
 
 	} );
 
-	//
+	// $ extensions
 
 	extend( $.fn, {
 
@@ -249,7 +251,7 @@
 			}
 
 			function tryInt( name ) {
-				return name.match( /^\d+$/ ) ? parseInt( name ) : name;
+				return name.match( /^\d+$/ ) ? parseInt( name, 10 ) : name;
 			}
 
 			var $controls = this.filter( '[name]' ).add( this.find( '[name]' ) );
