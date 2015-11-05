@@ -4,7 +4,7 @@ Minimal component library for jQuery, inspired by React and Riot.
 Just an experiment. [Or maybe not.](https://rawgit.com/morris/nito/master/examples/nito-vs-react/)
 
 ```js
-var Todo = $.nito(
+var Todo = $.nito( {
 
 	base: [
 		'<div>',
@@ -15,8 +15,8 @@ var Todo = $.nito(
 
 	setup: function () {
 		this.items = [
-			{ key: 1, title: 'Get Nito', completed: false },
-			{ key: 2, title: 'Create something', completed: false }
+			{ title: 'Get Nito', completed: false },
+			{ title: 'Create something', completed: false }
 		];
 	},
 
@@ -34,15 +34,15 @@ var TodoItem = $.nito( {
 		'</li>'
 	],
 
-	setup: function ( item, todo ) {
-		this.item = item;
-		this.todo = todo;
+	setup: function () {
 		this.on( 'click', this.toggle );
 	},
 
-	update: function () {
-		this.$el.weld( this.item );
-		this.$el.classes( { completed: this.item.completed } );
+	update: function ( item, todo ) {
+		this.item = item;
+		this.todo = todo;
+		this.$el.weld( item );
+		this.$el.classes( { completed: item.completed } );
 	},
 
 	toggle: function () {
