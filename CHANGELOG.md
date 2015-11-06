@@ -4,7 +4,7 @@
 
 - `values` is now able to serializes form controls
 - Removed `keyProp` in favor of new `identify` method
-	- Reconciliation works using the item index by default
+	- Reconciliation uses the item index by default
 - Optimized `weld`
 
 ## v0.7.1
