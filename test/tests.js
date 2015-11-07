@@ -193,7 +193,7 @@ QUnit.test( 'classes', function ( assert ) {
 
 } );
 
-QUnit.test( 'classes edge', function ( assert ) {
+QUnit.test( 'classes/edge', function ( assert ) {
 
 	var $el = $( '<div></div>' );
 
@@ -259,7 +259,7 @@ QUnit.test( 'weld', function ( assert ) {
 
 } );
 
-QUnit.test( 'weld edge', function ( assert ) {
+QUnit.test( 'weld/edge', function ( assert ) {
 
 	var $el = $( '<div></div>' );
 
@@ -273,7 +273,7 @@ QUnit.test( 'weld edge', function ( assert ) {
 
 } );
 
-QUnit.test( 'weld img', function ( assert ) {
+QUnit.test( 'weld/img', function ( assert ) {
 
 	var $el = $( '<img>' );
 
@@ -281,7 +281,7 @@ QUnit.test( 'weld img', function ( assert ) {
 
 } );
 
-QUnit.test( 'values text defaults', function ( assert ) {
+QUnit.test( 'values/text/defaults', function ( assert ) {
 
 	var $form = $( '<form><input type="text" name="foo"></form>' );
 	var $control = $form.find( 'input' );
@@ -306,7 +306,7 @@ QUnit.test( 'values text defaults', function ( assert ) {
 
 } );
 
-QUnit.test( 'values text defaults edge', function ( assert ) {
+QUnit.test( 'values/text/defaults/edge', function ( assert ) {
 
 	var $form = $( '<form><input type="text" name="foo"></form>' );
 	var $control = $form.find( 'input' );
@@ -324,57 +324,7 @@ QUnit.test( 'values text defaults edge', function ( assert ) {
 
 } );
 
-QUnit.test( 'values textarea defaults', function ( assert ) {
-
-	var $form = $( '<form><textarea name="foo"></textarea></form>' );
-	var $control = $form.find( 'textarea' );
-
-	assert.equal( $control.val(), '' );
-	assert.equal( $control.prop( 'value' ), '' );
-
-	$form.values( { foo: 'bar' }, true );
-
-	assert.equal( $control.html(), 'bar' );
-	assert.equal( $control.val(), 'bar' );
-
-	$control.val( 'baz' );
-
-	assert.equal( $control[ 0 ].defaultValue, 'bar' );
-	assert.equal( $control.val(), 'baz' );
-
-	$form[ 0 ].reset();
-
-	assert.equal( $control.html(), 'bar' );
-	assert.equal( $control.val(), 'bar' );
-
-} );
-
-QUnit.test( 'values textarea defaults edge', function ( assert ) {
-
-	var $form = $( '<form><textarea name="foo"></textarea></form>' );
-	var $control = $form.find( 'textarea' );
-
-	assert.equal( $control.val(), '' );
-	assert.equal( $control.prop( 'value' ), '' );
-
-	$form.values( { foo: 0 }, true );
-
-	assert.equal( $control.html(), '0' );
-	assert.equal( $control.val(), '0' );
-
-	$form.values( { foo: null }, true );
-
-	assert.equal( $control.html(), '' );
-	assert.equal( $control.val(), '' );
-
-	$form.values( { foo: undefined }, true );
-
-	assert.equal( $control.html(), '' );
-	assert.equal( $control.val(), '' );
-
-} );
-
-QUnit.test( 'values textarea user', function ( assert ) {
+QUnit.test( 'values/textarea/user', function ( assert ) {
 
 	var $form = $( '<form><textarea name="foo"></textarea></form>' );
 	var $control = $form.find( 'textarea' );
@@ -399,7 +349,79 @@ QUnit.test( 'values textarea user', function ( assert ) {
 
 } );
 
-QUnit.test( 'values select defaults', function ( assert ) {
+QUnit.test( 'values/textarea/defaults', function ( assert ) {
+
+	var $form = $( '<form><textarea name="foo"></textarea></form>' );
+	var $control = $form.find( 'textarea' );
+
+	assert.equal( $control.val(), '' );
+	assert.equal( $control.prop( 'value' ), '' );
+
+	$form.values( { foo: 'bar' }, true );
+
+	assert.equal( $control.html(), 'bar' );
+	assert.equal( $control.val(), 'bar' );
+
+	$control.val( 'baz' );
+
+	assert.equal( $control[ 0 ].defaultValue, 'bar' );
+	assert.equal( $control.val(), 'baz' );
+
+	$form[ 0 ].reset();
+
+	assert.equal( $control.html(), 'bar' );
+	assert.equal( $control.val(), 'bar' );
+
+} );
+
+QUnit.test( 'values/textarea/defaults/edge', function ( assert ) {
+
+	var $form = $( '<form><textarea name="foo"></textarea></form>' );
+	var $control = $form.find( 'textarea' );
+
+	assert.equal( $control.val(), '' );
+	assert.equal( $control.prop( 'value' ), '' );
+
+	$form.values( { foo: 0 }, true );
+
+	assert.equal( $control.html(), '0' );
+	assert.equal( $control.val(), '0' );
+
+	$form.values( { foo: null }, true );
+
+	assert.equal( $control.html(), '' );
+	assert.equal( $control.val(), '' );
+
+	$form.values( { foo: undefined }, true );
+
+	assert.equal( $control.html(), '' );
+	assert.equal( $control.val(), '' );
+
+} );
+
+QUnit.test( 'values/select/user', function ( assert ) {
+
+	var $form = $( '<form><select name="foo"><option value="bar">bar</option><option value="baz">baz</option></form>' );
+	var $control = $form.find( 'select' );
+	var $bar = $form.find( 'option' ).eq( 0 );
+	var $baz = $form.find( 'option' ).eq( 1 );
+
+	assert.equal( $control.val(), 'bar' );
+	assert.equal( $control.prop( 'value' ), 'bar' );
+
+	$form.values( { foo: 'baz' } );
+
+	assert.ok( $baz[ 0 ].selected );
+	assert.equal( $control.val(), 'baz' );
+
+	$form[ 0 ].reset();
+
+	assert.ok( $bar[ 0 ].selected );
+	assert.equal( $control.val(), 'bar' );
+
+} );
+
+QUnit.test( 'values/select/defaults', function ( assert ) {
 
 	var $form = $( '<form><select name="foo"><option value="bar">bar</option><option value="baz">baz</option></form>' );
 	var $control = $form.find( 'select' );
@@ -424,29 +446,7 @@ QUnit.test( 'values select defaults', function ( assert ) {
 
 } );
 
-QUnit.test( 'values select user', function ( assert ) {
-
-	var $form = $( '<form><select name="foo"><option value="bar">bar</option><option value="baz">baz</option></form>' );
-	var $control = $form.find( 'select' );
-	var $bar = $form.find( 'option' ).eq( 0 );
-	var $baz = $form.find( 'option' ).eq( 1 );
-
-	assert.equal( $control.val(), 'bar' );
-	assert.equal( $control.prop( 'value' ), 'bar' );
-
-	$form.values( { foo: 'baz' } );
-
-	assert.ok( $baz[ 0 ].selected );
-	assert.equal( $control.val(), 'baz' );
-
-	$form[ 0 ].reset();
-
-	assert.ok( $bar[ 0 ].selected );
-	assert.equal( $control.val(), 'bar' );
-
-} );
-
-QUnit.test( 'values select multiple defaults', function ( assert ) {
+QUnit.test( 'values/select/multiple/defaults', function ( assert ) {
 
 	var $form = $( '<form><select name="foo[]" multiple><option value="bar">bar</option><option value="baz">baz</option></form>' );
 	var $bar = $form.find( 'option' ).eq( 0 );
@@ -474,7 +474,41 @@ QUnit.test( 'values select multiple defaults', function ( assert ) {
 
 } );
 
-QUnit.test( 'values checkbox defaults', function ( assert ) {
+QUnit.test( 'values/checkbox/user', function ( assert ) {
+
+	var $form = $( '<form><input type="checkbox" name="foo"></form>' );
+	var $control = $form.find( 'input' );
+
+	$form.values( { foo: true } );
+
+	assert.notOk( $control.is( '[checked]' ) );
+	assert.ok( $control.prop( 'checked' ) );
+
+	$form.values( { foo: false } );
+
+	assert.notOk( $control.is( '[checked]' ) );
+	assert.notOk( $control.prop( 'checked' ) );
+
+	$form.values( { foo: true } );
+	$form.values( {} );
+
+	assert.notOk( $control.is( '[checked]' ) );
+	assert.notOk( $control.prop( 'checked' ) );
+
+	$form.values( { foo: true } );
+	$form.reset();
+
+	assert.notOk( $control.is( '[checked]' ) );
+	assert.notOk( $control.prop( 'checked' ) );
+
+	$control.prop( 'checked', true );
+
+	assert.notOk( $control.is( '[checked]' ) );
+	assert.ok( $control.prop( 'checked' ) );
+
+} );
+
+QUnit.test( 'values/checkbox/defaults', function ( assert ) {
 
 	var $form = $( '<form><input type="checkbox" name="foo"></form>' );
 	var $control = $form.find( 'input' );
@@ -489,6 +523,12 @@ QUnit.test( 'values checkbox defaults', function ( assert ) {
 	assert.notOk( $control.is( '[checked]' ) );
 	assert.notOk( $control.prop( 'checked' ) );
 
+	$form.values( { foo: true }, true );
+	$form.values( {}, true );
+
+	assert.notOk( $control.is( '[checked]' ) );
+	assert.notOk( $control.prop( 'checked' ) );
+
 	$control.prop( 'checked', true );
 
 	assert.notOk( $control.is( '[checked]' ) );
@@ -496,7 +536,7 @@ QUnit.test( 'values checkbox defaults', function ( assert ) {
 
 } );
 
-QUnit.test( 'values checkbox multiple defaults', function ( assert ) {
+QUnit.test( 'values/checkbox/multiple/defaults', function ( assert ) {
 
 	var $form = $( '<form><input type="checkbox" name="foo[]" value="bar"><input type="checkbox" name="foo[]" value="baz"></form>' );
 	var $bar = $form.find( 'input' ).eq( 0 );
@@ -524,7 +564,7 @@ QUnit.test( 'values checkbox multiple defaults', function ( assert ) {
 
 } );
 
-QUnit.test( 'values radio defaults', function ( assert ) {
+QUnit.test( 'values/radio/defaults', function ( assert ) {
 
 	var $form = $( '<form><input type="radio" name="foo" value="bar"><input type="radio" name="foo" value="baz"></form>' );
 	var $bar = $form.find( 'input' ).eq( 0 );
@@ -545,48 +585,7 @@ QUnit.test( 'values radio defaults', function ( assert ) {
 
 } );
 
-QUnit.test( 'reset/integration', function ( assert ) {
-
-	var $form = $(
-		'<form>' +
-			'<input type="text" name="foo">' +
-			'<input type="checkbox" name="bar" value="1">' +
-			'<textarea name="baz"></textarea>' +
-			'<select name="select"><option value="a"></option><option value="b"></option></select>' +
-		'</form>'
-	);
-	var $foo = $form.children().eq( 0 );
-	var $bar = $form.children().eq( 1 );
-	var $baz = $form.children().eq( 2 );
-	var $select = $form.children().eq( 3 );
-
-	$form.values( {
-		foo: 'foo',
-		bar: false,
-		baz: 'baz',
-		select: 'a'
-	}, true );
-
-	$form.values( {
-		foo: 'test',
-		bar: true,
-		baz: 'test',
-		select: 'b'
-	} );
-
-	assert.equal( $foo.val(), 'test' );
-	assert.equal( $bar.prop( 'checked' ), true );
-	assert.equal( $baz.val(), 'test' );
-	assert.equal( $select.val(), 'b' );
-
-	assert.equal( $foo.reset().val(), 'foo' );
-	assert.equal( $bar.reset().prop( 'checked' ), false );
-	assert.equal( $baz.reset().val(), 'baz' );
-	assert.equal( $select.reset().val(), 'a' );
-
-} );
-
-QUnit.test( 'values nested', function ( assert ) {
+QUnit.test( 'values/nested', function ( assert ) {
 
 	var $form = $(
 		'<form>' +
@@ -651,7 +650,7 @@ QUnit.test( 'values nested', function ( assert ) {
 
 } );
 
-QUnit.test( 'get values', function ( assert ) {
+QUnit.test( 'values/get', function ( assert ) {
 
 	var $form = $(
 		'<form>' +
@@ -685,5 +684,46 @@ QUnit.test( 'get values', function ( assert ) {
 		select: [ 'a', 'b' ],
 		radio: '6'
 	} );
+
+} );
+
+QUnit.test( 'reset', function ( assert ) {
+
+	var $form = $(
+		'<form>' +
+			'<input type="text" name="foo">' +
+			'<input type="checkbox" name="bar" value="1">' +
+			'<textarea name="baz"></textarea>' +
+			'<select name="select"><option value="a"></option><option value="b"></option></select>' +
+		'</form>'
+	);
+	var $foo = $form.children().eq( 0 );
+	var $bar = $form.children().eq( 1 );
+	var $baz = $form.children().eq( 2 );
+	var $select = $form.children().eq( 3 );
+
+	$form.values( {
+		foo: 'foo',
+		bar: false,
+		baz: 'baz',
+		select: 'a'
+	}, true );
+
+	$form.values( {
+		foo: 'test',
+		bar: true,
+		baz: 'test',
+		select: 'b'
+	} );
+
+	assert.equal( $foo.val(), 'test' );
+	assert.equal( $bar.prop( 'checked' ), true );
+	assert.equal( $baz.val(), 'test' );
+	assert.equal( $select.val(), 'b' );
+
+	assert.equal( $foo.reset().val(), 'foo' );
+	assert.equal( $bar.reset().prop( 'checked' ), false );
+	assert.equal( $baz.reset().val(), 'baz' );
+	assert.equal( $select.reset().val(), 'a' );
 
 } );
