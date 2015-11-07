@@ -304,56 +304,46 @@
 
 				var $control = $( this );
 				var tagName = this.tagName;
-				var type = this.type;
+				var type = tagName === 'INPUT' ? this.type : tagName;
 
-				if ( isArray( value ) ) {
+				if ( value === undefined || value === null ) value = '';
 
-					if ( type === 'checkbox' ) {
+				switch ( type ) {
+				case 'SELECT':
+					var multiple = this.multiple && isArray( value );
 
-						this[ checkedProp ] = value.indexOf( this.getAttribute( 'value' ) ) >= 0;
+					$control.children().each( function () {
+						this[ selectedProp ] = multiple ?
+							value.indexOf( this.getAttribute( 'value' ) ) >= 0 :
+							value == this.getAttribute( 'value' );
+					} );
 
-					} else if ( this.multiple ) { // select[multiple]
+					break;
 
-						$control.children().each( function () {
-							this[ selectedProp ] = value.indexOf( this.getAttribute( 'value' ) ) >= 0;
-						} );
+				case 'TEXTAREA':
+					this[ valueProp ] = value + '';
+					if ( defaults ) $control.html( value + '' ); // Support: IE
+					break;
 
-					}
+				case 'radio':
+					this[ checkedProp ] = value == this.getAttribute( 'value' );
+					break;
 
-				} else {
+				case 'checkbox':
+					this[ checkedProp ] = isArray( value ) ?
+						value.indexOf( this.getAttribute( 'value' ) ) >= 0 :
+						!!value;
+					break;
 
-					if ( value === undefined || value === null ) value = '';
+				case 'button':
+				case 'file':
+				case 'image':
+				case 'reset':
+				case 'submit':
+					break;
 
-					if ( tagName === 'SELECT' ) {
-
-						$control.children().each( function () {
-							this[ selectedProp ] = value == this.getAttribute( 'value' );
-						} );
-
-					} else if ( type === 'radio' ) {
-
-						this[ checkedProp ] = value == this.getAttribute( 'value' );
-
-					} else if ( type === 'checkbox' ) {
-
-						this[ checkedProp ] = !!value;
-
-					} else if ( tagName === 'TEXTAREA' ) {
-
-						this[ valueProp ] = value + '';
-						if ( defaults ) $control.html( value + '' ); // Support: IE
-
-					} else if (
-						type !== 'button' &&
-						type !== 'file' &&
-						type !== 'image' &&
-						type !== 'reset' &&
-						type !== 'submit'
-					) {
-
-						this[ valueProp ] = value + '';
-
-					}
+				default: // text, hidden, password, etc.
+					this[ valueProp ] = value + '';
 
 				}
 
@@ -373,9 +363,7 @@
 					break;
 
 				case 'INPUT':
-					var type = this.type;
-
-					if ( type === 'checkbox' || type === 'radio' ) {
+					if ( this.type === 'checkbox' || this.type === 'radio' ) {
 						this.checked = this.defaultChecked;
 					} else {
 						// text, password, hidden
