@@ -33,7 +33,17 @@ QUnit.test( 'defined', function ( assert ) {
 
 } );
 
-QUnit.test( 'loop', function ( assert ) {
+QUnit.test( 'loop', testLoop );
+
+QUnit.test( 'loop w/o identify', function ( assert ) {
+
+	var t = TodoItem.identify;
+	testLoop( assert );
+	TodoItem.identiy = t;
+
+} );
+
+function testLoop( assert ) {
 
 	var todo = Todo.appendTo( '#qunit-fixture' );
 	var $items = todo.find( '.items' );
@@ -137,16 +147,14 @@ QUnit.test( 'loop', function ( assert ) {
 		var s = [];
 
 		$items.children().each( function () {
-
 			s.push( $( this ).html() );
-
 		} )
 
 		return s.join( '' );
 
 	}
 
-} );
+}
 
 QUnit.test( 'nest', function ( assert ) {
 
@@ -270,6 +278,7 @@ QUnit.test( 'weld img', function ( assert ) {
 	var $el = $( '<img>' );
 
 	assert.equal( $el.weld( 'foo.png' ).attr( 'src' ), 'foo.png' );
+
 } );
 
 QUnit.test( 'values text defaults', function ( assert ) {
