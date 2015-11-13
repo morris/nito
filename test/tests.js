@@ -5,7 +5,15 @@ var Todo = $.nito( {
 			'<h1 class="title">Todo</h1>',
 			'<div class="items"></div>',
 		'</div>'
-	]
+	],
+
+	setup: function () {
+		this.testSetup = true;
+	},
+
+	update: function () {
+		this.testUpdate = true;
+	}
 
 } );
 
@@ -30,6 +38,19 @@ var TodoItem = $.nito( {
 QUnit.test( 'defined', function ( assert ) {
 
 	assert.equal( typeof $.nito, 'function' );
+
+} );
+
+QUnit.test( 'setup', function ( assert ) {
+
+	var $el = $( Todo.base.cloneNode( true ) );
+	var a = Todo.setup( $el );
+	var b = Todo.setup( $el );
+
+	assert.equal( a, b );
+	assert.equal( a.testSetup, true );
+	assert.equal( a.testUpdate, true );
+	assert.equal( a.el.nitoComps[ Todo.id ], a );
 
 } );
 

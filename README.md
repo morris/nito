@@ -121,6 +121,7 @@ Include $ first, then Nito:
 
 - Create a component using given base HTML or selector
 - Useful for components with varying or server-rendered HTML
+- Only applied once
 - See above
 
 #### `Comp.appendTo( selector, data, extra )`

@@ -16,38 +16,38 @@
 
 	var extend = $.extend, isArray = $.isArray, each = $.each;
 
-	// factory
+	// class factory
 
 	$.nito = function ( settings ) {
 
-		// define component class
+		// derive from $.Comp
 		var Comp = function ( el, data, extra ) {
 			$.Comp.call( this, el, data, extra );
 		};
 
-		// derive from $.Comp
 		Comp.prototype = Object.create( $.Comp.prototype );
+
+    // extend with static methods
+		extend( Comp, $.Comp );
 
 		// extend prototype with settings
 		extend( Comp.prototype, settings );
-
-		// extend with static methods
-		extend( Comp, $.Comp );
 
 		// set static members
 		var base = settings.base;
 		Comp.base = $( isArray( base ) ? base.join( '\n' ) : base )[ 0 ];
 		Comp.identify = settings.identify;
+		Comp.id = ++$.nitoId;
 
 		return Comp;
 
 	};
 
-	// component
+	// component class
 
 	$.Comp = function ( el, data, extra ) {
-		this.$el = $( el ).eq( 0 );
-		this.el = this.$el[ 0 ];
+		this.el = el;
+		this.$el = $( el );
 
 		this.setup( data, extra );
 		this.update( data, extra );
@@ -66,10 +66,28 @@
 		},
 
 		setup: function ( el, data, extra ) {
-			return new this( el, data, extra );
+
+			var $el = $( el ).eq( 0 );
+			el = $el[ 0 ];
+
+			// component without element
+			if ( !el ) return new this( null, data, extra );
+
+			// setup component only once
+			var comps = el.nitoComps = el.nitoComps || {};
+			var comp = comps[ this.id ];
+
+			if ( comp ) return comp;
+
+			// create component
+			comp = comps[ this.id ] = new this( el, data, extra );
+			return comp;
+
 		}
 
 	} );
+
+	$.nitoId = 0;
 
 	extend( $.Comp.prototype, {
 
@@ -145,7 +163,7 @@
 
 				if ( !child.nitoKeep ) {
 					container.removeChild( child );
-					delete map[ child.nitoKey ];
+					if ( child.nitoKey ) delete map[ child.nitoKey ];
 				} else {
 					++index;
 				}
