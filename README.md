@@ -55,7 +55,7 @@ var TodoItem = $.nito( {
 ```
 
 - For people who know and like jQuery or Zepto
-- Simple: 1 class, 9 functions, <500 lines
+- Simple: 1 class, 11 functions, <500 lines
 - [No templates](http://blog.nodejitsu.com/micro-templates-are-dead/),
 [no virtual DOM](http://blog.500tech.com/is-reactjs-fast/),
 [no JSX](https://www.pandastrike.com/posts/20150311-react-bad-idea)
@@ -96,6 +96,7 @@ Include $ first, then Nito:
 		- Optional, defaults to noop
 	- `update` is a method to update the component
 		- Has to be called explicitly (except for components rendered with `loop`/`nest`)
+		- Make sure `update` can be called without a data argument
 		- Optional, defaults to noop
 	- `identify` is a function that generates keys for `loop`
 		- Gets an item argument from `loop`
@@ -112,7 +113,7 @@ Include $ first, then Nito:
 #### `Comp.create( env, data )`
 
 - Create a component using the component base HTML
-- `env` is to `mount`. Optional
+- `env` is passed to `mount`. Optional
 	- Use `env` to pass constant references, e.g. the app/store/controller or a parent component
 - `data` is passed to `update`. Optional
 	- Use `data` for variable data/state
