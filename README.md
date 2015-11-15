@@ -13,7 +13,7 @@ var Todo = $.nito( {
 		'</div>'
 	],
 
-	setup: function () {
+	mount: function () {
 		this.items = [
 			{ title: 'Get Nito', completed: false },
 			{ title: 'Create something', completed: false }
@@ -34,15 +34,16 @@ var TodoItem = $.nito( {
 		'</li>'
 	],
 
-	setup: function () {
+	mount: function ( todo ) {
+		this.todo = todo;
 		this.on( 'click', this.toggle );
 	},
 
-	update: function ( item, todo ) {
-		this.item = item;
-		this.todo = todo;
-		this.$el.weld( item );
-		this.$el.classes( { completed: item.completed } );
+	update: function ( item ) {
+		if ( item ) this.item = item;
+
+		this.$el.weld( this.item );
+		this.$el.classes( { completed: this.item.completed } );
 	},
 
 	toggle: function () {
@@ -55,7 +56,7 @@ var TodoItem = $.nito( {
 
 - For people who know and like jQuery or Zepto
 - Simple: 1 class, 9 functions, <500 lines
-- [No templating](http://blog.nodejitsu.com/micro-templates-are-dead/),
+- [No templates](http://blog.nodejitsu.com/micro-templates-are-dead/),
 [no virtual DOM](http://blog.500tech.com/is-reactjs-fast/),
 [no JSX](https://www.pandastrike.com/posts/20150311-react-bad-idea)
 - Just $ and standard JavaScript
@@ -89,8 +90,8 @@ Include $ first, then Nito:
 	- `base` is the base HTML for the components
 		- Can be a string or an array of strings
 		- Arrays will be joined with `\n`
-		- Optional, if you only use `Comp.setup` (see below)
-	- `setup` is a method called on creation of a component
+		- Optional, only required for `Comp.create` (see below)
+	- `mount` is a method called on creation of a component
 		- Define event handlers here
 		- Optional, defaults to noop
 	- `update` is a method to update the component
@@ -108,23 +109,23 @@ Include $ first, then Nito:
 
 ## Creating components
 
-#### `Comp.create( data, extra )`
+#### `Comp.create( env, data )`
 
 - Create a component using the component base HTML
-- `data` and `extra` will be passed to `update` and `setup`. Optional
-	- `comp.setup( data, extra )` and an initial `comp.update( data, extra )` are called
-	- Use `data` for view data
-	- Use `extra` to pass references, e.g. the app/store/controller or a parent component
+- `env` is to `mount`. Optional
+	- Use `env` to pass constant references, e.g. the app/store/controller or a parent component
+- `data` is passed to `update`. Optional
+	- Use `data` for variable data/state
 - Returns the created component
 
-#### `Comp.setup( base, data, extra )`
+#### `Comp.mount( base, env, data )`
 
 - Create a component using given base HTML or selector
 - Useful for components with varying or server-rendered HTML
 - Only applied once
 - See above
 
-#### `Comp.appendTo( selector, data, extra )`
+#### `Comp.appendTo( selector, env, data )`
 
 - Create a component using Comp.create and then append it to `$( selector )`
 - See above
@@ -140,7 +141,7 @@ Include $ first, then Nito:
 
 - Shortcut to `comp.$el.find`
 
-#### `comp.on( [selector,] event, handler )`
+#### `comp.on( event, [selector,] handler )`
 
 - Shortcut to `comp.$el.on`
 - `handler` is bound to `comp`, *not* to the element
@@ -150,14 +151,14 @@ Include $ first, then Nito:
 ## Nesting components
 
 Super-efficiently nest components in any DOM element using `loop` or `nest`.
-Use these methods in `update`, *not* in `setup`.
+Use these methods in `update`, *not* in `mount`.
 
-#### `$el.loop( items, factory, extra )`
+#### `$el.loop( items, factory, env )`
 
 - For each item, create a component using the factory and append to `$el`
 - `items` is an array of `data` passed to the components
 - `factory` should be a component factory
-- `extra` is passed to each component. Optional
+- `env` is passed to each component. Optional
 - Reconciliation: Existing components are identified with items and reused/updated with given data
 	- By default, components are reconciled by item/component index
 	- If the `factory.identify` function is defined, components are reconciled by keys
@@ -171,7 +172,7 @@ $( '<ul></ul>' ).loop( [
 ], TodoItem );
 ```
 
-#### `$el.nest( item, factory, extra )`
+#### `$el.nest( item, factory, env )`
 
 - Same as loop, but for one component
 - Pass falsy item to not nest anything
@@ -237,4 +238,22 @@ $( '<div><h1 class="title"></h1><p class="post"></p></div>' )
 #### `$els.reset()`
 
 - Resets each form or individual form control in `$els` (without children)
+- Returns `$els`
+
+
+## Mount and update components on existing DOM
+
+#### `$els.mount( factory, env, data )`
+
+- Mount components on each element in `$els` using `factory`
+- `env` and `data` are passed to `factory.mount`
+- Components are only created once per factory
+	- An element may have multiple components, but only one for each factory
+- Returns `$els`
+
+#### `$els.update( factory, data )`
+
+- If `factory` is set, update all components from `factory` mounted on `$els`
+- Otherwise, update all components mounted on `$els`
+- `data` is optional
 - Returns `$els`

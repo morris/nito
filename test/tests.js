@@ -7,8 +7,8 @@ var Todo = $.nito( {
 		'</div>'
 	],
 
-	setup: function () {
-		this.testSetup = true;
+	mount: function () {
+		this.testMount = true;
 	},
 
 	update: function () {
@@ -27,8 +27,14 @@ var TodoItem = $.nito( {
 		return item.id;
 	},
 
-	update: function ( data ) {
-		this.$el.weld( data.title );
+	mount: function ( todo ) {
+		this.todo = todo;
+	},
+
+	update: function ( item ) {
+		if ( item ) this.item = item;
+
+		this.$el.weld( this.item.title );
 	}
 
 } );
@@ -41,14 +47,14 @@ QUnit.test( 'defined', function ( assert ) {
 
 } );
 
-QUnit.test( 'setup', function ( assert ) {
+QUnit.test( 'mount', function ( assert ) {
 
 	var $el = $( Todo.base.cloneNode( true ) );
-	var a = Todo.setup( $el );
-	var b = Todo.setup( $el );
+	var a = Todo.mount( $el );
+	var b = Todo.mount( $el );
 
 	assert.equal( a, b );
-	assert.equal( a.testSetup, true );
+	assert.equal( a.testMount, true );
 	assert.equal( a.testUpdate, true );
 	assert.equal( a.el.nitoComps[ Todo.id ], a );
 

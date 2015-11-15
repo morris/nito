@@ -21,8 +21,8 @@
 	$.nito = function ( settings ) {
 
 		// derive from $.Comp
-		var Comp = function ( el, data, extra ) {
-			$.Comp.call( this, el, data, extra );
+		var Comp = function ( el, env, data ) {
+			$.Comp.call( this, el, env, data );
 		};
 
 		Comp.prototype = Object.create( $.Comp.prototype );
@@ -45,42 +45,45 @@
 
 	// component class
 
-	$.Comp = function ( el, data, extra ) {
+	$.Comp = function ( el, env, data ) {
 		this.el = el;
 		this.$el = $( el );
 
-		this.setup( data, extra );
-		this.update( data, extra );
+		this.mount( env );
+		this.update( data );
 	};
 
 	extend( $.Comp, {
 
-		appendTo: function ( container, data, extra ) {
-			var comp = this.create( data, extra );
+		appendTo: function ( container, env, data ) {
+			var comp = this.create( env, data );
 			comp.$el.appendTo( container );
 			return comp;
 		},
 
-		create: function ( data, extra ) {
-			return this.setup( this.base ? this.base.cloneNode( true ) : null, data, extra );
+		create: function ( env, data ) {
+			return this.mount( this.base ? this.base.cloneNode( true ) : null, env, data );
 		},
 
-		setup: function ( el, data, extra ) {
+		mount: function ( el, env, data ) {
 
 			var $el = $( el ).eq( 0 );
 			el = $el[ 0 ];
 
 			// component without element
-			if ( !el ) return new this( null, data, extra );
+			if ( !el ) return new this( null, env, data );
 
-			// setup component only once
+			// mount component only once
 			var comps = el.nitoComps = el.nitoComps || {};
 			var comp = comps[ this.id ];
 
-			if ( comp ) return comp;
+			if ( comp ) {
+				comp.update( data );
+				return comp;
+			}
 
 			// create component
-			comp = comps[ this.id ] = new this( el, data, extra );
+			comp = comps[ this.id ] = new this( el, env, data );
 			return comp;
 
 		}
@@ -91,13 +94,13 @@
 
 	extend( $.Comp.prototype, {
 
-		setup: function () {},
+		mount: function () {},
 
 		update: function () {},
 
-		on: function ( event, handler ) {
+		on: function () {
 
-			// bind any function in arguments to the component
+			// bind any function argument to the component
 			var comp = this;
 			var args = [].map.call( arguments, function ( arg ) {
 				return typeof arg === 'function' ? arg.bind( comp ) : arg;
@@ -119,7 +122,37 @@
 
 	extend( $.fn, {
 
-		loop: function ( items, factory, extra ) {
+		mount: function ( factory, env, data ) {
+
+			return this.each( function () {
+				factory.mount( this, env, data );
+			} );
+
+		},
+
+		update: function ( factory, data ) {
+
+      if ( factory ) {
+
+        var id = factory.id;
+        return this.each( function () {
+          var comp = this.nitoComps && this.nitoComps[ id ];
+					if ( comp ) comp.update( data );
+        } );
+
+      }
+
+			return this.each( function () {
+
+				$.each( this.nitoComps || {}, function () {
+					this.update( data );
+				} );
+
+			} );
+
+		},
+
+		loop: function ( items, factory, env ) {
 
 			var container = this[ 0 ];
 			if ( !container ) return;
@@ -138,9 +171,9 @@
 				if ( comp ) {
 					// store distance between actual and target index
 					comp._sort = Math.abs( index - comp._index );
-					comp.update( item, extra );
+					comp.update( item );
 				} else {
-					comp = factory.create( item, extra );
+					comp = factory.create( env, item );
 					map[ key ] = comp;
 					comp._sort = -index;
 				}
@@ -197,10 +230,10 @@
 
 		},
 
-		nest: function ( item, factory, extra ) {
+		nest: function ( item, factory, env ) {
 
-			if ( item ) return this.loop( [ item ], factory, extra )[ 0 ];
-			this.loop( [], factory, extra );
+			if ( item ) return this.loop( [ item ], factory, env )[ 0 ];
+			this.loop( [], factory, env );
 
 		},
 
