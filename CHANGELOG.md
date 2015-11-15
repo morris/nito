@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.9.0
+
+- Renamed `setup` to `mount`
+- Renamed `extra` to `env`
+- Reordered `data, env` to `env, data`
+- Added `$.fn.mount`
+- Added `$.fn.update`
+- `mount` now only gets `env`
+- `update` now only gets `data`
+
 ## v0.8.0
 
 - `values` is now able to serializes form controls
