@@ -15,9 +15,8 @@ var TodoItem = $.nito( {
     return item.id;
   },
 
-	setup: function ( item, app ) {
+	mount: function ( app ) {
 
-		this.item = item;
 		this.app = app;
 		this.editing = false;
 
@@ -70,7 +69,9 @@ var TodoItem = $.nito( {
 
 	},
 
-	update: function () {
+	update: function ( item ) {
+    // make sure update may also be called without data
+    if ( item ) this.item = item;
 
 		// weld and classes are nice, non-destructive use of $
 		this.$el.weld( this.item );

@@ -4,7 +4,7 @@ var NitoDashboard = $.nito( {
 		'<div class="dashboard"></div>'
 	],
 
-	setup: function ( store ) {
+	mount: function ( store ) {
 		this.store = store;
 	},
 
@@ -27,15 +27,17 @@ var NitoItem = $.nito( {
 		return item.id;
 	},
 
-	setup: function () {
+	mount: function () {
 		this.$name = this.find( '.name' );
 		this.$score = this.find( '.score' );
 	},
 
 	update: function ( data ) {
-		this.$name.weld( data.name );
-		this.$score.weld( data.score );
-		this.$el.css( 'color', data.color );
+		if ( data ) this.data = data;
+		
+		this.$name.weld( this.data.name );
+		this.$score.weld( this.data.score );
+		this.$el.css( 'color', this.data.color );
 	}
 
 } );

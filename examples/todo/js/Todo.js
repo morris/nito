@@ -19,7 +19,7 @@ var Todo = $.nito( {
 		'</div>'
 	],
 
-	setup: function () {
+	mount: function () {
 
 		this.load();
 
