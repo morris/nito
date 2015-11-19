@@ -32,12 +32,12 @@ var NitoItem = $.nito( {
 		this.$score = this.find( '.score' );
 	},
 
-	update: function ( data ) {
-		if ( data ) this.data = data;
-		
-		this.$name.weld( this.data.name );
-		this.$score.weld( this.data.score );
-		this.$el.css( 'color', this.data.color );
+	update: function ( item ) {
+		if ( item ) this.item = item;
+
+		this.$name.weld( this.item.name );
+		this.$score.weld( this.item.score );
+		this.$el.css( 'color', this.item.color );
 	}
 
 } );

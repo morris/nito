@@ -7,12 +7,15 @@ var Todo = $.nito( {
 		'</div>'
 	],
 
-	mount: function () {
+	mount: function ( env ) {
+		this.env = env;
 		this.testMount = true;
 	},
 
-	update: function () {
+	update: function ( data ) {
+		if ( data ) this.data = data;
 		this.testUpdate = true;
+		this.$el.trigger( 'update' );
 	}
 
 } );
@@ -25,10 +28,6 @@ var TodoItem = $.nito( {
 
 	identify: function ( item ) {
 		return item.id;
-	},
-
-	mount: function ( todo ) {
-		this.todo = todo;
 	},
 
 	update: function ( item ) {
@@ -50,13 +49,32 @@ QUnit.test( 'defined', function ( assert ) {
 QUnit.test( 'mount', function ( assert ) {
 
 	var $el = $( Todo.base.cloneNode( true ) );
-	var a = Todo.mount( $el );
-	var b = Todo.mount( $el );
+	var a = Todo.mount( $el, 'test' );
+	var b = $el.mount( Todo )[ 0 ].nitoComps[ Todo.id ];
 
 	assert.equal( a, b );
 	assert.equal( a.testMount, true );
 	assert.equal( a.testUpdate, true );
+	assert.equal( a.env, 'test' );
 	assert.equal( a.el.nitoComps[ Todo.id ], a );
+
+} );
+
+QUnit.test( 'update', function ( assert ) {
+
+	var updates = 0;
+	var $el = $( Todo.base.cloneNode( true ) );
+	$el.on( 'update', function () {
+		++updates;
+	} );
+	Todo.mount( $el );
+	$el.update();
+	$el.update( Todo );
+	$el.update( Todo, 'test' );
+	$el.update( Todo, null );
+
+	assert.equal( updates, 5 );
+	assert.equal( $el[ 0 ].nitoComps[ Todo.id ].data, 'test' );
 
 } );
 

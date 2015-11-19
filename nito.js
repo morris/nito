@@ -77,10 +77,7 @@
 			var comps = el.nitoComps = el.nitoComps || {};
 			var comp = comps[ this.id ];
 
-			if ( comp ) {
-				comp.update( data );
-				return comp;
-			}
+			if ( comp ) return comp;
 
 			// create component
 			comp = comps[ this.id ] = new this( el, env, data );
@@ -125,29 +122,37 @@
 		mount: function ( factory, env, data ) {
 
 			return this.each( function () {
-				factory.mount( this, env, data );
+				factory.mount( this, funcValue( env, this ), funcValue( data, this ) );
 			} );
 
 		},
 
 		update: function ( factory, data ) {
 
-      if ( factory ) {
+			this.comps( factory, function () {
+				this.update( funcValue( data, this ) );
+			} );
+
+			return this;
+
+		},
+
+		comps: function ( factory, fn ) {
+
+			if ( factory && fn ) {
 
         var id = factory.id;
         return this.each( function () {
           var comp = this.nitoComps && this.nitoComps[ id ];
-					if ( comp ) comp.update( data );
+					if ( comp ) fn.call( comp );
         } );
 
       }
 
+			fn = fn || factory;
+
 			return this.each( function () {
-
-				$.each( this.nitoComps || {}, function () {
-					this.update( data );
-				} );
-
+				each( this.nitoComps || {}, fn );
 			} );
 
 		},
@@ -178,7 +183,7 @@
 					comp._sort = -index;
 				}
 
-				comp._index = index; // target index;
+				comp._index = index; // target index
 				comp.el.nitoKeep = true;
 				comp.el.nitoKey = key;
 
