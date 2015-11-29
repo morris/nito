@@ -5,10 +5,10 @@
 - Renamed `setup` to `mount`
 - Renamed `extra` to `env`
 - Reordered `data, env` to `env, data`
-- Added `$.fn.mount`
-- Added `$.fn.update`
 - `mount` now only gets `env`
 - `update` now only gets `data`
+- Added `$.fn.mount`
+- Added `$.fn.update`
 
 ## v0.8.0
 

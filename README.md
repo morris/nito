@@ -213,7 +213,7 @@ $( '.form-group' ).classes( {
 - If `data` is not an object, set `data` as `$els`'s inner HTML softly
 	- Function values are computed using each element as `this`
 - If `data` is a map of `name: html` pairs:
-	- Will find `.name` and set the given HTML softly
+	- Find `.name` and set the given HTML softly
 	- `selectors` is an optional map of `name: selector` pairs
 	- If `selectors[ name ]` is given, use that instead of `.name`
 - Returns `$els`
