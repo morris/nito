@@ -1,4 +1,4 @@
-/*! Nito v0.8.0 - https://github.com/morris/nito */
+/*! Nito v0.9.0 - https://github.com/morris/nito */
 
 ;( function ( root, factory ) {
 
@@ -129,11 +129,9 @@
 
 		update: function ( factory, data ) {
 
-			this.comps( factory, function () {
+			return this.comps( factory, function () {
 				this.update( funcValue( data, this ) );
 			} );
-
-			return this;
 
 		},
 
