@@ -27,7 +27,7 @@
 
 		Comp.prototype = Object.create( $.Comp.prototype );
 
-    // extend with static methods
+		// extend with static methods
 		extend( Comp, $.Comp );
 
 		// extend prototype with settings
@@ -139,13 +139,13 @@
 
 			if ( factory && fn ) {
 
-        var id = factory.id;
-        return this.each( function () {
-          var comp = this.nitoComps && this.nitoComps[ id ];
+				var id = factory.id;
+				return this.each( function () {
+					var comp = this.nitoComps && this.nitoComps[ id ];
 					if ( comp ) fn.call( comp );
-        } );
+				} );
 
-      }
+			}
 
 			fn = fn || factory;
 
