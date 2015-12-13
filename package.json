@@ -2,7 +2,7 @@
   "name": "nito",
   "version": "0.9.0",
   "repository": "https://github.com/morris/nito",
-  "description": "Lightweight components for your favorite $",
+  "description": "Minimal component library for jQuery, inspired by React and Riot",
   "author": {
     "name": "Morris Brodersen",
     "url": "http://morrisbrodersen.de"
@@ -15,8 +15,5 @@
     "gulp-rename": "^1.2.2",
     "gulp-uglify": "^1.2.0",
     "domino": "^1.0.19"
-  },
-  "scripts": {
-    "gulp": "gulp"
   }
 }
