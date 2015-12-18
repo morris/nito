@@ -11,6 +11,7 @@
   "main": "nito.js",
   "devDependencies": {
     "domino": "^1.0.20",
+    "express": "^4.13.3",
     "gulp": "^3.9.0",
     "gulp-jshint": "^1.11.2",
     "gulp-rename": "^1.2.2",

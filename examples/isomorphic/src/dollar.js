@@ -1,4 +1,4 @@
-var nito = require( '../../nito' );
+var nito = require( '../../../nito' );
 var jQuery = require( 'jquery' );
 
 if ( process.browser ) {

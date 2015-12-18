@@ -4,7 +4,7 @@ var Item = require( './Item' );
 var App = module.exports = $.nito( {
 
   base: [
-    '<div class="app">',
+    '<div class="app" id="app">',
       '<h1 class="title">test</h1>',
       '<p><button>Randomize</button></p>',
       '<div class="items">',
