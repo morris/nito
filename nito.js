@@ -12,7 +12,7 @@
 
 } )( this, function ( window, $ ) {
 
-	if ( $.nito ) return; // extend $ only once
+	if ( $.nito ) return $; // extend $ only once
 
 	var extend = $.extend, isArray = $.isArray, each = $.each;
 
@@ -450,5 +450,7 @@
 	function funcValue( value, context ) {
 		return typeof value === 'function' ? value.call( context ) : value;
 	}
+
+	return $;
 
 } );
