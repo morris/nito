@@ -13,23 +13,7 @@ var App = module.exports = $.nito( {
   ],
 
   mount: function ( env ) {
-    this.data = {
-      title: 'Test',
-      items: [
-        {
-          title: 'Item1',
-          description: 'Lorem ipsum'
-        },
-        {
-          title: 'Item2',
-          description: 'Dolor sit'
-        },
-        {
-          title: 'Item3',
-          description: 'Amet'
-        }
-      ]
-    }
+    this.find( '.item' ).mount( Item, this );
   },
 
   update: function ( data ) {
@@ -41,6 +25,10 @@ var App = module.exports = $.nito( {
 
   randomize: function () {
 
+  },
+
+  html: function () {
+    return this.$el.data( 'shared', this.data ).html();
   }
 
 } );

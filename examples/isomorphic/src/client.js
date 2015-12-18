@@ -1,4 +1,4 @@
-var nito = require( '../../../nito' );
+var $ = require( './dollar' );
 var App = require( './App' );
 
-App.mount( '#app' );
+App.mount( '#app', null, $( '#app' ).data( 'shared' ) );

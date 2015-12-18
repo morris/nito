@@ -3,7 +3,7 @@ var jQuery = require( 'jquery' );
 
 if ( process.browser ) {
 
-  module.exports = nito( window, jQuery( window ) );
+  module.exports = nito( window, jQuery );
 
 } else {
 
