@@ -1,6 +1,5 @@
 var fs = require( 'fs' );
 var express = require( 'express' );
-var $ = require( './dollar' );
 var App = require( './App' );
 
 var app = App.create( null, {
@@ -8,7 +7,7 @@ var app = App.create( null, {
   items: [
     { title: 'Lorem', description: 'Ipsum' },
     { title: 'Dolor', description: 'Sit' },
-    { title: 'Amet', description: 'Lol' },
+    { title: 'Amet', description: 'Lol' }
   ]
 } );
 
