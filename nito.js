@@ -1,4 +1,4 @@
-/*! Nito v0.9.0 - https://github.com/morris/nito */
+/*! Nito v0.10.0 - https://github.com/morris/nito */
 
 ;( function ( root, factory ) {
 
@@ -26,18 +26,22 @@
 		};
 
 		Comp.prototype = Object.create( $.Comp.prototype );
+		Comp.prototype.factory = Comp;
 
 		// extend with static methods
 		extend( Comp, $.Comp );
-
-		// extend prototype with settings
-		extend( Comp.prototype, settings );
 
 		// set static members
 		var base = settings.base;
 		Comp.base = $( isArray( base ) ? base.join( '\n' ) : base )[ 0 ];
 		Comp.identify = settings.identify;
-		Comp.id = ++$.nitoId;
+		Comp.id = settings.id || ++$.nitoId;
+
+		// extend prototype with settings; unset static settings
+		var proto = extend( Comp.prototype, settings );
+		delete proto.base;
+		delete proto.identify;
+		delete proto.id;
 
 		return Comp;
 
@@ -79,10 +83,21 @@
 
 			if ( comp ) return comp;
 
+			// get serialized data from attribute, if any
+			try {
+				if ( !data ) data = JSON.parse( $el.attr( deliverAttr + this.id ) );
+			} catch ( ex ) {
+				console.warn( ex );
+			}
+
 			// create component
 			comp = comps[ this.id ] = new this( el, env, data );
 			return comp;
 
+		},
+
+		deliver: function ( env, data ) {
+			return this.create( env, data ).$el.deliver( true );
 		}
 
 	} );
@@ -103,9 +118,8 @@
 				return typeof arg === 'function' ? arg.bind( comp ) : arg;
 			} );
 
-			this.$el.on.apply( this.$el, args );
-
-			return this;
+			comp.$el.on.apply( comp.$el, args );
+			return comp;
 
 		},
 
@@ -398,7 +412,6 @@
 
 				default: // text, hidden, password, etc.
 					this[ valueProp ] = value + '';
-
 				}
 
 			} );
@@ -443,9 +456,26 @@
 
 			return this;
 
+		},
+
+		deliver: function ( html ) {
+
+			// for each component on the matched elements, serialize data into attribute
+			this.comps( function () {
+				var id = this.factory.id;
+				if ( typeof id === 'string' ) {
+					this.$el.attr( deliverAttr + id, JSON.stringify( this.data ) );
+				}
+			} );
+
+			// return outer html or elements
+			return html ? $( '<div></div>' ).append( this[ 0 ] ).html() : this;
+
 		}
 
 	} );
+
+	var deliverAttr = 'data-nito-';
 
 	function funcValue( value, context ) {
 		return typeof value === 'function' ? value.call( context ) : value;

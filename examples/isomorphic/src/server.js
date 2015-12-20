@@ -2,20 +2,22 @@ var fs = require( 'fs' );
 var express = require( 'express' );
 var App = require( './App' );
 
-var app = App.create( null, {
+var index = fs.readFileSync( 'views/index.html' ).toString();
+
+var init = {
   title: 'foo',
   items: [
     { title: 'Lorem', description: 'Ipsum' },
     { title: 'Dolor', description: 'Sit' },
     { title: 'Amet', description: 'Lol' }
   ]
-} );
+};
 
-var index = fs.readFileSync( 'views/index.html' ).toString();
+// express
 var server = express();
 
 server.get( '/', function ( req, res ) {
-  res.end( index.replace( '<!--APP-->', app.$el.html() ) );
+  res.end( index.replace( '<!--APP-->', App.deliver( null, init ) ) );
 } );
 
 server.use( express.static( '.' ) );
