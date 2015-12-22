@@ -25,14 +25,14 @@ var App = module.exports = $.nito( {
       active: null
     };
 
-    this.on( 'create', this.create );
+    this.on( 'click', '.create', this.create );
   },
 
   update: function ( data ) {
     if ( data ) this.data = data;
 
     this.find( '.nav' ).loop( this.data.pages, NavItem, this );
-    this.find( '.active' ).next( this.data.active, Page, this );
+    this.find( '.active' ).nest( this.data.active, Page, this );
   },
 
   show: function ( page ) {
