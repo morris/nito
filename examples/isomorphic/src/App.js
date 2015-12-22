@@ -1,27 +1,58 @@
 var $ = require( './dollar' );
-var Item = require( './Item' );
+var NavItem = require( './NavItem' );
+var Page = require( './Page' );
 
 var App = module.exports = $.nito( {
 
   base: [
     '<div class="app" id="app">',
-      '<h1 class="title">test</h1>',
-      '<p><button>Randomize</button></p>',
-      '<div class="items">',
+      '<p><button class="create">New Page</button></p>',
+      '<nav class="nav">',
+      '</nav>',
+      '<div class="active">',
       '</div>',
     '</div>'
   ],
 
   id: 'app',
 
+  mount: function () {
+    // ensure initial data
+    this.data = {
+      pages: [],
+      active: null
+    };
+
+    this.on( 'create', this.create );
+  },
+
   update: function ( data ) {
     if ( data ) this.data = data;
 
-    this.$el.weld( { title: this.data.title } );
-    this.find( '.items' ).loop( this.data.items, Item, this );
+    this.find( '.nav' ).loop( this.data.pages, NavItem, this );
+    this.find( '.active' ).next( this.data.active, Page, this );
   },
 
-  randomize: function () {
+  show: function ( page ) {
+    this.data.active = page;
+    this.update();
+  },
+
+  create: function () {
+    this.data.pages.push( {
+      title: 'New Page',
+      body: '> What is bravery, without a dash of recklessness?'
+    } );
+    this.update();
+  },
+
+  remove: function () {
+    var pages = this.data.pages;
+    pages.splice( pages.indexOf( page ), 1 );
+    this.update();
+  },
+
+  save: function () {
 
   }
 

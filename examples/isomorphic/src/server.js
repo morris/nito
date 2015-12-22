@@ -4,20 +4,10 @@ var App = require( './App' );
 
 var index = fs.readFileSync( 'views/index.html' ).toString();
 
-var init = {
-  title: 'foo',
-  items: [
-    { title: 'Lorem', description: 'Ipsum' },
-    { title: 'Dolor', description: 'Sit' },
-    { title: 'Amet', description: 'Lol' }
-  ]
-};
-
-// express
 var server = express();
 
 server.get( '/', function ( req, res ) {
-  res.end( index.replace( '<!--APP-->', App.deliver( null, init ) ) );
+  res.end( index.replace( '<!-- APP -->', App.deliver() ) );
 } );
 
 server.use( express.static( '.' ) );
