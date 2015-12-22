@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.10.0
+
+- Added `$.Comp.deliver`
+- Added `$.fn.deliver`
+- Added Markdown Editor example
+
 ## v0.9.0
 
 - Renamed `setup` to `mount`
