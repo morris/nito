@@ -85,7 +85,7 @@
 
 			// get serialized data from attribute, if any
 			try {
-				if ( !data ) data = JSON.parse( $el.attr( deliverAttr + this.id ) );
+				if ( !data ) data = JSON.parse( $el.attr( deliverAttr + this.id ) || null );
 			} catch ( ex ) {
 				console.warn( ex );
 			}

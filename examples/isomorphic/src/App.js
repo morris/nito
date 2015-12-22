@@ -19,7 +19,9 @@ var App = module.exports = $.nito( {
   mount: function () {
     // ensure initial data
     this.data = {
-      pages: [],
+      pages: [
+        { title: 'Lo', body: 'wut' }
+      ],
       active: null
     };
 

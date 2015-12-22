@@ -1,3 +1,4 @@
+var browserify = require( 'browserify' );
 var fs = require( 'fs' );
 var express = require( 'express' );
 var App = require( './App' );
