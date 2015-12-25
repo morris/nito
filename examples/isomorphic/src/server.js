@@ -8,7 +8,7 @@ var index = fs.readFileSync( 'views/index.html' ).toString();
 var server = express();
 
 server.get( '/', function ( req, res ) {
-  res.end( index.replace( '<!-- APP -->', App.deliver() ) );
+	res.end( index.replace( '<!-- APP -->', App.deliver() ) );
 } );
 
 server.use( express.static( '.' ) );
