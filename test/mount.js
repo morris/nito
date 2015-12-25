@@ -1,4 +1,4 @@
-( function () {
+QUnit.module( 'mount', function () {
 
 	var settings = {
 
@@ -61,4 +61,4 @@
 
 	} );
 
-} )();
+} );

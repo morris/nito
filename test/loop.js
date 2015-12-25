@@ -1,4 +1,4 @@
-( function () {
+QUnit.module( 'loop', function () {
 
 	var Item = $.nito( {
 
@@ -18,9 +18,9 @@
 
 	//
 
-	QUnit.test( 'loop', testLoop );
+	QUnit.test( 'with identify', testLoop );
 
-	QUnit.test( 'loop w/o identify', function ( assert ) {
+	QUnit.test( 'without identify', function ( assert ) {
 
 		var t = Item.identify;
 		testLoop( assert );
@@ -155,4 +155,4 @@
 
 	} );
 
-} )();
+} );
