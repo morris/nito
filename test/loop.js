@@ -10,10 +10,8 @@
 			return item.id;
 		},
 
-		update: function ( item ) {
-			if ( item ) this.item = item;
-
-			this.$el.weld( this.item.title );
+		update: function () {
+			this.$el.weld( this.data.title );
 		}
 
 	} );

@@ -6,8 +6,7 @@
 			this.env = env;
 		},
 
-		update: function ( data ) {
-			if ( data ) this.data = data;
+		update: function () {
 			this.$el.trigger( 'update', this.data );
 		}
 

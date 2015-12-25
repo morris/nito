@@ -2,6 +2,11 @@
 
 ## v0.10.0
 
+- Added `$.Comp.prototype.set( data )`
+	- Sets data as `this.data` and calls `update`
+- Removed `data` argument in `$.Comp.prototype.update`
+	- Use `set( data )` instead
+	- Only use `this.data` in `update`
 - Added `$.Comp.deliver`
 - Added `$.fn.deliver`
 - Added Markdown Editor example
@@ -18,7 +23,7 @@
 
 ## v0.8.0
 
-- `values` is now able to serializes form controls
+- `values` is now able to serialize form controls
 - Removed `keyProp` in favor of new `identify` method
 	- Reconciliation uses the item index by default
 - Optimized `weld`

@@ -55,13 +55,13 @@ var TodoItem = $.nito( {
 ```
 
 - For people who know and like jQuery or Zepto
-- Simple: 1 factory, 11 functions, <500 lines
+- One simple factory, a few functions, <500 lines
+- Not a framework (never gets in the way!)
 - [No templates](http://blog.nodejitsu.com/micro-templates-are-dead/),
 [no virtual DOM](http://blog.500tech.com/is-reactjs-fast/),
 [no JSX](https://www.pandastrike.com/posts/20150311-react-bad-idea)
 - Just $ and standard JavaScript
 - Favors explicit code over implicit magic
-- Never gets in the way
 - Pairs well with [Bootstrap](http://getbootstrap.com)
 
 

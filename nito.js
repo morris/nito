@@ -37,7 +37,7 @@
 		Comp.identify = settings.identify;
 		Comp.id = settings.id || ++$.nitoId;
 
-		// extend prototype with settings; unset static settings
+		// extend prototype with settings
 		var proto = extend( Comp.prototype, settings );
 		delete proto.base;
 		delete proto.identify;
@@ -54,7 +54,7 @@
 		this.$el = $( el );
 
 		this.mount( env );
-		this.update( data );
+		this.set( data );
 	};
 
 	extend( $.Comp, {
@@ -110,6 +110,11 @@
 
 		update: function () {},
 
+		set: function ( data ) {
+			if ( data ) this.data = data;
+			this.update();
+		},
+
 		on: function () {
 
 			// bind any function argument to the component
@@ -144,7 +149,7 @@
 		update: function ( factory, data ) {
 
 			return this.comps( factory, function () {
-				this.update( funcValue( data, this ) );
+				this.set( funcValue( data, this ) );
 			} );
 
 		},
@@ -188,7 +193,7 @@
 				if ( comp ) {
 					// store distance between actual and target index
 					comp._sort = Math.abs( index - comp._index );
-					comp.update( item );
+					comp.set( item );
 				} else {
 					comp = factory.create( env, item );
 					map[ key ] = comp;

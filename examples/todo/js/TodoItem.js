@@ -12,8 +12,8 @@ var TodoItem = $.nito( {
 	],
 
 	identify: function ( item ) {
-    return item.id;
-  },
+		return item.id;
+	},
 
 	mount: function ( app ) {
 
@@ -21,24 +21,18 @@ var TodoItem = $.nito( {
 		this.editing = false;
 
 		this.on( 'click', '.check', function ( e ) {
-
 			this.app.check( this.item, !this.item.completed );
-
 		} );
 
 		this.on( 'dblclick', function ( e ) {
-
 			this.editing = true;
 			this.update();
 			this.find( '[name=title]' ).val( this.item.title ).focus();
-
 		} );
 
 		this.on( 'blur', '[name=title]', function ( e ) {
-
 			this.editing = false;
 			this.app.title( this.item, e.target.value.trim() );
-
 		} );
 
 		this.on( 'keydown', '[name=title]', function ( e ) {
@@ -62,27 +56,23 @@ var TodoItem = $.nito( {
 		} );
 
 		this.on( 'click', '.destroy', function () {
-
 			this.app.destroy( this.item );
-
 		} );
 
 	},
 
-	update: function ( item ) {
-    // make sure update may also be called without data
-    if ( item ) this.item = item;
+	update: function () {
+		var item = this.data;
 
 		// weld and classes are nice, non-destructive use of $
-		this.$el.weld( this.item );
+		this.$el.weld( item );
 
 		this.$el.classes( {
-			completed: this.item.completed,
+			completed: item.completed,
 			editing: this.editing
 		} );
 
-		this.$el.values( { completed: this.item.completed } );
-
+		this.$el.values( { completed: item.completed } );
 	}
 
 } );

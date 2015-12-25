@@ -29,13 +29,11 @@ var Todo = $.nito( {
 
 			switch ( e.which ) {
 			case ESCAPE_KEY:
-
 				e.preventDefault();
 				input.value = '';
 				break;
 
 			case ENTER_KEY:
-
 				this.add( input.value );
 
 				e.preventDefault();
@@ -167,7 +165,6 @@ var Todo = $.nito( {
 	// persistence
 
 	load: function () {
-
 		try {
 			this.data = JSON.parse( localStorage.todo );
 		} catch ( ex ) {}
@@ -177,15 +174,12 @@ var Todo = $.nito( {
 			items: [],
 			nextId: 1
 		};
-
 	},
 
 	store: function () {
-
 		try {
 			localStorage.todo = JSON.stringify( this.data );
 		} catch ( ex ) {}
-
 	}
 
 } );
