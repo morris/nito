@@ -1,3 +1,3 @@
 var App = require( './App' );
 
-App.mount( '#app' );
+App.mount( '#app', window );

@@ -3,18 +3,10 @@ var $ = require( './dollar' );
 module.exports = $.nito( {
 
 	base: [
-		'<div class="nav-item">',
-			'<span class="title"></span>',
-		'</div>'
+		'<li class="nav-item">',
+			'<a class="title"></a>',
+		'</li>'
 	],
-
-	mount: function ( app ) {
-		this.app = app;
-
-		this.on( 'click', function () {
-			this.app.show( this.data );
-		} );
-	},
 
 	update: function ( data ) {
 		if ( data ) this.data = data;
@@ -22,6 +14,7 @@ module.exports = $.nito( {
 		this.$el.classes( {
 			active: this.data.active
 		} );
+		this.find( 'a' ).attr( 'href', '/' + this.data.id );
 	}
 
 } );

@@ -2,66 +2,85 @@ var $ = require( './dollar' );
 var NavItem = require( './NavItem' );
 var Page = require( './Page' );
 
-var App = module.exports = $.nito( {
+module.exports = $.nito( {
 
 	base: [
 		'<div class="app" id="app">',
 			'<p><button class="btn btn-default create">New Page</button></p>',
-			'<nav class="nav">',
-			'</nav>',
-			'<div class="active">',
+			'<ul class="nav nav-tabs">',
+			'</ul>',
+			'<div class="active-page">',
 			'</div>',
 		'</div>'
 	],
 
 	id: 'app',
 
-	mount: function () {
-		// ensure initial data
-		this.data = {
-			pages: [
-				{ title: 'Lo', body: 'wut' }
-			],
-			active: null
-		};
-
+	mount: function ( env ) {
+		this.env = env;
 		this.on( 'click', '.create', this.create );
+		this.on( 'click', 'a', this.navigate );
+		if ( process.browser ) {
+			$( env ).on( 'popstate', this.update.bind( this ) );
+		}
 	},
 
-	update: function ( data ) {
-		if ( data ) this.data = data;
-		var active = this.data.active;
+	update: function () {
+		var env = this.env;
+		var data = this.data;
+
+		var path = process.browser ? env.location.pathname : env.url;
 
 		this.find( '.nav' ).loop( this.data.pages.map( function ( page ) {
 			return {
 				title: page.title,
-				active: page === active
+				id: page.id,
+				active: '/' + page.id === path
 			};
 		} ), NavItem, this );
-		this.find( '.active' ).nest( this.data.active, Page, this );
+
+		this.find( '.active-page' ).loop( this.data.pages.filter( function ( page ) {
+			return '/' + page.id === path;
+		} ), Page, this );
 	},
 
-	show: function ( page ) {
-		this.data.active = page;
+	navigate: function ( e ) {
+		var $a = $( e.target );
+		history.pushState( {}, 'Test', $a.attr( 'href' ) );
+		e.preventDefault();
 		this.update();
 	},
 
 	create: function () {
 		this.data.pages.push( {
+			id: this.uuid(),
 			title: 'New Page',
 			body: '> What is bravery, without a dash of recklessness?'
 		} );
-		this.update();
+		this.persist();
 	},
 
-	remove: function () {
+	remove: function ( page ) {
 		var pages = this.data.pages;
 		pages.splice( pages.indexOf( page ), 1 );
+		this.persist();
+	},
+
+	save: function ( page, data ) {
+		$.extend( page, data );
+		this.persist();
+	},
+
+	persist: function () {
+		$.post( '/', JSON.stringify( this.data ) );
 		this.update();
 	},
 
-	save: function () {
-
+	uuid: function () {
+		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace( /[xy]/g, function ( c ) {
+			var r = Math.random() * 16 | 0, v = c === 'x' ? r : ( r & 0x3 | 0x8 );
+			return v.toString( 16 );
+		} );
 	}
 
 } );

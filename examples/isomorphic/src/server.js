@@ -7,10 +7,21 @@ var index = fs.readFileSync( 'views/index.html' ).toString();
 
 var server = express();
 
-server.get( '/', function ( req, res ) {
-	res.end( index.replace( '<!-- APP -->', App.deliver() ) );
+server.use( express.static( '.' ) );
+
+server.get( '/*', function ( req, res ) {
+	fs.readFile( 'data.json', function ( err, json ) {
+		var data = err ? null : JSON.parse( json.toString() );
+		res.end( index.replace( '<!-- APP -->', App.deliver( req, data ) ) );
+	} );
 } );
 
-server.use( express.static( '.' ) );
+// persistence
+server.post( '/', function ( req, res ) {
+	var data = fs.createWriteStream( 'data.json' );
+	req.pipe( data ).on( 'finish', function () {
+		res.set( 'Content-Type', 'application/json' ).end( '{ ok: true }' );
+	} );
+} );
 
 server.listen( 3000 );
