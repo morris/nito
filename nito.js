@@ -113,6 +113,7 @@
 		set: function ( data ) {
 			if ( data ) this.data = data;
 			this.update();
+			return this;
 		},
 
 		on: function () {
