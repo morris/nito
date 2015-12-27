@@ -49,7 +49,7 @@ var TodoItem = $.nito( {
 		this.todo.update(); // always update explicitly
 	}
 
-} );
+-} );
 ```
 
 - Create reusable components with jQuery or Zepto
@@ -278,3 +278,11 @@ $( '<div><h1 class="title"></h1><p class="post"></p></div>' )
 - Otherwise, update all components mounted on `$els`
 - `data` is passed to `comp.set`. Optional
 - Returns `$els`
+
+## Serialize component data for server-to-client transmission
+
+#### `$els.deliver( html )`
+
+- Serialize all components mounted on `$els` into attributes
+- If `html` is set, return the outer HTML of the first element in `$els`
+- Otherwise return `$els`
