@@ -21,18 +21,18 @@ var TodoItem = $.nito( {
 		this.editing = false;
 
 		this.on( 'click', '.check', function ( e ) {
-			this.app.check( this.item, !this.item.completed );
+			this.app.check( this.data, !this.data.completed );
 		} );
 
 		this.on( 'dblclick', function ( e ) {
 			this.editing = true;
 			this.update();
-			this.find( '[name=title]' ).val( this.item.title ).focus();
+			this.find( '[name=title]' ).val( this.data.title ).focus();
 		} );
 
 		this.on( 'blur', '[name=title]', function ( e ) {
 			this.editing = false;
-			this.app.title( this.item, e.target.value.trim() );
+			this.app.title( this.data, e.target.value.trim() );
 		} );
 
 		this.on( 'keydown', '[name=title]', function ( e ) {
@@ -42,7 +42,7 @@ var TodoItem = $.nito( {
 			switch ( e.which ) {
 			case ESCAPE_KEY:
 				e.preventDefault();
-				input.value = this.item.title;
+				input.value = this.data.title;
 				$( input ).blur();
 				break;
 
@@ -56,7 +56,7 @@ var TodoItem = $.nito( {
 		} );
 
 		this.on( 'click', '.destroy', function () {
-			this.app.destroy( this.item );
+			this.app.destroy( this.data );
 		} );
 
 	},
