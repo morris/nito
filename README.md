@@ -1,7 +1,7 @@
 # Nito :skull:
 
 Minimal component library for jQuery, inspired by React and Riot.
-Just an experiment. [Or maybe not.](https://rawgit.com/morris/nito/master/examples/nito-vs-react/)
+Just an experiment. [Or maybe not.](https://rawgit.com/morris/nito/v0.10.0/examples/nito-vs-react/)
 
 ```js
 var Todo = $.nito( {
@@ -49,7 +49,7 @@ var TodoItem = $.nito( {
 		this.todo.update(); // always update explicitly
 	}
 
--} );
+} );
 ```
 
 - Create reusable components with jQuery or Zepto
