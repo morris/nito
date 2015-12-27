@@ -19,7 +19,7 @@ module.exports = $.nito( {
 				'</div>',
 				'<div class="form-group">',
 					'<label class="control-label">Body</label>',
-					'<textarea class="form-control" type="text" name="body"></textarea>',
+					'<textarea class="form-control" rows="20" type="text" name="body"></textarea>',
 				'</div>',
 			'</form>',
 		'</div>'

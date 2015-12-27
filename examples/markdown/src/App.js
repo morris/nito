@@ -18,6 +18,7 @@ module.exports = $.nito( {
 
 	mount: function ( env ) {
 		this.env = env;
+		this.data = { pages: [] };
 		this.on( 'click', '.create', this.create );
 		this.on( 'click', 'a', this.navigate );
 		if ( process.browser ) {
