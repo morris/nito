@@ -7,10 +7,10 @@
 	} else if ( typeof module === 'object' && module.exports ) {
 		module.exports = factory;
 	} else {
-		factory( root, root.$ );
+		factory( root.$ );
 	}
 
-} )( this, function ( window, $ ) {
+} )( this, function ( $ ) {
 
 	if ( $.nito ) return $; // extend $ only once
 
