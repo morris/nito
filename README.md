@@ -81,8 +81,6 @@ Isomorphic (server- and client-side) app built with Nito on Node.js.
 
 ## Getting started
 
-Include $ first, then Nito:
-
 ```html
 <script src="jquery-1.11.3.min.js"></script>
 <script src="nito.min.js"></script>

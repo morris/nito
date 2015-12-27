@@ -47,7 +47,7 @@ module.exports = $.nito( {
 
 	navigate: function ( e ) {
 		var $a = $( e.target );
-		history.pushState( {}, 'Test', $a.attr( 'href' ) );
+		history.pushState( {}, '', $a.attr( 'href' ) );
 		e.preventDefault();
 		this.update();
 	},
