@@ -55,7 +55,7 @@ module.exports = $.nito( {
 	create: function () {
 		this.data.pages.push( {
 			id: this.uuid(),
-			title: 'New Page',
+			title: 'Untitled',
 			body: '> What is bravery, without a dash of recklessness?'
 		} );
 		this.persist();
