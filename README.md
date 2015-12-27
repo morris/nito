@@ -66,8 +66,17 @@ var TodoItem = $.nito( {
 
 ## Examples
 
-- [Todo](https://rawgit.com/morris/nito/master/examples/todo/) with TodoMVC-like features
-- [Nito vs. React](https://rawgit.com/morris/nito/master/examples/nito-vs-react/) with benchmark
+### [Todo](https://rawgit.com/morris/nito/v0.10.0/examples/todo/)
+
+A simple client-side todo app with TodoMVC-like features.
+
+### [Nito vs. React](https://rawgit.com/morris/nito/v0.10.0/examples/nito-vs-react/)
+
+Structural comparison of the two libraries, including benchmark.
+
+### [Markdown Editor](https://github.com/morris/nito/tree/master/examples/markdown)
+
+Isomorphic (server- and client-side) app built with Nito on Node.js.
 
 
 ## Getting started
