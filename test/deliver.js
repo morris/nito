@@ -19,4 +19,36 @@ QUnit.module( 'deliver', function () {
 
 	} );
 
+	QUnit.test( 'looped', function ( assert ) {
+
+		var Div = $.nito( {
+			base: '<div></div>',
+			id: 'div',
+			update: function () {
+				this.$el.loop( this.data, P, this );
+			}
+		} );
+
+		var P = $.nito( {
+			base: '<p></p>',
+			mount: function () {
+				this.on( 'test', function () {
+					++test;
+				} );
+			}
+		} );
+
+		var test = 0;
+
+		var div = Div.create( null, [ 1, 2, 3 ] );
+		var html = div.$el.deliver( true );
+
+		var div_ = Div.mount( html );
+		assert.equal( div_.data.length, 3 );
+		assert.equal( div_.find( 'p' ).length, 3 );
+		div_.find( 'p' ).trigger( 'test' );
+		assert.equal( test, 3 );
+
+	} );
+
 } );

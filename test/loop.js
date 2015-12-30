@@ -18,13 +18,14 @@ QUnit.module( 'loop', function () {
 
 	//
 
-	QUnit.test( 'with identify', testLoop );
+	QUnit.test( 'order, with identify', testLoop );
 
-	QUnit.test( 'without identify', function ( assert ) {
+	QUnit.test( 'order, without identify', function ( assert ) {
 
 		var t = Item.identify;
+		Item.identify = null;
 		testLoop( assert );
-		Item.identiy = t;
+		Item.identify = t;
 
 	} );
 
