@@ -369,7 +369,7 @@ QUnit.module( 'values', function () {
 
 	} );
 
-	QUnit.test( 'get', function ( assert ) {
+	( window.Zepto ? QUnit.skip : QUnit.test )( 'get', function ( assert ) {
 
 		var $form = $(
 			'<form>' +
