@@ -328,7 +328,8 @@
 
 			var $controls = this.filter( '[name]' ).add( this.find( '[name]' ) );
 
-			if ( data === undefined ) { // get values
+			// get values
+			if ( data === undefined ) {
 
 				data = {};
 				$controls.serializeArray().forEach( function ( entry ) {

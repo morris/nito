@@ -8,6 +8,7 @@ QUnit.module( 'reset', function () {
 				'<input type="checkbox" name="bar" value="1">' +
 				'<textarea name="baz"></textarea>' +
 				'<select name="select"><option value="a"></option><option value="b"></option></select>' +
+				'<input type="button" name="what">',
 			'</form>'
 		);
 		var $foo = $form.children().eq( 0 );

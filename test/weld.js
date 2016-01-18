@@ -40,4 +40,24 @@ QUnit.module( 'weld', function () {
 
 	} );
 
+	QUnit.test( 'skip inputs', function ( assert ) {
+
+		var $el = $( '<div><i class="foo"></i><input type="text" class="foo"><b class="bar"></b><textarea class="bar"></textarea></div>' );
+
+		$el.weld( {
+			foo: 'hello',
+			bar: 'world'
+		} );
+
+		assert.equal( $el.find( 'i' ).html(), 'hello' );
+		assert.equal( $el.find( 'b' ).html(), 'world' );
+		assert.equal( $el.find( 'input' ).val(), '' );
+		assert.equal( $el.find( 'textarea' ).val(), '' );
+
+		$el.weld( 'hi' );
+
+		assert.equal( $el.html(), 'hi' );
+
+	} );
+
 } );
