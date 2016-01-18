@@ -12,7 +12,7 @@
 
 } )( this, function ( $ ) {
 
-	if ( $.nito ) return $; // extend $ only once
+	$.nitoId = $.nitoId || 0;
 
 	var extend = $.extend, isArray = $.isArray, each = $.each;
 
@@ -101,8 +101,6 @@
 		}
 
 	} );
-
-	$.nitoId = 0;
 
 	extend( $.Comp.prototype, {
 
