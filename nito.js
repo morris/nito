@@ -1,4 +1,4 @@
-/*! Nito v0.10.0 - https://github.com/morris/nito */
+/*! Nito v0.11.0 - https://github.com/morris/nito */
 
 ;( function ( root, factory ) {
 
@@ -99,7 +99,7 @@
 		unmount: function ( el ) {
 			el =  $( el )[ 0 ];
 			if ( el && el.nitoComps ) {
-				var comp = el.nitoComps[ this.id ]
+				var comp = el.nitoComps[ this.id ];
 				if ( comp ) {
 					comp.unmount();
 					delete el.nitoComps[ this.id ];
