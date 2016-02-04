@@ -297,7 +297,7 @@
 						break;
 
 					default:
-						if ( ( this.nitoHTML || this.innerHTML ) !== value ) {
+						if ( this.nitoHTML !== value ) {
 							this.innerHTML = this.nitoHTML = value;
 						}
 					}
