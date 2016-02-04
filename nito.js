@@ -96,6 +96,17 @@
 
 		},
 
+		unmount: function ( el ) {
+			el =  $( el )[ 0 ];
+			if ( el && el.nitoComps ) {
+				var comp = el.nitoComps[ this.id ]
+				if ( comp ) {
+					comp.unmount();
+					delete el.nitoComps[ this.id ];
+				}
+			}
+		},
+
 		deliver: function ( env, data ) {
 			return this.create( env, data ).$el.deliver( true );
 		}
@@ -109,6 +120,8 @@
 		mount: function () {},
 
 		update: function () {},
+
+		unmount: function () {},
 
 		set: function ( data ) {
 			if ( data ) this.data = data;
@@ -151,6 +164,14 @@
 
 			return this.comps( factory, function () {
 				this.set( funcValue( data, this ) );
+			} );
+
+		},
+
+		unmount: function ( factory ) {
+
+			return this.comps( factory, function () {
+				this.factory.unmount( this.el );
 			} );
 
 		},

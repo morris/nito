@@ -8,6 +8,10 @@ QUnit.module( 'mount', function () {
 
 		update: function () {
 			this.$el.trigger( 'update', this.data );
+		},
+
+		unmount: function () {
+			this.$el.trigger( 'unmount', this.data );
 		}
 
 	};
@@ -58,6 +62,69 @@ QUnit.module( 'mount', function () {
 		$el.update( A );
 
 		assert.deepEqual( updates, [ 'x', 'x', 'x', 'a', 'test', 'test', 'x', 'b', 'test' ] );
+
+	} );
+
+	QUnit.test( 'unmount one', function ( assert ) {
+
+		var $el = $( '<div></div>' );
+		$el.mount( A, 'a', 'x' );
+		$el.mount( B, 'b', 'x' );
+
+		var updates = [];
+		$el.on( 'update', function ( e, data ) {
+			updates.push( data );
+		} );
+		var unmounts = [];
+		$el.on( 'unmount', function ( e, data ) {
+			unmounts.push( data );
+		} );
+		$el.update();
+		$el.update( A );
+		$el.update( A, 'a' );
+		$el.unmount( A );
+		$el.update( A, 'test' );
+		$el.update( B );
+		$el.update( B, 'b' );
+		$el.unmount( B );
+		$el.update( B, 'test' );
+
+		assert.deepEqual( updates, [ 'x', 'x', 'x', 'a', 'x', 'b' ] );
+		assert.deepEqual( unmounts, [ 'a', 'b' ] );
+		$el.comps( function () {
+			assert.ok( false );
+		} );
+
+	} );
+
+	QUnit.test( 'unmount all', function ( assert ) {
+
+		var $el = $( '<div></div>' );
+		$el.mount( A, 'a', 'x' );
+		$el.mount( B, 'b', 'x' );
+
+		var updates = [];
+		$el.on( 'update', function ( e, data ) {
+			updates.push( data );
+		} );
+		var unmounts = [];
+		$el.on( 'unmount', function ( e, data ) {
+			unmounts.push( data );
+		} );
+		$el.update();
+		$el.update( A );
+		$el.update( A, 'a' );
+		$el.update( B );
+		$el.update( B, 'b' );
+		$el.unmount();
+		$el.update( A, 'test' );
+		$el.update( B, 'test' );
+
+		assert.deepEqual( updates, [ 'x', 'x', 'x', 'a', 'x', 'b' ] );
+		assert.deepEqual( unmounts, [ 'a', 'b' ] );
+		$el.comps( function () {
+			assert.ok( false );
+		} );
 
 	} );
 
