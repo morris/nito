@@ -111,6 +111,8 @@ Isomorphic (server- and client-side) app built with Nito on Node.js.
 		- Has to be called explicitly (except for components rendered with `loop`/`nest`)
 		- Use `this.data` to update the component
 		- Optional, defaults to noop
+	- `unmount()`
+		- Called when unmounting a component
 	- `identify( item )`
 		- Generates keys from items in `loop`
 		- Keys are used for component reconciliation
@@ -284,6 +286,12 @@ $( '<div><h1 class="title"></h1><p class="post"></p></div>' )
 - If `factory` is set, update all components from `factory` mounted on `$els`
 - Otherwise, update all components mounted on `$els`
 - `data` is passed to `comp.set`. Optional
+- Returns `$els`
+
+#### `$els.unmount( factory )`
+
+- If `factory` is set, unmount all components from `factory` mounted on `$els`
+- Otherwise, unmount all components mounted on `$els`
 - Returns `$els`
 
 ## Serialize component data for server-to-client transmission
