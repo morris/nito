@@ -239,6 +239,7 @@
 				var child = children[ index ];
 
 				if ( !child.nitoKeep ) {
+					$( child ).unmount();
 					container.removeChild( child );
 					if ( child.nitoKey ) delete map[ child.nitoKey ];
 				} else {
