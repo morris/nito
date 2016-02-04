@@ -417,8 +417,9 @@
 					break;
 
 				case 'TEXTAREA':
-					this[ valueProp ] = value + '';
-					if ( defaults ) $control.html( value + '' ); // Support: IE
+					value += '';
+					if ( this[ valueProp ] !== value ) this[ valueProp ] = value;
+					if ( defaults ) $control.weld( value ); // Support: IE
 					break;
 
 				case 'radio':
@@ -439,7 +440,8 @@
 					break;
 
 				default: // text, hidden, password, etc.
-					this[ valueProp ] = value + '';
+					value += '';
+					if ( this[ valueProp ] !== value ) this[ valueProp ] = value;
 				}
 
 			} );
