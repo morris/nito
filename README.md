@@ -1,7 +1,7 @@
 <img src="logo.png" width="200" alt="Nito">
 
 Minimal component library for jQuery, inspired by React and Riot.
-Just an experiment. [Or maybe not.](https://rawgit.com/morris/nito/v0.10.0/examples/nito-vs-react/)
+Just an experiment. [Or maybe not.](https://rawgit.com/morris/nito/v0.11.0/examples/nito-vs-react/)
 
 ```js
 var Todo = $.nito( {
@@ -66,11 +66,11 @@ var TodoItem = $.nito( {
 
 ## Examples
 
-### [Todo](https://rawgit.com/morris/nito/v0.10.0/examples/todo/)
+### [Todo](https://rawgit.com/morris/nito/v0.11.0/examples/todo/)
 
 A simple client-side todo app with TodoMVC-like features.
 
-### [Nito vs. React](https://rawgit.com/morris/nito/v0.10.0/examples/nito-vs-react/)
+### [Nito vs. React](https://rawgit.com/morris/nito/v0.11.0/examples/nito-vs-react/)
 
 Structural comparison of the two libraries, including benchmark.
 
@@ -105,14 +105,15 @@ Isomorphic (server- and client-side) app built with Nito on Node.js.
 		- Called when mounting a component
 		- `env` is used to pass constant references, e.g. the app/store/controller or a parent component
 		- Define event handlers here
-		- Optional, defaults to noop
+		- Optional
 	- `update()`
 		- Updates the component
 		- Has to be called explicitly (except for components rendered with `loop`/`nest`)
 		- Use `this.data` to update the component
-		- Optional, defaults to noop
+		- Optional
 	- `unmount()`
 		- Called when unmounting a component
+		- Optional
 	- `identify( item )`
 		- Generates keys from items in `loop`
 		- Keys are used for component reconciliation
