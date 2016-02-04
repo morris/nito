@@ -51,4 +51,15 @@ QUnit.module( 'deliver', function () {
 
 	} );
 
+	QUnit.test( 'direct', function ( assert ) {
+
+		var A = $.nito( { base: '<div class="direct"></div>', id: 'a' } );
+		var s = A.deliver( 'ignore', { type: 'A' } );
+
+		assert.ok( s.match( /<div/ ) );
+		assert.ok( s.match( /class="direct"/ ) );
+		assert.equal( A.mount( s ).data.type, 'A' );
+
+	} );
+
 } );

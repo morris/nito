@@ -12,7 +12,7 @@
 
 } )( this, function ( $ ) {
 
-	if ( $.nito ) return $; // extend $ only once
+	$.nitoId = $.nitoId || 0;
 
 	var extend = $.extend, isArray = $.isArray, each = $.each;
 
@@ -112,8 +112,6 @@
 		}
 
 	} );
-
-	$.nitoId = 0;
 
 	extend( $.Comp.prototype, {
 
@@ -352,7 +350,8 @@
 
 			var $controls = this.filter( '[name]' ).add( this.find( '[name]' ) );
 
-			if ( data === undefined ) { // get values
+			// get values
+			if ( data === undefined ) {
 
 				data = {};
 				$controls.serializeArray().forEach( function ( entry ) {
