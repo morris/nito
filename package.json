@@ -1,6 +1,6 @@
 {
   "name": "nito",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "repository": "https://github.com/morris/nito",
   "description": "Minimal component library for jQuery, inspired by React and Riot",
   "author": {
