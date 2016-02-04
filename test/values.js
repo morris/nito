@@ -369,7 +369,7 @@ QUnit.module( 'values', function () {
 
 	} );
 
-	QUnit.test( 'get', function ( assert ) {
+	( typeof Zepto === 'undefined' ? QUnit.test : QUnit.skip )( 'get', function ( assert ) {
 
 		var $form = $(
 			'<form>' +
