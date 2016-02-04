@@ -1,8 +1,14 @@
 # Changelog
 
+## v0.11.0
+
+- Fix `$.fn.values`: checks if text inputs are modified
+- Added `$.Comp.prototype.unmount`
+- Added `$.fn.unmount`
+
 ## v0.10.0
 
-- Added `$.Comp.prototype.set( data )`
+- Added `$.Comp.prototype.set`
 	- Sets data as `this.data` and calls `update`
 - Removed `data` argument in `$.Comp.prototype.update`
 	- Use `set( data )` instead
