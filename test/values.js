@@ -408,15 +408,17 @@ QUnit.module( 'values', function () {
 
 	QUnit.test( 'soft set on input', function ( assert ) {
 
-		var $form = $( '<form><input type="text" name="foo" value="bar"></form>' );
+		var $form = $( '<form><input type="text" name="foo" value="bar"></form>' ).appendTo( 'body' );
 		var $bar = $form.find( 'input' );
 
-		$bar.select();
+		$bar[ 0 ].setSelectionRange( 0, 3 );
 		assert.equal( $bar[ 0 ].selectionStart, 0 );
 		assert.equal( $bar[ 0 ].selectionEnd, 3 );
 		$form.values( { foo: 'bar' } );
 		assert.equal( $bar[ 0 ].selectionStart, 0 );
 		assert.equal( $bar[ 0 ].selectionEnd, 3 );
+
+		$form.remove();
 
 	} );
 
