@@ -1,159 +1,159 @@
 QUnit.module( 'loop', function () {
 
-	var Item = $.nito( {
+  var Item = $.nito( {
 
-		base: [
-			'<div class="item"></div>'
-		],
+    base: [
+      '<div class="item"></div>'
+    ],
 
-		identify: function ( item ) {
-			return item.id;
-		},
+    identify: function ( item ) {
+      return item.id;
+    },
 
-		update: function () {
-			this.$el.weld( this.data.title );
-		}
+    update: function () {
+      this.$el.weld( this.data.title );
+    }
 
-	} );
+  } );
 
-	//
+  //
 
-	QUnit.test( 'order, with identify', testLoop );
+  QUnit.test( 'order, with identify', testLoop );
 
-	QUnit.test( 'order, without identify', function ( assert ) {
+  QUnit.test( 'order, without identify', function ( assert ) {
 
-		var t = Item.identify;
-		Item.identify = null;
-		testLoop( assert );
-		Item.identify = t;
+    var t = Item.identify;
+    Item.identify = null;
+    testLoop( assert );
+    Item.identify = t;
 
-	} );
+  } );
 
-	function testLoop( assert ) {
+  function testLoop( assert ) {
 
-		var $items = $( '<div></div>' );
+    var $items = $( '<div></div>' );
 
-		$items.loop( [
-			{ id: 1, title: 'A' },
-			{ id: 2, title: 'B' },
-			{ id: 3, title: 'C' },
-			{ id: 4, title: 'D' },
-			{ id: 5, title: 'E' },
-			{ id: 6, title: 'F' },
-			{ id: 7, title: 'G' }
-		], Item );
+    $items.loop( [
+      { id: 1, title: 'A' },
+      { id: 2, title: 'B' },
+      { id: 3, title: 'C' },
+      { id: 4, title: 'D' },
+      { id: 5, title: 'E' },
+      { id: 6, title: 'F' },
+      { id: 7, title: 'G' }
+    ], Item );
 
-		assert.equal( $items.children().length, 7 );
-		assert.equal( join(), 'ABCDEFG' );
+    assert.equal( $items.children().length, 7 );
+    assert.equal( join(), 'ABCDEFG' );
 
-		$items.loop( [
-			{ id: 1, title: 'A' },
-			{ id: 2, title: 'B' },
-			{ id: 3, title: 'C' },
-			{ id: 4, title: 'D' },
-			{ id: 5, title: 'E' },
-			{ id: 6, title: 'F' },
-			{ id: 7, title: 'G' }
-		], Item );
+    $items.loop( [
+      { id: 1, title: 'A' },
+      { id: 2, title: 'B' },
+      { id: 3, title: 'C' },
+      { id: 4, title: 'D' },
+      { id: 5, title: 'E' },
+      { id: 6, title: 'F' },
+      { id: 7, title: 'G' }
+    ], Item );
 
-		assert.equal( $items.children().length, 7 );
-		assert.equal( join(), 'ABCDEFG' );
+    assert.equal( $items.children().length, 7 );
+    assert.equal( join(), 'ABCDEFG' );
 
-		$items.loop( [
-			{ id: 1, title: 'A' },
-			{ id: 3, title: 'C' },
-			{ id: 4, title: 'D' },
-			{ id: 5, title: 'E' },
-			{ id: 6, title: 'F' },
-			{ id: 2, title: 'B' },
-			{ id: 7, title: 'G' }
-		], Item );
+    $items.loop( [
+      { id: 1, title: 'A' },
+      { id: 3, title: 'C' },
+      { id: 4, title: 'D' },
+      { id: 5, title: 'E' },
+      { id: 6, title: 'F' },
+      { id: 2, title: 'B' },
+      { id: 7, title: 'G' }
+    ], Item );
 
-		assert.equal( $items.children().length, 7 );
-		assert.equal( join(), 'ACDEFBG' );
+    assert.equal( $items.children().length, 7 );
+    assert.equal( join(), 'ACDEFBG' );
 
-		$items.loop( [
-			{ id: 1, title: 'A' },
-			{ id: 2, title: 'B' },
-			{ id: 8, title: 'X' },
-			{ id: 3, title: 'C' },
-			{ id: 6, title: 'F' },
-			{ id: 9, title: 'Y' },
-			{ id: 4, title: 'D' },
-			{ id: 5, title: 'E' },
-			{ id: 7, title: 'G' }
-		], Item );
+    $items.loop( [
+      { id: 1, title: 'A' },
+      { id: 2, title: 'B' },
+      { id: 8, title: 'X' },
+      { id: 3, title: 'C' },
+      { id: 6, title: 'F' },
+      { id: 9, title: 'Y' },
+      { id: 4, title: 'D' },
+      { id: 5, title: 'E' },
+      { id: 7, title: 'G' }
+    ], Item );
 
-		assert.equal( $items.children().length, 9 );
-		assert.equal( join(), 'ABXCFYDEG' );
+    assert.equal( $items.children().length, 9 );
+    assert.equal( join(), 'ABXCFYDEG' );
 
-		$items.loop( [
-			{ id: 9, title: 'Y' },
-			{ id: 8, title: 'X' },
-			{ id: 3, title: 'C' },
-			{ id: 1, title: 'A' }
-		], Item );
+    $items.loop( [
+      { id: 9, title: 'Y' },
+      { id: 8, title: 'X' },
+      { id: 3, title: 'C' },
+      { id: 1, title: 'A' }
+    ], Item );
 
-		assert.equal( $items.children().length, 4 );
-		assert.equal( join(), 'YXCA' );
+    assert.equal( $items.children().length, 4 );
+    assert.equal( join(), 'YXCA' );
 
-		$items.loop( [], Item );
+    $items.loop( [], Item );
 
-		assert.equal( $items.children().length, 0 );
+    assert.equal( $items.children().length, 0 );
 
-		$items.loop( [
-			{ id: 1, title: 'A' },
-			{ id: 2, title: 'B' },
-			{ id: 3, title: 'C' },
-			{ id: 4, title: 'D' },
-			{ id: 5, title: 'E' },
-			{ id: 6, title: 'F' },
-			{ id: 7, title: 'G' }
-		], Item );
+    $items.loop( [
+      { id: 1, title: 'A' },
+      { id: 2, title: 'B' },
+      { id: 3, title: 'C' },
+      { id: 4, title: 'D' },
+      { id: 5, title: 'E' },
+      { id: 6, title: 'F' },
+      { id: 7, title: 'G' }
+    ], Item );
 
-		assert.equal( $items.children().length, 7 );
-		assert.equal( join(), 'ABCDEFG' );
+    assert.equal( $items.children().length, 7 );
+    assert.equal( join(), 'ABCDEFG' );
 
-		$items.loop( [
-			{ id: 1, title: 'A' },
-			{ id: 3, title: 'C' },
-			{ id: 4, title: 'D' },
-			{ id: 5, title: 'E' },
-			{ id: 7, title: 'G' },
-			{ id: 6, title: 'F' },
-			{ id: 2, title: 'B' },
-		], Item );
+    $items.loop( [
+      { id: 1, title: 'A' },
+      { id: 3, title: 'C' },
+      { id: 4, title: 'D' },
+      { id: 5, title: 'E' },
+      { id: 7, title: 'G' },
+      { id: 6, title: 'F' },
+      { id: 2, title: 'B' },
+    ], Item );
 
-		assert.equal( $items.children().length, 7 );
-		assert.equal( join(), 'ACDEGFB' );
+    assert.equal( $items.children().length, 7 );
+    assert.equal( join(), 'ACDEGFB' );
 
-		function join() {
+    function join() {
 
-			var s = [];
+      var s = [];
 
-			$items.children().each( function () {
-				s.push( $( this ).html() );
-			} )
+      $items.children().each( function () {
+        s.push( $( this ).html() );
+      } )
 
-			return s.join( '' );
+      return s.join( '' );
 
-		}
+    }
 
-	}
+  }
 
-	QUnit.test( 'nest', function ( assert ) {
+  QUnit.test( 'nest', function ( assert ) {
 
-		var $items = $( '<div></div>' );
+    var $items = $( '<div></div>' );
 
-		$items.nest( { id: 1, title: 'A' }, Item );
+    $items.nest( { id: 1, title: 'A' }, Item );
 
-		assert.equal( $items.children().length, 1 );
-		assert.equal( $items.children().eq( 0 ).html(), 'A' );
+    assert.equal( $items.children().length, 1 );
+    assert.equal( $items.children().eq( 0 ).html(), 'A' );
 
-		$items.nest( null, Item );
+    $items.nest( null, Item );
 
-		assert.equal( $items.children().length, 0 );
+    assert.equal( $items.children().length, 0 );
 
-	} );
+  } );
 
 } );

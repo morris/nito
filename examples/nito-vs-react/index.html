@@ -1,153 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>Nito vs. React</title>
+  <head>
+    <meta charset="utf-8">
+    <title>Nito vs. React</title>
 
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-		<link rel="stylesheet" href="css/app.css">
-	</head>
-	<body>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/app.css">
+  </head>
+  <body>
 
-		<div class="container" id="main">
+    <div class="container" id="main">
 
-			<h1><a href="https://github.com/morris/nito">Nito</a> vs. React</h1>
+      <h1><a href="https://github.com/morris/nito">Nito</a> vs. React</h1>
 
-			<p>Benchmark concept originally by <a href="https://github.com/jonmiles/react-performance-tests">Jonathan Miles</a>.</p>
+      <p>Benchmark concept originally by <a href="https://github.com/jonmiles/react-performance-tests">Jonathan Miles</a>.</p>
 
-			<hr>
+      <hr>
 
-			<div class="form-inline">
-				<div class="form-group">
-					<label for="comps">Number of components</label>
-					<input type="text" class="form-control" id="comps" value="100">
-				</div>
-				<div class="form-group">
-					<label for="rate">Rate of change</label>
-					<input type="text" class="form-control" id="rate" value="30">
-				</div>
-				<button class="btn btn-primary" id="benchmark">Benchmark</button>
-				<button class="btn btn-primary" id="updateNito">Update Nito</button>
-				<button class="btn btn-primary" id="updateReact">Update React</button>
-			</div>
+      <div class="form-inline">
+        <div class="form-group">
+          <label for="comps">Number of components</label>
+          <input type="text" class="form-control" id="comps" value="100">
+        </div>
+        <div class="form-group">
+          <label for="rate">Rate of change</label>
+          <input type="text" class="form-control" id="rate" value="30">
+        </div>
+        <button class="btn btn-primary" id="benchmark">Benchmark</button>
+        <button class="btn btn-primary" id="updateNito">Update Nito</button>
+        <button class="btn btn-primary" id="updateReact">Update React</button>
+      </div>
 
-			<hr>
+      <hr>
 
-			<div class="row">
+      <div class="row">
 
-				<div class="col-sm-4" id="nito"></div>
-				<div class="col-sm-4" id="react"></div>
-				<div class="col-sm-4">
+        <div class="col-sm-4" id="nito"></div>
+        <div class="col-sm-4" id="react"></div>
+        <div class="col-sm-4">
 
-					<pre id="log"></pre>
+          <pre id="log"></pre>
 
-				</div>
+        </div>
 
-			</div>
+      </div>
 
-			<hr>
+      <hr>
 
-		</div>
+    </div>
 
-		<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-		<script src="../../nito.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="../../nito.js"></script>
 
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.min.js"></script>
 
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/benchmark/1.0.0/benchmark.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/benchmark/1.0.0/benchmark.js"></script>
 
-		<script src="js/Store.js"></script>
-		<script src="js/NitoDashboard.js"></script>
-		<script type="text/jsx" src="js/ReactDashboard.jsx"></script>
+    <script src="js/Store.js"></script>
+    <script src="js/NitoDashboard.js"></script>
+    <script type="text/jsx" src="js/ReactDashboard.jsx"></script>
 
-		<script type="text/jsx">
-			var store = new Store();
-			store.change( 0, 0, $( '#comps' ).val(), 0 );
-			var rate = $( '#rate' ).val();
+    <script type="text/jsx">
+      var store = new Store();
+      store.change( 0, 0, $( '#comps' ).val(), 0 );
+      var rate = $( '#rate' ).val();
 
-			var nitoDashboard = NitoDashboard.appendTo( '#nito', store );
-			var reactDashboard = React.render(
-				React.createElement( ReactDashboard, { store: store } ),
-				document.getElementById( 'react' )
-			);
+      var nitoDashboard = NitoDashboard.appendTo( '#nito', store );
+      var reactDashboard = React.render(
+        React.createElement( ReactDashboard, { store: store } ),
+        document.getElementById( 'react' )
+      );
 
-			$( '#comps' ).on( 'change', function () {
+      $( '#comps' ).on( 'change', function () {
 
-				store.data = [];
-				store.change( 0, 0, parseInt( this.value ), 0 );
+        store.data = [];
+        store.change( 0, 0, parseInt( this.value ), 0 );
 
-			} );
+      } );
 
-			$( '#rate' ).on( 'change', function () {
+      $( '#rate' ).on( 'change', function () {
 
-				rate = parseInt( this.value );
+        rate = parseInt( this.value );
 
-			} );
+      } );
 
-			$( '#updateNito' ).on( 'click', function () {
+      $( '#updateNito' ).on( 'click', function () {
 
-				store.change( rate, rate, rate, rate );
-				frame( 'Nito', function () { nitoDashboard.update(); } );
+        store.change( rate, rate, rate, rate );
+        frame( 'Nito', function () { nitoDashboard.update(); } );
 
-			} );
+      } );
 
-			$( '#updateReact' ).on( 'click', function () {
+      $( '#updateReact' ).on( 'click', function () {
 
-				store.change( rate, rate, rate, rate );
-				frame( 'React', function () { reactDashboard.update(); } );
+        store.change( rate, rate, rate, rate );
+        frame( 'React', function () { reactDashboard.update(); } );
 
-			} );
+      } );
 
-			$( '#benchmark' ).on( 'click', function () {
+      $( '#benchmark' ).on( 'click', function () {
 
-				var suite = new Benchmark.Suite;
+        var suite = new Benchmark.Suite;
 
-				suite.add( 'Nito', function () {
+        suite.add( 'Nito', function () {
 
-					store.change( rate, rate, rate, rate );
-					nitoDashboard.update();
+          store.change( rate, rate, rate, rate );
+          nitoDashboard.update();
 
-				} ).add( 'React', function() {
+        } ).add( 'React', function() {
 
-					store.change( rate, rate, rate, rate );
-					reactDashboard.update();
+          store.change( rate, rate, rate, rate );
+          reactDashboard.update();
 
-				} ).on( 'cycle', function ( event ) {
+        } ).on( 'cycle', function ( event ) {
 
-					$( '#log' ).append( String( event.target ) + '\n' );
+          $( '#log' ).append( String( event.target ) + '\n' );
 
-				} ).on( 'complete', function () {
+        } ).on( 'complete', function () {
 
-					$( '#log' ).append( 'Fastest is ' + this.filter( 'fastest' ).pluck( 'name' ) + '\n' );
+          $( '#log' ).append( 'Fastest is ' + this.filter( 'fastest' ).pluck( 'name' ) + '\n' );
 
-				} ).run( { 'async': true } );
+        } ).run( { 'async': true } );
 
-			} );
+      } );
 
-			function frame( name, fn ) {
+      function frame( name, fn ) {
 
-				var t0, t1;
-				requestAnimationFrame( ready );
+        var t0, t1;
+        requestAnimationFrame( ready );
 
-				function ready() {
+        function ready() {
 
-					requestAnimationFrame( done );
+          requestAnimationFrame( done );
 
-					t0 = new Date().getTime();
-					fn();
+          t0 = new Date().getTime();
+          fn();
 
-				}
+        }
 
-				function done() {
+        function done() {
 
-					t1 = new Date().getTime();
-					$( '#log' ).append( name + ' frame: ' + ( t1 - t0 ) + 'ms\n' );
+          t1 = new Date().getTime();
+          $( '#log' ).append( name + ' frame: ' + ( t1 - t0 ) + 'ms\n' );
 
-				}
+        }
 
-			}
-		</script>
+      }
+    </script>
 
-	</body>
+  </body>
 </html>

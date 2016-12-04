@@ -6,48 +6,48 @@ Just an experiment. [Or maybe not.](https://rawgit.com/morris/nito/v0.11.0/examp
 ```js
 var Todo = $.nito( {
 
-	base: [
-		'<div>',
-			'<h1>Todo</h1>',
-			'<ul class="items"></ul>',
-		'</div>'
-	],
+  base: [
+    '<div>',
+      '<h1>Todo</h1>',
+      '<ul class="items"></ul>',
+    '</div>'
+  ],
 
-	mount: function () {
-		this.data = [
-			{ title: 'Get Nito', completed: false },
-			{ title: 'Create something', completed: false }
-		];
-	},
+  mount: function () {
+    this.data = [
+      { title: 'Get Nito', completed: false },
+      { title: 'Create something', completed: false }
+    ];
+  },
 
-	update: function () {
-		this.find( '.items' ).loop( this.data, TodoItem, this );
-	}
+  update: function () {
+    this.find( '.items' ).loop( this.data, TodoItem, this );
+  }
 
 } );
 
 var TodoItem = $.nito( {
 
-	base: [
-		'<li>',
-			'<strong class="title"></strong>',
-		'</li>'
-	],
+  base: [
+    '<li>',
+      '<strong class="title"></strong>',
+    '</li>'
+  ],
 
-	mount: function ( todo ) {
-		this.todo = todo;
-		this.on( 'click', this.toggle );
-	},
+  mount: function ( todo ) {
+    this.todo = todo;
+    this.on( 'click', this.toggle );
+  },
 
-	update: function () {
-		this.$el.weld( this.data );
-		this.$el.classes( { completed: this.data.completed } );
-	},
+  update: function () {
+    this.$el.weld( this.data );
+    this.$el.classes( { completed: this.data.completed } );
+  },
 
-	toggle: function () {
-		this.data.completed = !this.data.completed;
-		this.todo.update(); // always update explicitly
-	}
+  toggle: function () {
+    this.data.completed = !this.data.completed;
+    this.todo.update(); // always update explicitly
+  }
 
 } );
 ```
@@ -93,34 +93,34 @@ Isomorphic (server- and client-side) app built with Nito on Node.js.
 
 - Create a component factory
 - `settings` is an object that defines the prototype of the components
-	- `id`
-		- Component identifier
-		- Optional. Mandatory for server-side/shared components
-	- `base`
-		- Base HTML for components
-		- May be a string or an array of strings
-		- Arrays will be joined with `\n`
-		- Optional, used in `Comp.create` (see below)
-	- `mount( env )`
-		- Called when mounting a component
-		- `env` is used to pass constant references, e.g. the app/store/controller or a parent component
-		- Define event handlers here
-		- Optional
-	- `update()`
-		- Updates the component
-		- Has to be called explicitly (except for components rendered with `loop`/`nest`)
-		- Use `this.data` to update the component
-		- Optional
-	- `unmount()`
-		- Called when unmounting a component
-		- Optional
-	- `identify( item )`
-		- Generates keys from items in `loop`
-		- Keys are used for component reconciliation
-		- Must return a distinct, truthy string or number
-		- See `loop`
-		- Optional
-	- Add more methods and properties as needed
+  - `id`
+    - Component identifier
+    - Optional. Mandatory for server-side/shared components
+  - `base`
+    - Base HTML for components
+    - May be a string or an array of strings
+    - Arrays will be joined with `\n`
+    - Optional, used in `Comp.create` (see below)
+  - `mount( env )`
+    - Called when mounting a component
+    - `env` is used to pass constant references, e.g. the app/store/controller or a parent component
+    - Define event handlers here
+    - Optional
+  - `update()`
+    - Updates the component
+    - Has to be called explicitly (except for components rendered with `loop`/`nest`)
+    - Use `this.data` to update the component
+    - Optional
+  - `unmount()`
+    - Called when unmounting a component
+    - Optional
+  - `identify( item )`
+    - Generates keys from items in `loop`
+    - Keys are used for component reconciliation
+    - Must return a distinct, truthy string or number
+    - See `loop`
+    - Optional
+  - Add more methods and properties as needed
 - Returns the created factory
 
 
@@ -130,9 +130,9 @@ Isomorphic (server- and client-side) app built with Nito on Node.js.
 
 - Create a component using the component base HTML
 - `env` is passed to `comp.mount`. Optional
-	- Use `env` to pass constant references, e.g. the app/store/controller or a parent component
+  - Use `env` to pass constant references, e.g. the app/store/controller or a parent component
 - `data` is passed to `comp.set`. Optional
-	- Use `data` for variable data/state
+  - Use `data` for variable data/state
 - Returns the created component
 
 #### `Comp.mount( base, env, data )`
@@ -189,17 +189,17 @@ Use these methods in `update`, *not* in `mount`.
 - `items` is an array of `data` passed to the components
 - `factory` should be a component factory
 - Reconciliation: Existing components are identified with items and reused/updated with given data
-	- By default, components are reconciled by item/component index
-	- If the `factory.identify` function is defined, components are reconciled by keys
-	- New components are created with `factory.create( env, data )`
-	- Existing components are updated with `comp.set( data )`
+  - By default, components are reconciled by item/component index
+  - If the `factory.identify` function is defined, components are reconciled by keys
+  - New components are created with `factory.create( env, data )`
+  - Existing components are updated with `comp.set( data )`
 - `$el` must only have children generated by `loop`; don't mix with more children
 - Returns array of child components
 
 ```js
 $( '<ul></ul>' ).loop( [
-	{ title: 'Write code', done: true },
-	{ title: 'Write readme', done: false }
+  { title: 'Write code', done: true },
+  { title: 'Write readme', done: false }
 ], TodoItem );
 ```
 
@@ -225,8 +225,8 @@ for usage in component `update` methods.
 
 ```js
 $( '.form-group' ).classes( {
-	'has-success': true,
-	'has-error': false
+  'has-success': true,
+  'has-error': false
 } );
 ```
 
@@ -234,17 +234,17 @@ $( '.form-group' ).classes( {
 
 - Set `data` on `$els`
 - If `data` is not an object, set `data` as `$els`'s inner HTML softly
-	- Function values are computed using each element as `this`
+  - Function values are computed using each element as `this`
 - If `data` is a map of `name: html` pairs:
-	- Find `.name` and set the given HTML softly
-	- `selectors` is an optional map of `name: selector` pairs
-	- If `selectors[ name ]` is given, use that instead of `.name`
+  - Find `.name` and set the given HTML softly
+  - `selectors` is an optional map of `name: selector` pairs
+  - If `selectors[ name ]` is given, use that instead of `.name`
 - Returns `$els`
 
 ```js
 $( '<h1></h1>' ).weld( 'hello' );
 $( '<div><h1 class="title"></h1><p class="post"></p></div>' )
-	.weld( { title: 'hello', contents: 'world' }, { contents: '.post' } );
+  .weld( { title: 'hello', contents: 'world' }, { contents: '.post' } );
 ```
 
 #### `$els.values()`
@@ -258,11 +258,11 @@ $( '<div><h1 class="title"></h1><p class="post"></p></div>' )
 - Fill named form controls in `$els` with given data
 - Supports all controls and nested data
 - If `defaults` is falsy, sets the value properties (user input)
-	- User input will be overwritten
-	- Form defaults are not modified
+  - User input will be overwritten
+  - Form defaults are not modified
 - If `defaults` is truthy, sets values on the DOM (form defaults)
-	- Modifies DOM attributes like `value` and `selected`, *not* the properties
-	- Inputs modified by the user will still reflect the user input
+  - Modifies DOM attributes like `value` and `selected`, *not* the properties
+  - Inputs modified by the user will still reflect the user input
 - Use `reset` to discard user input
 - Returns `$els`
 
@@ -279,7 +279,7 @@ $( '<div><h1 class="title"></h1><p class="post"></p></div>' )
 - Mount components on each element in `$els` using `factory`
 - `env` and `data` are passed to `factory.mount`, both optional
 - Components are only created once per factory
-	- An element may have multiple components, but only one for each factory
+  - An element may have multiple components, but only one for each factory
 - Returns `$els`
 
 #### `$els.update( factory, data )`

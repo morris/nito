@@ -9,10 +9,10 @@
 ## v0.10.0
 
 - Added `$.Comp.prototype.set`
-	- Sets data as `this.data` and calls `update`
+  - Sets data as `this.data` and calls `update`
 - Removed `data` argument in `$.Comp.prototype.update`
-	- Use `set( data )` instead
-	- Only use `this.data` in `update`
+  - Use `set( data )` instead
+  - Only use `this.data` in `update`
 - Added `$.Comp.deliver`
 - Added `$.fn.deliver`
 - Added Markdown Editor example
@@ -31,7 +31,7 @@
 
 - `values` is now able to serialize form controls
 - Removed `keyProp` in favor of new `identify` method
-	- Reconciliation uses the item index by default
+  - Reconciliation uses the item index by default
 - Optimized `weld`
 
 ## v0.7.1
@@ -49,8 +49,8 @@
 - Renamed `fill` to `values`
 - `weld` now only selects `.name`
 - Removed `$.fn.style` and `$.fn.attrs`
-	- Benchmarks show that `$.fn.css` and `$.fn.attr` are faster
-	- Browsers are/should be smart enough not to repaint/reflow if a style/attribute is unchanged
+  - Benchmarks show that `$.fn.css` and `$.fn.attr` are faster
+  - Browsers are/should be smart enough not to repaint/reflow if a style/attribute is unchanged
 - Added React comparison example
 
 ## v0.6.0

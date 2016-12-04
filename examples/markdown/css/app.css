@@ -1,14 +1,14 @@
 .active {
-	color: red;
+  color: red;
 }
 
 .notEditing .save,
 .notEditing .form {
-	display: none;
+  display: none;
 }
 
 .editing .edit,
 .editing .remove,
 .editing .body {
-	display: none;
+  display: none;
 }
