@@ -41,10 +41,8 @@ module.exports = $.nito( {
       editing: this.editing,
       notEditing: !this.editing
     } );
-    this.$el.weld( {
-      title: this.data.title,
-      body: marked( this.data.body )
-    } );
+    this.find( '.title' ).ftext( this.data.title );
+    this.find( '.body' ).fhtml( marked( this.data.body ) );
     this.find( '.form' ).values( this.data );
   },
 
@@ -59,7 +57,7 @@ module.exports = $.nito( {
 
   save: function () {
     this.editing = false;
-    this.app.save( this.data, this.find( 'input, textarea' ).values() );
+    this.app.save( this.data, this.find( 'input, textarea' ).serializeData() );
   }
 
 } );

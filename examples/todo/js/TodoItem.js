@@ -64,15 +64,14 @@ var TodoItem = $.nito( {
   update: function () {
     var item = this.data;
 
-    // weld and classes are nice, non-destructive use of $
-    this.$el.weld( item );
+    this.find( '.title' ).ftext( item.title );
 
     this.$el.classes( {
       completed: item.completed,
       editing: this.editing
     } );
 
-    this.$el.values( { completed: item.completed } );
+    this.find( '[name=completed]' ).fval( item.completed );
   }
 
 } );

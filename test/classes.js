@@ -1,6 +1,6 @@
 QUnit.module( 'classes', function () {
 
-  QUnit.test( 'basics', function ( assert ) {
+  QUnit.test( 'basic', function ( assert ) {
 
     var $el = $( '<div></div>' );
 

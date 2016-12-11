@@ -9,7 +9,7 @@ var NitoDashboard = $.nito( {
   },
 
   update: function () {
-    this.$el.loop( this.store.data, NitoItem );
+    this.$el.nest( NitoItem, this.store.data, this );
   }
 
 } );
@@ -34,8 +34,8 @@ var NitoItem = $.nito( {
 
   update: function () {
     var item = this.data;
-    this.$name.weld( item.name );
-    this.$score.weld( item.score );
+    this.$name.ftext( item.name );
+    this.$score.ftext( item.score );
     this.$el.css( 'color', item.color );
   }
 

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Nito vs. React</title>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/app.css">
   </head>
   <body>
@@ -49,59 +49,53 @@
 
     </div>
 
-    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="../../nito.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.1/react.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.1/react-dom.min.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/benchmark/1.0.0/benchmark.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.2/lodash.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/platform/1.3.3/platform.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/benchmark/2.1.2/benchmark.min.js"></script>
 
     <script src="js/Store.js"></script>
     <script src="js/NitoDashboard.js"></script>
-    <script type="text/jsx" src="js/ReactDashboard.jsx"></script>
+    <script src="js/ReactDashboard.js"></script>
 
-    <script type="text/jsx">
+    <script>
       var store = new Store();
       store.change( 0, 0, $( '#comps' ).val(), 0 );
       var rate = $( '#rate' ).val();
 
-      var nitoDashboard = NitoDashboard.appendTo( '#nito', store );
-      var reactDashboard = React.render(
+      var nitoDashboard = NitoDashboard.create( null, store ).appendTo( '#nito' );
+      var reactDashboard = ReactDOM.render(
         React.createElement( ReactDashboard, { store: store } ),
         document.getElementById( 'react' )
       );
 
       $( '#comps' ).on( 'change', function () {
-
         store.data = [];
         store.change( 0, 0, parseInt( this.value ), 0 );
-
       } );
 
       $( '#rate' ).on( 'change', function () {
-
         rate = parseInt( this.value );
-
       } );
 
       $( '#updateNito' ).on( 'click', function () {
-
         store.change( rate, rate, rate, rate );
         frame( 'Nito', function () { nitoDashboard.update(); } );
-
       } );
 
       $( '#updateReact' ).on( 'click', function () {
-
         store.change( rate, rate, rate, rate );
         frame( 'React', function () { reactDashboard.update(); } );
-
       } );
 
       $( '#benchmark' ).on( 'click', function () {
 
-        var suite = new Benchmark.Suite;
+        var suite = new Benchmark.Suite();
 
         suite.add( 'Nito', function () {
 
@@ -119,7 +113,7 @@
 
         } ).on( 'complete', function () {
 
-          $( '#log' ).append( 'Fastest is ' + this.filter( 'fastest' ).pluck( 'name' ) + '\n' );
+          $( '#log' ).append( 'Fastest is ' + this.filter( 'fastest' )[ 0 ][ 'name' ] + '\n' );
 
         } ).run( { 'async': true } );
 

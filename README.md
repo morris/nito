@@ -14,14 +14,16 @@ var Todo = $.nito( {
   ],
 
   mount: function () {
-    this.data = [
-      { title: 'Get Nito', completed: false },
-      { title: 'Create something', completed: false }
-    ];
+    this.data = {
+      items: [
+        { title: 'Get Nito', completed: false },
+        { title: 'Create something', completed: false }
+      ]
+    };
   },
 
   update: function () {
-    this.find( '.items' ).loop( this.data, TodoItem, this );
+    this.find( '.items' ).nest( TodoItem, this.data.items, this );
   }
 
 } );
@@ -76,14 +78,14 @@ Structural comparison of the two libraries, including benchmark.
 
 ### [Markdown Editor](https://github.com/morris/nito/tree/master/examples/markdown)
 
-Isomorphic (server- and client-side) app built with Nito on Node.js.
+Isomorphic app (server- and client-side) built with Nito on Node.js.
 
 
 ## Getting started
 
 ```html
-<script src="jquery-1.11.3.min.js"></script>
-<script src="nito.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://rawgit.com/morris/nito/v0.11.0/nito.min.js"></script>
 ```
 
 
@@ -91,7 +93,7 @@ Isomorphic (server- and client-side) app built with Nito on Node.js.
 
 #### `$.nito( settings )`
 
-- Create a component factory
+- Create a component class
 - `settings` is an object that defines the prototype of the components
   - `id`
     - Component identifier
@@ -108,51 +110,32 @@ Isomorphic (server- and client-side) app built with Nito on Node.js.
     - Optional
   - `update()`
     - Updates the component
-    - Has to be called explicitly (except for components rendered with `loop`/`nest`)
+    - Has to be called explicitly (except for components rendered with `nest`/`nestOne`)
     - Use `this.data` to update the component
     - Optional
   - `unmount()`
     - Called when unmounting a component
     - Optional
   - `identify( item )`
-    - Generates keys from items in `loop`
+    - Generates keys from items in `nest`
     - Keys are used for component reconciliation
-    - Must return a distinct, truthy string or number
-    - See `loop`
+    - Must return a distinct, truthy string or number per `nest`
+    - See `nest`
     - Optional
   - Add more methods and properties as needed
-- Returns the created factory
+- Returns the created class
 
 
 ## Creating components
 
-#### `Comp.create( env, data )`
+#### `Comp.create( data, env )`
 
 - Create a component using the component base HTML
+- `data` is passed to `comp.set` and available as `comp.data`. Optional
+  - Use `data` for variable data/state
 - `env` is passed to `comp.mount`. Optional
   - Use `env` to pass constant references, e.g. the app/store/controller or a parent component
-- `data` is passed to `comp.set`. Optional
-  - Use `data` for variable data/state
-- Returns the created component
-
-#### `Comp.mount( base, env, data )`
-
-- Create a component using given base HTML, element or selector
-- Useful for components with varying or server-rendered HTML
-- Only applied once
-- See above
-
-#### `Comp.appendTo( selector, env, data )`
-
-- Create a component using `Comp.create` and then append it to `$( selector )`
-- See above
-
-#### `Comp.deliver( env, data )`
-
-- Create a component using `Comp.create`
-- Returns the outer HTML of the component including serialized data
-- Useful for transmission of components from server to client
-- See above
+- Return the created element ($ object)
 
 
 ## Component members and methods
@@ -163,9 +146,9 @@ Isomorphic (server- and client-side) app built with Nito on Node.js.
 
 #### `comp.set( data )`
 
-- Set `data` as `comp.data`
+- If `data` is truthy, set `data` as `comp.data`
 - Call `comp.update()`
-- Returns `comp`
+- Return `comp`
 
 #### `comp.find( selector )`
 
@@ -175,40 +158,64 @@ Isomorphic (server- and client-side) app built with Nito on Node.js.
 
 - Shortcut to `comp.$el.on`
 - `handler` is bound to `comp`, *not* to the element
-- Returns `comp`
+- Return `comp`
+
+
+## Mount and update components on existing DOM
+
+#### `$els.mount( compClass, data, env )`
+
+- Mount components on each element in `$els` using `compClass`
+- `data` is passed to `comp.set`. Optional
+- `env` is passed to `comp.mount`. Optional
+- Components are only created once per class
+  - An element may have multiple components, but only one for each class
+- Return `$els`
+
+#### `$els.update( compClass, data )`
+
+- If `compClass` is set, update all `compClass` components mounted on `$els`
+- Otherwise, update all components mounted on `$els`
+- `data` is passed to `comp.set`. Optional
+- Return `$els`
+
+#### `$els.unmount( compClass )`
+
+- If `compClass` is set, unmount all `compClass` components mounted on `$els`
+- Otherwise, unmount all components mounted on `$els`
+- Return `$els`
 
 
 ## Nesting components
 
-Super-efficiently nest components in any DOM element using `loop` or `nest`.
+Efficiently nest components in any DOM element using `nest` or `nestOne`.
 Use these methods in `update`, *not* in `mount`.
 
-#### `$el.loop( items, factory, env )`
+#### `$els.nest( compClass, items, env )`
 
-- For each item, create a component using the factory and append to `$el`
-- `items` is an array of `data` passed to the components
-- `factory` should be a component factory
+- For each item, create a component of the given class and append to `$els`
+- `items` is an array of `data` objects passed to the components
+- `compClass` should be a component class
 - Reconciliation: Existing components are identified with items and reused/updated with given data
   - By default, components are reconciled by item/component index
-  - If the `factory.identify` function is defined, components are reconciled by keys
-  - New components are created with `factory.create( env, data )`
+  - If the `compClass.identify` function is defined, components are reconciled by keys
+  - New components are created with `compClass.create( data, env )`
   - Existing components are updated with `comp.set( data )`
-- `$el` must only have children generated by `loop`; don't mix with more children
-- Returns array of child components
+- `$els` should only have children generated by `nest`
+- Return array of child components
 
 ```js
-$( '<ul></ul>' ).loop( [
+$( '<ul></ul>' ).nest( TodoItem, null, [
   { title: 'Write code', done: true },
   { title: 'Write readme', done: false }
-], TodoItem );
+] );
 ```
 
-#### `$el.nest( item, factory, env )`
+#### `$els.nestOne( compClass, item, env )`
 
-- Same as loop, but for one component
+- Same as `nest`, but for one item
 - Pass falsy item to not nest anything
-- If item is given, needs a valid key
-- Returns child component, if any
+- Return child component, if any
 
 
 ## Updating components
@@ -221,7 +228,7 @@ for usage in component `update` methods.
 - Set classes on `$els` softly
 - Classes not present in map are not touched
 - Function values are computed using each element as `this`
-- Returns `$els`
+- Return `$els`
 
 ```js
 $( '.form-group' ).classes( {
@@ -230,75 +237,68 @@ $( '.form-group' ).classes( {
 } );
 ```
 
-#### `$els.weld( data, selectors )`
+#### `$els.fhtml( html )`
 
-- Set `data` on `$els`
-- If `data` is not an object, set `data` as `$els`'s inner HTML softly
-  - Function values are computed using each element as `this`
-- If `data` is a map of `name: html` pairs:
-  - Find `.name` and set the given HTML softly
-  - `selectors` is an optional map of `name: selector` pairs
-  - If `selectors[ name ]` is given, use that instead of `.name`
-- Returns `$els`
+- Set inner HTML in `$els` softly
+- Faster than `$els.html`
+- Return `$els`
 
-```js
-$( '<h1></h1>' ).weld( 'hello' );
-$( '<div><h1 class="title"></h1><p class="post"></p></div>' )
-  .weld( { title: 'hello', contents: 'world' }, { contents: '.post' } );
-```
+#### `$els.ftext( text )`
 
-#### `$els.values()`
+- Set text content in `$els` softly
+- Faster than `$els.text`
+- Return `$els`
+
+#### `$els.fval( value )`
+
+- Set control values in `$els` softly
+- User input will be overwritten
+- Form defaults are not modified
+- Return `$els`
+
+#### `$els.fdef( value )`
+
+- Set default control value in `$els` softly
+- Modifies DOM attributes like `value` and `selected`, *not* the properties
+- Inputs modified by the user will still reflect the user input
+- Return `$els`
+
+
+## Form helpers
+
+#### `$els.serializeData()`
 
 - Serialize named form controls in `$els` into an object
 - Supports all controls and nested names like `object[key]`, `array[index]`, `multiple[]`
-- Returns an object containing the values
+- Checkboxes are serialized with their `value`, or `'on'` if no value is present
+- Return an object containing the values
 
-#### `$els.values( data, defaults )`
+#### `$els.fill( data )`
 
 - Fill named form controls in `$els` with given data
 - Supports all controls and nested data
-- If `defaults` is falsy, sets the value properties (user input)
-  - User input will be overwritten
-  - Form defaults are not modified
-- If `defaults` is truthy, sets values on the DOM (form defaults)
-  - Modifies DOM attributes like `value` and `selected`, *not* the properties
-  - Inputs modified by the user will still reflect the user input
-- Use `reset` to discard user input
-- Returns `$els`
+- Return `$els`
+
+#### `$els.fillDef( data )`
+
+- Same as `fill` but for default values
+- Return `$els`
 
 #### `$els.reset()`
 
 - Reset each form or individual form control in `$els` (without children)
-- Returns `$els`
+- Return `$els`
 
 
-## Mount and update components on existing DOM
+## Server-side helpers
 
-#### `$els.mount( factory, env, data )`
+#### `$els.deliver()`
 
-- Mount components on each element in `$els` using `factory`
-- `env` and `data` are passed to `factory.mount`, both optional
-- Components are only created once per factory
-  - An element may have multiple components, but only one for each factory
-- Returns `$els`
+- Serialize all component data in `$els` into attributes
+- Use before transferring element HTML from server to client
+- Return `$els`
 
-#### `$els.update( factory, data )`
+#### `$els.outerHtml()`
 
-- If `factory` is set, update all components from `factory` mounted on `$els`
-- Otherwise, update all components mounted on `$els`
-- `data` is passed to `comp.set`. Optional
-- Returns `$els`
-
-#### `$els.unmount( factory )`
-
-- If `factory` is set, unmount all components from `factory` mounted on `$els`
-- Otherwise, unmount all components mounted on `$els`
-- Returns `$els`
-
-## Serialize component data for server-to-client transmission
-
-#### `$els.deliver( html )`
-
-- Serialize all components mounted on `$els` into attributes
-- If `html` is set, return the outer HTML of the first element in `$els`
-- Otherwise return `$els`
+- Return outer HTML of `$els`
+- Use to transfer element HTML from server to client

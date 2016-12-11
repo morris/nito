@@ -56,13 +56,13 @@ var Todo = $.nito( {
     this.store();
     this.route();
 
-    // $el.loop reconciles with existing DOM
-    this.find( 'ul.items' ).loop( this.items, TodoItem, this );
+    // $el.nest reconciles with existing DOM
+    this.find( 'ul.items' ).nest( TodoItem, this.items, this );
 
     var left = this.left().length;
     var items = left === 1 ? 'item' : 'items';
 
-    this.find( '.left' ).weld( '<strong>' + left + '</strong> ' + items + ' left' );
+    this.find( '.left' ).fhtml( '<strong>' + left + '</strong> ' + items + ' left' );
     this.find( '.clear' ).classes( { hidden: left === this.data.items.length } );
 
     var action = this.action;

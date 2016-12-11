@@ -1,4 +1,4 @@
-/*! Nito v0.11.0 - https://github.com/morris/nito */
+/*! Nito v1.0.0 - https://github.com/morris/nito */
 
 ;( function ( root, factory ) {
 
@@ -14,104 +14,57 @@
 
   $.nitoId = $.nitoId || 0;
 
-  var extend = $.extend, isArray = $.isArray, each = $.each;
+  var extend = Object.assign || $.extend;
+  var isArray = Array.isArray || $.isArray;
+  var each = $.each;
 
-  // class factory
+  // component class factory
 
   $.nito = function ( settings ) {
 
-    // derive from $.Comp
-    var Comp = function ( el, env, data ) {
-      $.Comp.call( this, el, env, data );
+    var Comp = function ( el, data, env ) {
+      $.Comp.call( this, el, data, env );
     };
 
     Comp.prototype = Object.create( $.Comp.prototype );
-    Comp.prototype.factory = Comp;
 
-    // extend with static methods
-    extend( Comp, $.Comp );
+    extend( Comp.prototype, settings, {
+      compClass: Comp,
+      base: null,
+      identify: null,
+      id: null
+    } );
 
-    // set static members
     var base = settings.base;
-    Comp.base = $( isArray( base ) ? base.join( '\n' ) : base )[ 0 ];
-    Comp.identify = settings.identify;
-    Comp.id = settings.id || ++$.nitoId;
 
-    // extend prototype with settings
-    var proto = extend( Comp.prototype, settings );
-    delete proto.base;
-    delete proto.identify;
-    delete proto.id;
+    extend( Comp, $.Comp, {
+      base: $( isArray( base ) ? base.join( '\n' ) : base )[ 0 ],
+      identify: settings.identify,
+      id: settings.id || ++$.nitoId
+    } );
 
     return Comp;
 
   };
 
-  // component class
+  // component base class
 
-  $.Comp = function ( el, env, data ) {
+  $.Comp = function ( el, data, env ) {
     this.el = el;
     this.$el = $( el );
+
+    // for $.fn.nest
+    this._sort = 0;
+    this._index = 0;
 
     this.mount( env );
     this.set( data );
   };
 
-  extend( $.Comp, {
-
-    appendTo: function ( container, env, data ) {
-      var comp = this.create( env, data );
-      comp.$el.appendTo( container );
-      return comp;
-    },
-
-    create: function ( env, data ) {
-      return this.mount( this.base ? this.base.cloneNode( true ) : null, env, data );
-    },
-
-    mount: function ( el, env, data ) {
-
-      var $el = $( el ).eq( 0 );
-      el = $el[ 0 ];
-
-      // component without element
-      if ( !el ) return new this( null, env, data );
-
-      // mount component only once
-      var comps = el.nitoComps = el.nitoComps || {};
-      var comp = comps[ this.id ];
-
-      if ( comp ) return comp;
-
-      // get serialized data from attribute, if any
-      try {
-        if ( !data ) data = JSON.parse( $el.attr( deliverAttr + this.id ) || null );
-      } catch ( ex ) {
-        console.warn( ex );
-      }
-
-      // create component
-      comp = comps[ this.id ] = new this( el, env, data );
-      return comp;
-
-    },
-
-    unmount: function ( el ) {
-      el =  $( el )[ 0 ];
-      if ( el && el.nitoComps ) {
-        var comp = el.nitoComps[ this.id ];
-        if ( comp ) {
-          comp.unmount();
-          delete el.nitoComps[ this.id ];
-        }
-      }
-    },
-
-    deliver: function ( env, data ) {
-      return this.create( env, data ).$el.deliver( true );
-    }
-
-  } );
+  $.Comp.create = function ( data, env ) {
+    if ( !this.base ) throw new Error( 'Cannot create component without base' );
+    return $( this.base.cloneNode( true ) ).mount( this, data, env );
+  };
 
   extend( $.Comp.prototype, {
 
@@ -150,135 +103,146 @@
 
   extend( $.fn, {
 
-    mount: function ( factory, env, data ) {
+    // component lifecycle
+
+    mount: function ( compClass, data, env ) {
+
+      var id = compClass.id;
 
       return this.each( function () {
-        factory.mount( this, funcValue( env, this ), funcValue( data, this ) );
+
+        var el = this;
+
+        // mount component only once
+        var comps = el.nitoComps = el.nitoComps || {};
+        var comp = comps[ id ];
+
+        if ( comp ) return;
+
+        // get serialized data from attribute, if any
+        try {
+          if ( !data ) data = JSON.parse( $( el ).attr( deliverAttr + id ) || null );
+        } catch ( ex ) {
+          console.warn( ex );
+        }
+
+        // create component
+        comps[ id ] = new compClass( el, data, env );
+
       } );
 
     },
 
-    update: function ( factory, data ) {
+    update: function ( compClass, data ) {
 
-      return this.comps( factory, function () {
-        this.set( funcValue( data, this ) );
+      return this.eachComp( compClass, function () {
+        this.set( data );
       } );
 
     },
 
-    unmount: function ( factory ) {
+    unmount: function ( compClass ) {
 
-      return this.comps( factory, function () {
-        this.factory.unmount( this.el );
+      return this.eachComp( compClass, function () {
+        this.unmount();
+        delete this.el.nitoComps[ this.compClass.id ];
       } );
 
     },
 
-    comps: function ( factory, fn ) {
+    // nesting
 
-      if ( factory && fn ) {
+    nest: function ( compClass, items, env ) {
 
-        var id = factory.id;
-        return this.each( function () {
-          var comp = this.nitoComps && this.nitoComps[ id ];
-          if ( comp ) fn.call( comp );
+      if ( !compClass || !compClass.create ) {
+        throw new Error( 'compClass.create is undefined in nest' );
+      }
+      if ( items && !items.map ) {
+        throw new Error( 'items.map is undefined in nest' );
+      }
+
+      var identify = compClass.identify;
+
+      return this.each( function () {
+
+        var container = this;
+        var children = container.children;
+        var map = container.nitoMap = container.nitoMap || {};
+        var index = 0;
+
+        // reconcile items with existing components via index or identify()
+        var comps = ( items || [] ).map( function ( item ) {
+
+          var key = identify ? identify( item ) : index + 1;
+          if ( !key ) throw new Error( 'Invalid key in nest' );
+          var comp = map[ key ];
+
+          if ( comp ) {
+            // store distance between actual and target index
+            comp._sort = Math.abs( index - comp._index );
+            comp.set( item );
+          } else {
+            comp = compClass.create( item, env )[ 0 ].nitoComps[ compClass.id ];
+            map[ key ] = comp;
+            comp._sort = -index;
+          }
+
+          comp._index = index++; // target index
+          comp.el.nitoKeep = true;
+          comp.el.nitoKey = key;
+
+          return comp;
+
         } );
 
-      }
+        // remove obsolete components
+        index = 0;
+        while ( index < children.length ) {
 
-      fn = fn || factory;
+          var child = children[ index ];
 
-      return this.each( function () {
-        each( this.nitoComps || {}, fn );
+          if ( !child.nitoKeep ) {
+            $( child ).unmount();
+            container.removeChild( child );
+            if ( child.nitoKey ) delete map[ child.nitoKey ];
+          } else {
+            ++index;
+          }
+
+        }
+
+        // append and/or reorder components
+        comps.sort( function ( a, b ) {
+
+          // sort by distance between actual index and target index
+          // sorting keeps number of appends/inserts low
+          return b._sort - a._sort || b._index - a._index;
+
+        } ).forEach( function ( comp ) {
+
+          // move each component to its target index
+          var el = comp.el;
+          var other = children[ comp._index ];
+
+          if ( !other ) {
+            container.appendChild( el );
+          } else if ( el !== other ) {
+            container.insertBefore( el, other );
+          }
+
+          el.nitoKeep = false;
+
+        } );
+
       } );
 
     },
 
-    loop: function ( items, factory, env ) {
-
-      var container = this[ 0 ];
-      if ( !container ) return;
-      var children = container.children;
-      var map = container.nitoMap = container.nitoMap || {};
-      var identify = factory.identify;
-      var index = 0;
-
-      // reconcile items with existing components via index or identify()
-      var comps = items.map( function ( item ) {
-
-        var key = identify ? identify( item ) : index + 1;
-        if ( !key ) throw new Error( 'Invalid key in loop' );
-        var comp = map[ key ];
-
-        if ( comp ) {
-          // store distance between actual and target index
-          comp._sort = Math.abs( index - comp._index );
-          comp.set( item );
-        } else {
-          comp = factory.create( env, item );
-          map[ key ] = comp;
-          comp._sort = -index;
-        }
-
-        comp._index = index; // target index
-        comp.el.nitoKeep = true;
-        comp.el.nitoKey = key;
-
-        ++index;
-
-        return comp;
-
-      } );
-
-      // remove obsolete components
-      index = 0;
-      while ( index < children.length ) {
-
-        var child = children[ index ];
-
-        if ( !child.nitoKeep ) {
-          $( child ).unmount();
-          container.removeChild( child );
-          if ( child.nitoKey ) delete map[ child.nitoKey ];
-        } else {
-          ++index;
-        }
-
-      }
-
-      // append and/or reorder components
-      comps.slice( 0 ).sort( function ( a, b ) {
-
-        // sort by distance between actual index and target index
-        // sorting keeps number of appends/inserts low
-        return b._sort - a._sort || b._index - a._index;
-
-      } ).forEach( function ( comp ) {
-
-        // move each component to its target index
-        var el = comp.el;
-        var other = children[ comp._index ];
-
-        if ( !other ) {
-          container.appendChild( el );
-        } else if ( el !== other ) {
-          container.insertBefore( el, other );
-        }
-
-        el.nitoKeep = false;
-
-      } );
-
-      return comps;
-
+    nestOne: function ( compClass, item, env ) {
+      return this.nest( compClass, item ? [ item ] : [], env );
     },
 
-    nest: function ( item, factory, env ) {
-
-      if ( item ) return this.loop( [ item ], factory, env )[ 0 ];
-      this.loop( [], factory, env );
-
-    },
+    // manipulation
 
     classes: function ( classes ) {
 
@@ -287,150 +251,131 @@
         var el = this, $el = $( el );
 
         each( classes, function ( name, condition ) {
-          $el.toggleClass( name, !!funcValue( condition, el ) );
+          $el.toggleClass( name, !!condition );
         } );
 
       } );
 
     },
 
-    // original idea: https://github.com/tmpvar/weld - thanks!
-    weld: function ( data, selectors ) {
+    fhtml: function ( html ) {
 
-      if ( data === null || data === undefined ) data = '';
-
-      if ( typeof data !== 'object' ) {
-
-        return this.each( function () {
-
-          var value = funcValue( data, this ) + '';
-
-          switch ( this.tagName ) {
-          case 'INPUT':
-          case 'TEXTAREA':
-          case 'SELECT':
-            // skip form controls
-            break;
-
-          case 'IMG':
-            if ( this.src !== value ) this.src = value;
-            break;
-
-          default:
-            if ( this.nitoHTML !== value ) {
-              this.innerHTML = this.nitoHTML = value;
-            }
-          }
-
-        } );
-
-      }
-
-      selectors = selectors || {};
-      var $set = this;
-
-      each( data, function ( name, value ) {
-        var selector = selectors[ name ] || ( '.' + name );
-        $set.find( selector ).weld( value );
+      return this.each( function () {
+        if ( this.nitoHtml !== html ) {
+          this.innerHTML = this.nitoHtml = html;
+        }
       } );
-
-      return this;
 
     },
 
-    values: function ( data, defaults ) {
+    ftext: function ( text ) {
 
-      function parse( name ) {
-        return name.replace( /\]/g, '' ).split( /\[/g );
-      }
+      return this.each( function () {
+        if ( this.nitoText !== text ) {
+          this.textContent = this.nitoText = text;
+        }
+      } );
 
-      function tryInt( name ) {
-        return name.match( /^\d+$/ ) ? parseInt( name, 10 ) : name;
-      }
+    },
 
-      var $controls = this.filter( '[name]' ).add( this.find( '[name]' ) );
+    // forms
 
-      // get values
-      if ( data === undefined ) {
+    serializeData: function () {
 
-        data = {};
-        $controls.serializeArray().forEach( function ( entry ) {
+      var data = {};
 
-          var path = parse( entry.name );
-          var name = path[ 0 ];
-          var current = data;
+      this.serializeArray().forEach( function ( entry ) {
 
-          for ( var i = 0, l = path.length - 1; i < l; ++i ) {
-            var part = path[ i ];
-            name = path[ i + 1 ];
-            var container = name.match( /^\d*$/ ) ? [] : {};
-            current = current[ part ] = current[ part ] || container;
-          }
+        var current = data;
+        var path = parseName( entry.name );
+        var name = path[ 0 ];
 
-          if ( name === '' ) {
-            current.push( entry.value );
-          } else {
-            current[ tryInt( name ) ] = entry.value;
-          }
+        for ( var i = 0, l = path.length - 1; i < l; ++i ) {
+          var part = path[ i ];
+          name = path[ i + 1 ];
+          var container = name === '' || typeof name === 'number' ? [] : {};
+          current = current[ part ] = current[ part ] || container;
+        }
 
-        } );
+        if ( name === '' ) {
+          current.push( entry.value );
+        } else {
+          current[ name ] = entry.value;
+        }
 
-        return data;
+      } );
 
-      }
+      return data;
 
-      // set values
-      var valueProp = 'value';
-      var checkedProp = 'checked';
-      var selectedProp = 'selected';
+    },
 
-      if ( defaults ) {
-        valueProp = 'defaultValue';
-        checkedProp = 'defaultChecked';
-        selectedProp = 'defaultSelected';
-      }
+    fill: function ( data, def ) {
 
-      $controls.each( function () {
+      return this.each( function () {
 
         var value = data;
-        parse( this.name ).forEach( function ( part ) {
-          if ( value && part !== '' ) value = value[ tryInt( part ) ];
+        parseName( this.name || '' ).forEach( function ( part ) {
+          if ( value && part !== '' ) value = value[ part ];
         } );
+        if ( value === data ) value = '';
 
-        var $control = $( this );
-        var tagName = this.tagName;
-        var type = tagName === 'INPUT' ? this.type : tagName;
+        $( this ).fval( value, def );
 
-        if ( value === undefined || value === null ) value = '';
+      } );
+
+    },
+
+    fillDef: function ( data ) {
+      return this.fill( data, true );
+    },
+
+    fval: function ( value, def ) {
+
+      var valueProp = 'value';
+      var selectedProp = 'selected';
+      var checkedProp = 'checked';
+
+      if ( def ) {
+        valueProp = 'defaultValue';
+        selectedProp = 'defaultSelected';
+        checkedProp = 'defaultChecked';
+      }
+
+      value = toValue( value );
+
+      return this.each( function () {
+
+        var el = this;
+        var tagName = el.tagName;
+        var type = tagName === 'INPUT' ? el.type : tagName;
 
         switch ( type ) {
         case 'SELECT':
-          var multiple = this.multiple && isArray( value );
+          var multiple = el.multiple && isArray( value );
 
-          $control.children().each( function () {
+          $( el ).children().each( function () {
+            var optionValue = this.getAttribute( 'value' ) || this.textContent;
             this[ selectedProp ] = multiple ?
-              value.indexOf( this.getAttribute( 'value' ) ) >= 0 :
-              value == this.getAttribute( 'value' );
+              value.indexOf( optionValue ) >= 0 :
+              value === optionValue;
           } );
 
           break;
 
         case 'TEXTAREA':
-          value += '';
-          if ( this[ valueProp ] !== value ) this[ valueProp ] = value;
-          if ( defaults ) $control.weld( value ); // Support: IE
+          if ( el[ valueProp ] !== value ) el[ valueProp ] = value;
+          if ( def ) $( el ).ftext( value ); // Support: IE
           break;
 
         case 'radio':
-          this[ checkedProp ] = value == this.getAttribute( 'value' );
-          break;
-
         case 'checkbox':
-          this[ checkedProp ] = isArray( value ) ?
-            value.indexOf( this.getAttribute( 'value' ) ) >= 0 :
-            !!value;
+          var elValue = el.getAttribute( 'value' ) || 'on';
+          el[ checkedProp ] = isArray( value ) ?
+            value.indexOf( elValue ) >= 0 :
+            value === elValue;
           break;
 
+        case 'OPTION':
         case 'button':
         case 'file':
         case 'image':
@@ -439,19 +384,20 @@
           break;
 
         default: // text, hidden, password, etc.
-          value += '';
-          if ( this[ valueProp ] !== value ) this[ valueProp ] = value;
+          if ( el[ valueProp ] !== value ) el[ valueProp ] = value;
         }
 
       } );
 
-      return this;
+    },
 
+    fdef: function ( value ) {
+      return this.fval( value, true );
     },
 
     reset: function () {
 
-      this.each( function () {
+      return this.each( function () {
 
         switch ( this.tagName ) {
         case 'FORM':
@@ -465,7 +411,6 @@
             // text, password, hidden
             this.value = this.defaultValue;
           }
-
           break;
 
         case 'TEXTAREA':
@@ -483,22 +428,44 @@
 
       } );
 
-      return this;
-
     },
 
-    deliver: function ( html ) {
+    // util
 
-      // for each component on the matched elements, serialize data into attribute
-      this.comps( function () {
-        var id = this.factory.id;
+    deliver: function () {
+
+      // for each component mounted on the given elements,
+      // serialize data into attribute for transmission
+      return this.eachComp( function () {
+        var id = this.compClass.id;
         if ( typeof id === 'string' ) {
           this.$el.attr( deliverAttr + id, JSON.stringify( this.data ) );
         }
       } );
 
-      // return outer html or elements
-      return html ? $( '<div></div>' ).append( this[ 0 ] ).html() : this;
+    },
+
+    outerHtml: function () {
+      return $( '<div></div>' ).append( this ).html();
+    },
+
+    eachComp: function ( compClass, fn ) {
+
+      if ( compClass && fn ) {
+
+        var id = compClass.id;
+        return this.each( function () {
+          var comp = this.nitoComps && this.nitoComps[ id ];
+          if ( comp ) fn.call( comp );
+        } );
+
+      }
+
+      fn = fn || compClass;
+
+      return this.each( function () {
+        each( this.nitoComps || {}, fn );
+      } );
 
     }
 
@@ -506,8 +473,17 @@
 
   var deliverAttr = 'data-nito-';
 
-  function funcValue( value, context ) {
-    return typeof value === 'function' ? value.call( context ) : value;
+  function parseName( name ) {
+    return name.replace( /\]/g, '' ).split( /\[/g ).map( function ( part ) {
+      return part.match( /^\d+$/ ) ? parseInt( part, 10 ) : part;
+    } );
+  }
+
+  function toValue( value ) {
+    if ( value === null || value === undefined || value === false ) return '';
+    if ( value === true ) return 'on';
+    if ( isArray( value ) ) return value.map( toValue );
+    return value + '';
   }
 
   return $;

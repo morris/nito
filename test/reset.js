@@ -5,7 +5,7 @@ QUnit.module( 'reset', function () {
     var $form = $(
       '<form>' +
         '<input type="text" name="foo">' +
-        '<input type="checkbox" name="bar" value="1">' +
+        '<input type="checkbox" name="bar">' +
         '<textarea name="baz"></textarea>' +
         '<select name="select"><option value="a"></option><option value="b"></option></select>' +
         '<input type="button" name="what">',
@@ -16,14 +16,14 @@ QUnit.module( 'reset', function () {
     var $baz = $form.children().eq( 2 );
     var $select = $form.children().eq( 3 );
 
-    $form.values( {
+    $form.children().fillDef( {
       foo: 'foo',
       bar: false,
       baz: 'baz',
       select: 'a'
-    }, true );
+    } );
 
-    $form.values( {
+    $form.children().fill( {
       foo: 'test',
       bar: true,
       baz: 'test',

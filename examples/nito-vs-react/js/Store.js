@@ -6,7 +6,7 @@ var Store = function () {
   this.change = function ( remove, modify, append, reinsert ) {
 
     var data = this.data;
-    var i;
+    var i, item;
 
     for ( i = 0; i < remove && data.length > 0; ++i ) {
       data.splice( random( data ), 1 );
@@ -17,7 +17,7 @@ var Store = function () {
     }
 
     for ( i = 0; i < append; ++i ) {
-      var item = randomData();
+      item = randomData();
       item.id = nextId;
       ++nextId;
       data.push( item );
@@ -25,7 +25,7 @@ var Store = function () {
 
     for ( i = 0; i < reinsert && data.length > 1; ++i ) {
       var from = random( data );
-      var item = data.splice( from, 1 )[ 0 ];
+      item = data.splice( from, 1 )[ 0 ];
       var to = random( data );
       data.splice( to, 0, item );
     }

@@ -1,4 +1,4 @@
-QUnit.module( 'loop', function () {
+QUnit.module( 'nest', function () {
 
   var Item = $.nito( {
 
@@ -11,7 +11,7 @@ QUnit.module( 'loop', function () {
     },
 
     update: function () {
-      this.$el.weld( this.data.title );
+      this.$el.text( this.data.title );
     }
 
   } );
@@ -33,7 +33,7 @@ QUnit.module( 'loop', function () {
 
     var $items = $( '<div></div>' );
 
-    $items.loop( [
+    $items.nest( Item, [
       { id: 1, title: 'A' },
       { id: 2, title: 'B' },
       { id: 3, title: 'C' },
@@ -41,12 +41,12 @@ QUnit.module( 'loop', function () {
       { id: 5, title: 'E' },
       { id: 6, title: 'F' },
       { id: 7, title: 'G' }
-    ], Item );
+    ] );
 
     assert.equal( $items.children().length, 7 );
     assert.equal( join(), 'ABCDEFG' );
 
-    $items.loop( [
+    $items.nest( Item, [
       { id: 1, title: 'A' },
       { id: 2, title: 'B' },
       { id: 3, title: 'C' },
@@ -54,12 +54,12 @@ QUnit.module( 'loop', function () {
       { id: 5, title: 'E' },
       { id: 6, title: 'F' },
       { id: 7, title: 'G' }
-    ], Item );
+    ] );
 
     assert.equal( $items.children().length, 7 );
     assert.equal( join(), 'ABCDEFG' );
 
-    $items.loop( [
+    $items.nest( Item, [
       { id: 1, title: 'A' },
       { id: 3, title: 'C' },
       { id: 4, title: 'D' },
@@ -67,12 +67,12 @@ QUnit.module( 'loop', function () {
       { id: 6, title: 'F' },
       { id: 2, title: 'B' },
       { id: 7, title: 'G' }
-    ], Item );
+    ] );
 
     assert.equal( $items.children().length, 7 );
     assert.equal( join(), 'ACDEFBG' );
 
-    $items.loop( [
+    $items.nest( Item, [
       { id: 1, title: 'A' },
       { id: 2, title: 'B' },
       { id: 8, title: 'X' },
@@ -82,26 +82,26 @@ QUnit.module( 'loop', function () {
       { id: 4, title: 'D' },
       { id: 5, title: 'E' },
       { id: 7, title: 'G' }
-    ], Item );
+    ] );
 
     assert.equal( $items.children().length, 9 );
     assert.equal( join(), 'ABXCFYDEG' );
 
-    $items.loop( [
+    $items.nest( Item, [
       { id: 9, title: 'Y' },
       { id: 8, title: 'X' },
       { id: 3, title: 'C' },
       { id: 1, title: 'A' }
-    ], Item );
+    ] );
 
     assert.equal( $items.children().length, 4 );
     assert.equal( join(), 'YXCA' );
 
-    $items.loop( [], Item );
+    $items.nest( Item, [] );
 
     assert.equal( $items.children().length, 0 );
 
-    $items.loop( [
+    $items.nest( Item, [
       { id: 1, title: 'A' },
       { id: 2, title: 'B' },
       { id: 3, title: 'C' },
@@ -109,12 +109,12 @@ QUnit.module( 'loop', function () {
       { id: 5, title: 'E' },
       { id: 6, title: 'F' },
       { id: 7, title: 'G' }
-    ], Item );
+    ] );
 
     assert.equal( $items.children().length, 7 );
     assert.equal( join(), 'ABCDEFG' );
 
-    $items.loop( [
+    $items.nest( Item, [
       { id: 1, title: 'A' },
       { id: 3, title: 'C' },
       { id: 4, title: 'D' },
@@ -122,35 +122,31 @@ QUnit.module( 'loop', function () {
       { id: 7, title: 'G' },
       { id: 6, title: 'F' },
       { id: 2, title: 'B' },
-    ], Item );
+    ] );
 
     assert.equal( $items.children().length, 7 );
     assert.equal( join(), 'ACDEGFB' );
 
     function join() {
-
       var s = [];
-
       $items.children().each( function () {
         s.push( $( this ).html() );
-      } )
-
+      } );
       return s.join( '' );
-
     }
 
   }
 
-  QUnit.test( 'nest', function ( assert ) {
+  QUnit.test( 'nestOne', function ( assert ) {
 
     var $items = $( '<div></div>' );
 
-    $items.nest( { id: 1, title: 'A' }, Item );
+    $items.nestOne( Item, { id: 1, title: 'A' } );
 
     assert.equal( $items.children().length, 1 );
     assert.equal( $items.children().eq( 0 ).html(), 'A' );
 
-    $items.nest( null, Item );
+    $items.nestOne( Item, null );
 
     assert.equal( $items.children().length, 0 );
 

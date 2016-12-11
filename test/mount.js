@@ -23,30 +23,37 @@ QUnit.module( 'mount', function () {
 
   QUnit.test( 'mount', function ( assert ) {
 
-    var $el = $( '<div></div>' );
-    var a = A.mount( $el, 'a', 'a*' );
-    var a_ = $el.mount( A, 'a_', 'a_*' )[ 0 ].nitoComps[ A.id ];
-    var b = B.mount( $el, 'b', 'b*' );
-    var b_ = $el.mount( B, 'b_', 'b_*' )[ 0 ].nitoComps[ B.id ];
+    var $el = $( '<div></div>' )
+      .mount( A, 'a*', 'a' )
+      .mount( A, 'a_*', 'a_' )
+      .mount( B, 'b*', 'b' )
+      .mount( B, 'b_*', 'b_' );
 
-    assert.equal( a, a_ );
-    assert.equal( b, b_ );
-    assert.notEqual( a, b );
-    assert.notEqual( A.id, B.id );
-    assert.equal( a.env, 'a' );
-    assert.equal( a.data, 'a*' );
-    assert.equal( b.env, 'b' );
-    assert.equal( b.data, 'b*' );
-    assert.equal( a.el.nitoComps[ A.id ], a );
-    assert.equal( b.el.nitoComps[ B.id ], b );
+    var i = 0;
+
+    $el.eachComp( function () {
+      if ( this.compClass === A ) {
+        assert.equal( this.data, 'a*' );
+        assert.equal( this.env, 'a' );
+        ++i;
+      } else if ( this.compClass === B ) {
+        assert.equal( this.data, 'b*' );
+        assert.equal( this.env, 'b' );
+        ++i;
+      } else {
+        throw new Error( '?' );
+      }
+    } );
+
+    assert.equal( i, 2 );
 
   } );
 
   QUnit.test( 'update', function ( assert ) {
 
     var $el = $( '<div></div>' );
-    $el.mount( A, 'a', 'x' );
-    $el.mount( B, 'b', 'x' );
+    $el.mount( A, 'x', 'a' );
+    $el.mount( B, 'x', 'b' );
 
     var updates = [];
     $el.on( 'update', function ( e, data ) {
@@ -68,8 +75,8 @@ QUnit.module( 'mount', function () {
   QUnit.test( 'unmount one', function ( assert ) {
 
     var $el = $( '<div></div>' );
-    $el.mount( A, 'a', 'x' );
-    $el.mount( B, 'b', 'x' );
+    $el.mount( A, 'x', 'a' );
+    $el.mount( B, 'x', 'b' );
 
     var updates = [];
     $el.on( 'update', function ( e, data ) {
@@ -91,7 +98,7 @@ QUnit.module( 'mount', function () {
 
     assert.deepEqual( updates, [ 'x', 'x', 'x', 'a', 'x', 'b' ] );
     assert.deepEqual( unmounts, [ 'a', 'b' ] );
-    $el.comps( function () {
+    $el.eachComp( function () {
       assert.ok( false );
     } );
 
@@ -100,8 +107,8 @@ QUnit.module( 'mount', function () {
   QUnit.test( 'unmount all', function ( assert ) {
 
     var $el = $( '<div></div>' );
-    $el.mount( A, 'a', 'x' );
-    $el.mount( B, 'b', 'x' );
+    $el.mount( A, 'x', 'a' );
+    $el.mount( B, 'x', 'b' );
 
     var updates = [];
     $el.on( 'update', function ( e, data ) {
@@ -122,7 +129,7 @@ QUnit.module( 'mount', function () {
 
     assert.deepEqual( updates, [ 'x', 'x', 'x', 'a', 'x', 'b' ] );
     assert.deepEqual( unmounts, [ 'a', 'b' ] );
-    $el.comps( function () {
+    $el.eachComp( function () {
       assert.ok( false );
     } );
 

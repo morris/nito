@@ -10,7 +10,7 @@ module.exports = $.nito( {
 
   update: function ( data ) {
     if ( data ) this.data = data;
-    this.$el.weld( this.data );
+    this.find( '.title' ).ftext( this.data.title );
     this.$el.classes( {
       active: this.data.active
     } );

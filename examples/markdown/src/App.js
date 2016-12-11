@@ -32,7 +32,7 @@ module.exports = $.nito( {
 
     var path = process.browser ? env.location.pathname : env.url;
 
-    this.find( '.nav' ).loop( this.data.pages.map( function ( page ) {
+    this.find( '.nav' ).nest( this.data.pages.map( function ( page ) {
       return {
         title: page.title,
         id: page.id,
@@ -40,7 +40,7 @@ module.exports = $.nito( {
       };
     } ), NavItem, this );
 
-    this.find( '.active-page' ).loop( this.data.pages.filter( function ( page ) {
+    this.find( '.active-page' ).nest( this.data.pages.filter( function ( page ) {
       return '/' + page.id === path;
     } ), Page, this );
   },
