@@ -51,6 +51,28 @@ QUnit.module( 'fval', function () {
 
   } );
 
+  QUnit.test( 'select/option default value', function ( assert ) {
+
+    var $form = $( '<form><select name="foo"><option>bar</option><option>baz</option></form>' );
+    var $control = $form.find( 'select' );
+    var $bar = $form.find( 'option' ).eq( 0 );
+    var $baz = $form.find( 'option' ).eq( 1 );
+
+    assert.equal( $control.val(), 'bar' );
+    assert.equal( $control.prop( 'value' ), 'bar' );
+
+    $control.fval( 'baz' );
+
+    assert.ok( $baz[ 0 ].selected );
+    assert.equal( $control.val(), 'baz' );
+
+    $form[ 0 ].reset();
+
+    assert.ok( $bar[ 0 ].selected );
+    assert.equal( $control.val(), 'bar' );
+
+  } );
+
   QUnit.test( 'checkbox', function ( assert ) {
 
     var $form = $( '<form><input type="checkbox" name="foo"></form>' );

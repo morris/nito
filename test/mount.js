@@ -135,4 +135,33 @@ QUnit.module( 'mount', function () {
 
   } );
 
+  QUnit.test( 'errors', function ( assert ) {
+
+    assert.throws( function () {
+      $().mount();
+    }, /Invalid component class/ );
+
+    assert.throws( function () {
+      $().mount( function () {} );
+    }, /Invalid component class/ );
+
+    assert.throws( function () {
+      $.nito( {} ).create();
+    }, /Cannot create component without base/ );
+
+    assert.throws( function () {
+      $.nito().create();
+    }, /Invalid settings/ );
+
+  } );
+
+  QUnit.test( 'base join', function ( assert ) {
+
+    assert.equal(
+      $.nito( { base: [ '<div>', '</div>' ] } ).create().outerHtml(),
+      '<div>\n</div>'
+    );
+
+  } );
+
 } );

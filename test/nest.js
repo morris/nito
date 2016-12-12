@@ -3,7 +3,8 @@ QUnit.module( 'nest', function () {
   var Item = $.nito( {
 
     base: [
-      '<div class="item"></div>'
+      '<div class="item">',
+      '</div>'
     ],
 
     identify: function ( item ) {
@@ -149,6 +150,22 @@ QUnit.module( 'nest', function () {
     $items.nestOne( Item, null );
 
     assert.equal( $items.children().length, 0 );
+
+  } );
+
+  QUnit.test( 'errors', function ( assert ) {
+
+    assert.throws( function () {
+      $().nest();
+    }, /Invalid component class/ );
+
+    assert.throws( function () {
+      $().nest( function () {} );
+    }, /Invalid component class/ );
+
+    assert.throws( function () {
+      $( '<div></div>' ).nest( $.nito( {} ), true );
+    }, /Invalid items/ );
 
   } );
 
