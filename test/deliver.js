@@ -18,9 +18,9 @@ QUnit.module( 'deliver', function () {
 
     var data = [];
     $el.eachComp( function () {
-      data.push( this.data );
+      data.push( this.data && this.data.type );
     } );
-    assert.deepEqual( data.sort(), [ { type: 'B' }, { type: 'A' }, undefined ] );
+    assert.deepEqual( data.sort(), [ 'A', 'B', undefined ] );
 
   } );
 
