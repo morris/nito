@@ -1,23 +1,25 @@
 {
   "name": "nito",
-  "version": "0.11.0",
+  "version": "1.0.0",
   "repository": "https://github.com/morris/nito",
   "description": "Minimal component library for jQuery, inspired by React and Riot",
   "author": {
     "name": "Morris Brodersen",
-    "url": "http://morrisbrodersen.de"
+    "url": "https://morrisbrodersen.de"
   },
   "license": "MIT",
   "main": "nito.js",
+  "scripts": {
+    "lint": "node_modules/jshint/bin/jshint nito.js",
+    "build": "node_modules/uglify-js/bin/uglifyjs --compress --mangle --comments /^!/ --output nito.min.js nito.js"
+  },
   "devDependencies": {
-    "browserify": "^12.0.1",
-    "domino": "^1.0.20",
-    "express": "^4.13.3",
-    "gulp": "^3.9.0",
-    "gulp-jshint": "^1.11.2",
-    "gulp-rename": "^1.2.2",
-    "gulp-uglify": "^1.2.0",
-    "jquery": "^2.1.4",
-    "marked": "^0.3.5"
+    "browserify": "^13.1.1",
+    "domino": "^1.0.27",
+    "express": "^4.14.0",
+    "jquery": "^3.1.1",
+    "jshint": "^2.9.4",
+    "marked": "^0.3.6",
+    "uglify-js": "^2.7.5"
   }
 }
