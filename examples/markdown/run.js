@@ -1,7 +1,7 @@
 var fs = require( 'fs' );
 var browserify = require( 'browserify' );
-var b = browserify();
-b.add( './src/client.js' );
+
+var b = browserify( './src/client.js', { debug: true } );
 b.bundle().pipe( fs.createWriteStream( 'js/bundle.js' ) )
   .on( 'finish', function () {
     console.log( 'browserified' );

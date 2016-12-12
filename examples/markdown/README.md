@@ -8,8 +8,8 @@ This example shows how to build an isomorphic app with Nito on Node.js.
 
 ```
 git clone https://github.com/morris/nito.git
-cd nito/examples/markdown
 npm install
+cd nito/examples/markdown
 node run.js
 ```
 

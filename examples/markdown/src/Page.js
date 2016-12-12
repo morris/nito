@@ -43,7 +43,7 @@ module.exports = $.nito( {
     } );
     this.find( '.title' ).ftext( this.data.title );
     this.find( '.body' ).fhtml( marked( this.data.body ) );
-    this.find( '.form' ).values( this.data );
+    this.find( 'input, textarea' ).fill( this.data );
   },
 
   edit: function () {

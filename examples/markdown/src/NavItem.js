@@ -8,8 +8,7 @@ module.exports = $.nito( {
     '</li>'
   ],
 
-  update: function ( data ) {
-    if ( data ) this.data = data;
+  update: function () {
     this.find( '.title' ).ftext( this.data.title );
     this.$el.classes( {
       active: this.data.active

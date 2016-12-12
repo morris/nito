@@ -12,7 +12,8 @@ server.use( express.static( '.' ) );
 server.get( '/*', function ( req, res ) {
   fs.readFile( 'data.json', function ( err, json ) {
     var data = err ? null : JSON.parse( json.toString() );
-    res.end( index.replace( '<!-- APP -->', App.deliver( req, data ) ) );
+    var html = App.create( data, req ).deliver().outerHtml();
+    res.end( index.replace( '<!-- APP -->', html ) );
   } );
 } );
 
@@ -24,4 +25,6 @@ server.post( '/', function ( req, res ) {
   } );
 } );
 
-server.listen( 3000 );
+server.listen( 3000, function () {
+  console.log( 'http://localhost:3000' );
+} );

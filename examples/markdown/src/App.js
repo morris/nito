@@ -32,17 +32,17 @@ module.exports = $.nito( {
 
     var path = process.browser ? env.location.pathname : env.url;
 
-    this.find( '.nav' ).nest( this.data.pages.map( function ( page ) {
+    this.find( '.nav' ).nest( NavItem, this.data.pages.map( function ( page ) {
       return {
         title: page.title,
         id: page.id,
         active: '/' + page.id === path
       };
-    } ), NavItem, this );
+    } ), this );
 
-    this.find( '.active-page' ).nest( this.data.pages.filter( function ( page ) {
+    this.find( '.active-page' ).nest( Page, this.data.pages.filter( function ( page ) {
       return '/' + page.id === path;
-    } ), Page, this );
+    } ), this );
   },
 
   navigate: function ( e ) {

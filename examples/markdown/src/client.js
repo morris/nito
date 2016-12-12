@@ -1,3 +1,4 @@
+var $ = require( './dollar' );
 var App = require( './App' );
 
-App.mount( '#app', window );
+$( '#app' ).mount( App, null, window );
