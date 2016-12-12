@@ -27,7 +27,7 @@ QUnit.module( 'fill/fillDef', function () {
         }
       },
       baz: {
-        foo: 'baz',
+        foo: 'baz'
       },
       select: [ 'a' ],
       indexed: [ 'a' ]
@@ -41,7 +41,7 @@ QUnit.module( 'fill/fillDef', function () {
         }
       },
       baz: {
-        foo: 'test',
+        foo: 'test'
       },
       select: [ 'a', 'b' ],
       indexed: [ 'a', 'b' ]

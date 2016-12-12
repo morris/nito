@@ -266,6 +266,7 @@
     fhtml: function ( html ) {
 
       return this.each( function () {
+        if ( html === null ) html = ''; // Support: IE
         if ( this.nitoHtml !== html ) {
           this.innerHTML = this.nitoHtml = html;
         }

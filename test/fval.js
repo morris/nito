@@ -31,7 +31,10 @@ QUnit.module( 'fval', function () {
 
   QUnit.test( 'select', function ( assert ) {
 
-    var $form = $( '<form><select name="foo"><option value="bar">bar</option><option value="baz">baz</option></form>' );
+    var $form = $( '<form><select name="foo">' +
+        '<option value="bar">bar</option>' +
+        '<option value="baz">baz</option>' +
+      '</form>' );
     var $control = $form.find( 'select' );
     var $bar = $form.find( 'option' ).eq( 0 );
     var $baz = $form.find( 'option' ).eq( 1 );
@@ -41,13 +44,13 @@ QUnit.module( 'fval', function () {
 
     $control.fval( 'baz' );
 
-    assert.ok( $baz[ 0 ].selected );
     assert.equal( $control.val(), 'baz' );
+    assert.ok( $baz.is( ':selected' ) );
 
-    $form[ 0 ].reset();
+    $form.reset();
 
-    assert.ok( $bar[ 0 ].selected );
     assert.equal( $control.val(), 'bar' );
+    assert.ok( $bar.is( ':selected' ) );
 
   } );
 
@@ -63,13 +66,13 @@ QUnit.module( 'fval', function () {
 
     $control.fval( 'baz' );
 
-    assert.ok( $baz[ 0 ].selected );
     assert.equal( $control.val(), 'baz' );
+    assert.ok( $baz.is( ':selected' ) );
 
-    $form[ 0 ].reset();
+    $form.reset();
 
-    assert.ok( $bar[ 0 ].selected );
     assert.equal( $control.val(), 'bar' );
+    assert.ok( $bar.is( ':selected' ) );
 
   } );
 
