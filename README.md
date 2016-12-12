@@ -1,7 +1,8 @@
 <img src="logo.png" width="200" alt="Nito">
 
 Minimal component library for jQuery, inspired by React and Riot.
-Just an experiment. [Or maybe not.](https://rawgit.com/morris/nito/v0.11.0/examples/nito-vs-react/)
+Just an experiment.
+[Or maybe not.](https://cdn.rawgit.com/morris/nito/v1.0.0/examples/nito-vs-react/)
 
 ```js
 var Todo = $.nito( {
@@ -42,7 +43,7 @@ var TodoItem = $.nito( {
   },
 
   update: function () {
-    this.$el.weld( this.data );
+    this.find( '.title' ).ftext( this.data.title );
     this.$el.classes( { completed: this.data.completed } );
   },
 
@@ -55,24 +56,20 @@ var TodoItem = $.nito( {
 ```
 
 - Create reusable components with jQuery or Zepto
-- Promotes one-way data flow
+- Designed for pure update functions, driven by minimal state
 - One simple factory, a few functions, <500 lines
-- [No templates](http://blog.nodejitsu.com/micro-templates-are-dead/),
-[no virtual DOM](http://blog.500tech.com/is-reactjs-fast/),
-[no JSX](https://www.pandastrike.com/posts/20150311-react-bad-idea)
 - Not a framework - never gets in the way
 - Just $ and standard JavaScript
-- Favors explicit code over implicit magic
 - Pairs well with [Bootstrap](http://getbootstrap.com)
 
 
 ## Examples
 
-### [Todo](https://rawgit.com/morris/nito/v0.11.0/examples/todo/)
+### [Todo](https://cdn.rawgit.com/morris/nito/v1.0.0/examples/todo/)
 
 A simple client-side todo app with TodoMVC-like features.
 
-### [Nito vs. React](https://rawgit.com/morris/nito/v0.11.0/examples/nito-vs-react/)
+### [Nito vs. React](https://cdn.rawgit.com/morris/nito/v1.0.0/examples/nito-vs-react/)
 
 Structural comparison of the two libraries, including benchmark.
 
@@ -85,7 +82,7 @@ Isomorphic app (server- and client-side) built with Nito on Node.js.
 
 ```html
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-<script src="https://rawgit.com/morris/nito/v0.11.0/nito.min.js"></script>
+<script src="https://cdn.rawgit.com/morris/nito/v1.0.0/nito.min.js"></script>
 ```
 
 
@@ -223,6 +220,8 @@ $( '<ul></ul>' ).nest( TodoItem, null, [
 The following methods are helpful and/or speed optimized
 for usage in component `update` methods.
 
+### Basics
+
 #### `$els.classes( map )`
 
 - Set classes on `$els` softly
@@ -249,22 +248,7 @@ $( '.form-group' ).classes( {
 - Faster than `$els.text`
 - Return `$els`
 
-#### `$els.fval( value )`
-
-- Set control values in `$els` softly
-- User input will be overwritten
-- Form defaults are not modified
-- Return `$els`
-
-#### `$els.fdef( value )`
-
-- Set default control value in `$els` softly
-- Modifies DOM attributes like `value` and `selected`, *not* the properties
-- Inputs modified by the user will still reflect the user input
-- Return `$els`
-
-
-## Form helpers
+### Forms
 
 #### `$els.serializeData()`
 
@@ -282,6 +266,20 @@ $( '.form-group' ).classes( {
 #### `$els.fillDef( data )`
 
 - Same as `fill` but for default values
+- Return `$els`
+
+#### `$els.fval( value )`
+
+- Set form control value in `$els` softly
+- User input will be overwritten
+- Form defaults are not modified
+- Return `$els`
+
+#### `$els.fdef( value )`
+
+- Set default form control value in `$els` softly
+- Modifies DOM attributes like `value` and `selected`, *not* the properties
+- Inputs modified by the user will still reflect the user input
 - Return `$els`
 
 #### `$els.reset()`
