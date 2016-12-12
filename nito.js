@@ -17,6 +17,7 @@
   var extend = Object.assign || $.extend;
   var isArray = Array.isArray || $.isArray;
   var each = $.each;
+  var deliverAttr = 'data-nito-';
 
   // component class factory
 
@@ -153,13 +154,6 @@
     // nesting
 
     nest: function ( compClass, items, env ) {
-
-      if ( !compClass || !compClass.create ) {
-        throw new Error( 'compClass.create is undefined in nest' );
-      }
-      if ( items && !items.map ) {
-        throw new Error( 'items.map is undefined in nest' );
-      }
 
       var identify = compClass.identify;
 
@@ -470,8 +464,6 @@
     }
 
   } );
-
-  var deliverAttr = 'data-nito-';
 
   function parseName( name ) {
     return name.replace( /\]/g, '' ).split( /\[/g ).map( function ( part ) {
