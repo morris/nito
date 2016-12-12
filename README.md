@@ -99,7 +99,7 @@ Isomorphic app (server- and client-side) built with Nito on Node.js.
     - Base HTML for components
     - May be a string or an array of strings
     - Arrays will be joined with `\n`
-    - Optional, used in `Comp.create` (see below)
+    - Optional, used in `compClass.create` (see below)
   - `mount( env )`
     - Called when mounting a component
     - `env` is used to pass constant references, e.g. the app/store/controller or a parent component
@@ -125,14 +125,14 @@ Isomorphic app (server- and client-side) built with Nito on Node.js.
 
 ## Creating components
 
-#### `Comp.create( data, env )`
+#### `compClass.create( data, env )`
 
 - Create a component using the component base HTML
 - `data` is passed to `comp.set` and available as `comp.data`. Optional
   - Use `data` for variable data/state
 - `env` is passed to `comp.mount`. Optional
   - Use `env` to pass constant references, e.g. the app/store/controller or a parent component
-- Return the created element ($ object)
+- Return the created element (`$` object)
 
 
 ## Component members and methods
@@ -202,7 +202,7 @@ Use these methods in `update`, *not* in `mount`.
 - Return array of child components
 
 ```js
-$( '<ul></ul>' ).nest( TodoItem, null, [
+$( '<ul></ul>' ).nest( TodoItem, [
   { title: 'Write code', done: true },
   { title: 'Write readme', done: false }
 ] );
@@ -259,9 +259,16 @@ $( '.form-group' ).classes( {
 
 #### `$els.fill( data )`
 
-- Fill named form controls in `$els` with given data
+- Fill named form controls in `$els` with given data (JSON-like)
 - Supports all controls and nested data
 - Return `$els`
+
+```js
+$( '[name]' ).fill( {
+  title: 'Nito',
+  description: '...'
+} );
+```
 
 #### `$els.fillDef( data )`
 
