@@ -23,6 +23,8 @@
 
   $.nito = function ( settings ) {
 
+    if ( !settings ) throw new Error( 'Invalid settings' );
+
     var Comp = function ( el, data, env ) {
       $.Comp.call( this, el, data, env );
     };
@@ -108,6 +110,10 @@
 
     mount: function ( compClass, data, env ) {
 
+      if ( typeof compClass !== 'function' || !compClass.id ) {
+        throw new Error( 'Invalid component class' );
+      }
+
       var id = compClass.id;
 
       return this.each( function () {
@@ -154,6 +160,11 @@
     // nesting
 
     nest: function ( compClass, items, env ) {
+
+      if ( typeof compClass !== 'function' || !compClass.create || !compClass.id ) {
+        throw new Error( 'Invalid component class' );
+      }
+      if ( items && !items.map ) throw new Error( 'Invalid items' );
 
       var identify = compClass.identify;
 
