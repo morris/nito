@@ -57,4 +57,18 @@ QUnit.module( 'deliver', function () {
 
   } );
 
+  QUnit.test( 'invalid', function ( assert ) {
+
+    var A = $.nito( { base: '<div></div>', id: 'a' } );
+    var $el = $( '<div data-nito-a="bad json"></div>' ).mount( A );
+
+    var data = [];
+    $el.eachComp( function () {
+      data.push( this.data );
+    } );
+
+    assert.deepEqual( data, [ undefined ] );
+
+  } );
+
 } );
