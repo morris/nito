@@ -9,7 +9,7 @@
 - Removed `Comp.mount`, `Comp.appendTo`, `Comp.deliver` in favor of their `$.fn` variants
 - Added `outerHtml`
 - Added `eachComp`
-- Reordered `env, data` to `data, env` consistently
+- Renamed and reordered `env, data` to `data, options` consistently
 - `nest`, `nestOne`, `Comp.create` return `$` objects consistently
 
 ## v0.x

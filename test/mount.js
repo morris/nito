@@ -2,8 +2,8 @@ QUnit.module( 'mount', function () {
 
   var settings = {
 
-    mount: function ( env ) {
-      this.env = env;
+    mount: function ( options ) {
+      this.options = options;
     },
 
     update: function () {
@@ -34,11 +34,11 @@ QUnit.module( 'mount', function () {
     $el.eachComp( function () {
       if ( this.compClass === A ) {
         assert.equal( this.data, 'a*' );
-        assert.equal( this.env, 'a' );
+        assert.equal( this.options, 'a' );
         ++i;
       } else if ( this.compClass === B ) {
         assert.equal( this.data, 'b*' );
-        assert.equal( this.env, 'b' );
+        assert.equal( this.options, 'b' );
         ++i;
       } else {
         throw new Error( '?' );

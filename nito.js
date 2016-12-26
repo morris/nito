@@ -25,8 +25,8 @@
 
     if ( !settings ) throw new Error( 'Invalid settings' );
 
-    var Comp = function ( el, data, env ) {
-      $.Comp.call( this, el, data, env );
+    var Comp = function ( el, data, options ) {
+      $.Comp.call( this, el, data, options );
     };
 
     Comp.prototype = Object.create( $.Comp.prototype );
@@ -52,7 +52,7 @@
 
   // component base class
 
-  $.Comp = function ( el, data, env ) {
+  $.Comp = function ( el, data, options ) {
     this.el = el;
     this.$el = $( el );
 
@@ -60,13 +60,13 @@
     this._sort = 0;
     this._index = 0;
 
-    this.mount( env );
+    this.mount( options );
     this.set( data );
   };
 
-  $.Comp.create = function ( data, env ) {
+  $.Comp.create = function ( data, options ) {
     if ( !this.base ) throw new Error( 'Cannot create component without base' );
-    return $( this.base.cloneNode( true ) ).mount( this, data, env );
+    return $( this.base.cloneNode( true ) ).mount( this, data, options );
   };
 
   extend( $.Comp.prototype, {
@@ -108,7 +108,7 @@
 
     // component lifecycle
 
-    mount: function ( compClass, data, env ) {
+    mount: function ( compClass, data, options ) {
 
       if ( typeof compClass !== 'function' || !compClass.id ) {
         throw new Error( 'Invalid component class' );
@@ -134,7 +134,7 @@
         }
 
         // create component
-        comps[ id ] = new compClass( el, data, env );
+        comps[ id ] = new compClass( el, data, options );
 
       } );
 
@@ -159,7 +159,7 @@
 
     // nesting
 
-    nest: function ( compClass, items, env ) {
+    nest: function ( compClass, items, options ) {
 
       if ( typeof compClass !== 'function' || !compClass.create || !compClass.id ) {
         throw new Error( 'Invalid component class' );
@@ -187,7 +187,7 @@
             comp._sort = Math.abs( index - comp._index );
             comp.set( item );
           } else {
-            comp = compClass.create( item, env )[ 0 ].nitoComps[ compClass.id ];
+            comp = compClass.create( item, options )[ 0 ].nitoComps[ compClass.id ];
             map[ key ] = comp;
             comp._sort = -index;
           }
@@ -243,8 +243,8 @@
 
     },
 
-    nestOne: function ( compClass, item, env ) {
-      return this.nest( compClass, item ? [ item ] : [], env );
+    nestOne: function ( compClass, item, options ) {
+      return this.nest( compClass, item ? [ item ] : [], options );
     },
 
     // manipulation
