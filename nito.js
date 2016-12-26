@@ -130,7 +130,7 @@
         try {
           if ( !data ) data = JSON.parse( $( el ).attr( deliverAttr + id ) || null );
         } catch ( ex ) {
-          console.warn( ex );
+          if ( typeof console === 'object' ) console.warn( ex );
         }
 
         // create component
