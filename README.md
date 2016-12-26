@@ -49,7 +49,7 @@ var TodoItem = $.nito( {
 
   toggle: function () {
     this.data.completed = !this.data.completed;
-    this.todo.update(); // always update explicitly
+    this.todo.update();
   }
 
 } );
