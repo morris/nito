@@ -120,26 +120,19 @@
       } );
 
       function frame( name, fn ) {
-
         var t0, t1;
         requestAnimationFrame( ready );
 
         function ready() {
-
           requestAnimationFrame( done );
-
           t0 = new Date().getTime();
           fn();
-
         }
 
         function done() {
-
           t1 = new Date().getTime();
           $( '#log' ).append( name + ' frame: ' + ( t1 - t0 ) + 'ms\n' );
-
         }
-
       }
     </script>
 

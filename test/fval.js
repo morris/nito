@@ -22,7 +22,7 @@ QUnit.module( 'fval', function () {
     assert.equal( $control[ 0 ].defaultValue, '' );
     assert.equal( $control.val(), 'baz' );
 
-    $form[ 0 ].reset();
+    $form.reset();
 
     assert.equal( $control.html(), '' );
     assert.equal( $control.val(), '' );

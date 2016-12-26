@@ -1,4 +1,4 @@
-<img src="logo.png" width="200" alt="Nito">
+# Nito
 
 Minimal component library for jQuery, inspired by React and Riot.
 Just an experiment.

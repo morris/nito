@@ -19,9 +19,9 @@ var ReactDashboard = React.createClass( {
     var items = this.props.store.data;
 
     return React.createElement( 'div', { className: 'dashboard' },
-        items.map( function ( d ) {
-          return React.createElement( ReactItem, { key: d.id, color: d.color, name: d.name, score: d.score } );
-        } )
+      items.map( function ( d ) {
+        return React.createElement( ReactItem, { key: d.id, color: d.color, name: d.name, score: d.score } );
+      } )
     );
   }
 
