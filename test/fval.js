@@ -45,12 +45,12 @@ QUnit.module( 'fval', function () {
     $control.fval( 'baz' );
 
     assert.equal( $control.val(), 'baz' );
-    assert.ok( $baz.is( ':selected' ) );
+    assert.ok( $baz[ 0 ].selected );
 
     $form.reset();
 
     assert.equal( $control.val(), 'bar' );
-    assert.ok( $bar.is( ':selected' ) );
+    assert.ok( $bar[ 0 ].selected );
 
   } );
 
@@ -67,12 +67,12 @@ QUnit.module( 'fval', function () {
     $control.fval( 'baz' );
 
     assert.equal( $control.val(), 'baz' );
-    assert.ok( $baz.is( ':selected' ) );
+    assert.ok( $baz[ 0 ].selected );
 
     $form.reset();
 
     assert.equal( $control.val(), 'bar' );
-    assert.ok( $bar.is( ':selected' ) );
+    assert.ok( $bar[ 0 ].selected );
 
   } );
 

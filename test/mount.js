@@ -32,11 +32,11 @@ QUnit.module( 'mount', function () {
     var i = 0;
 
     $el.eachComp( function () {
-      if ( this.compClass === A ) {
+      if ( this.constructor === A ) {
         assert.equal( this.data, 'a*' );
         assert.equal( this.options, 'a' );
         ++i;
-      } else if ( this.compClass === B ) {
+      } else if ( this.constructor === B ) {
         assert.equal( this.data, 'b*' );
         assert.equal( this.options, 'b' );
         ++i;
