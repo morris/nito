@@ -13,7 +13,9 @@
 
       <h1><a href="https://github.com/morris/nito">Nito</a> vs. React</h1>
 
-      <p>Benchmark concept originally by <a href="https://github.com/jonmiles/react-performance-tests">Jonathan Miles</a>.</p>
+      <p>Benchmark concept originally by
+        <a href="https://github.com/jonmiles/react-performance-tests">Jonathan Miles</a>.
+        Start Chrome with <code>--enable-precise-memory-info</code> for accurate memory stats.</p>
 
       <hr>
 
@@ -24,11 +26,9 @@
         </div>
         <div class="form-group">
           <label for="rate">Rate of change</label>
-          <input type="text" class="form-control" id="rate" value="30">
+          <input type="text" class="form-control" id="rate" value="0.3">
         </div>
         <button class="btn btn-primary" id="benchmark">Benchmark</button>
-        <button class="btn btn-primary" id="updateNito">Update Nito</button>
-        <button class="btn btn-primary" id="updateReact">Update React</button>
       </div>
 
       <hr>
@@ -58,6 +58,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.2/lodash.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/platform/1.3.3/platform.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/benchmark/2.1.2/benchmark.min.js"></script>
+    <script src="https://cdn.rawgit.com/paulirish/memory-stats.js/6fa0f35/memory-stats.js"></script>
 
     <script src="js/Store.js"></script>
     <script src="js/NitoDashboard.js"></script>
@@ -65,8 +66,7 @@
 
     <script>
       var store = new Store();
-      store.change( 0, 0, $( '#comps' ).val(), 0 );
-      var rate = $( '#rate' ).val();
+      store.change( parseInt( $( '#comps' ).val(), 10 ), 0 );
 
       var nitoDashboard = NitoDashboard.create( null, store ).appendTo( '#nito' );
       var reactDashboard = ReactDOM.render(
@@ -74,37 +74,20 @@
         document.getElementById( 'react' )
       );
 
-      $( '#comps' ).on( 'change', function () {
-        store.data = [];
-        store.change( 0, 0, parseInt( this.value ), 0 );
-      } );
-
-      $( '#rate' ).on( 'change', function () {
-        rate = parseInt( this.value );
-      } );
-
-      $( '#updateNito' ).on( 'click', function () {
-        store.change( rate, rate, rate, rate );
-        frame( 'Nito', function () { nitoDashboard.update(); } );
-      } );
-
-      $( '#updateReact' ).on( 'click', function () {
-        store.change( rate, rate, rate, rate );
-        frame( 'React', function () { reactDashboard.update(); } );
-      } );
-
       $( '#benchmark' ).on( 'click', function () {
 
         var suite = new Benchmark.Suite();
+        var comps = parseInt( $( '#comps' ).val(), 10 );
+        var rate = parseFloat( $( '#rate' ).val(), 10 );
 
         suite.add( 'Nito', function () {
 
-          store.change( rate, rate, rate, rate );
+          store.change( comps, rate );
           nitoDashboard.update();
 
         } ).add( 'React', function() {
 
-          store.change( rate, rate, rate, rate );
+          store.change( comps, rate );
           reactDashboard.update();
 
         } ).on( 'cycle', function ( event ) {
@@ -119,21 +102,21 @@
 
       } );
 
-      function frame( name, fn ) {
-        var t0, t1;
-        requestAnimationFrame( ready );
+      var stats = new MemoryStats();
 
-        function ready() {
-          requestAnimationFrame( done );
-          t0 = new Date().getTime();
-          fn();
-        }
+      stats.domElement.style.position = 'fixed';
+      stats.domElement.style.right = '0px';
+      stats.domElement.style.top = '0px';
 
-        function done() {
-          t1 = new Date().getTime();
-          $( '#log' ).append( name + ' frame: ' + ( t1 - t0 ) + 'ms\n' );
-        }
+      document.body.appendChild( stats.domElement );
+
+      function updateStats() {
+        stats.update();
+        requestAnimationFrame( updateStats );
       }
+
+      updateStats();
+
     </script>
 
   </body>
