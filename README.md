@@ -56,10 +56,9 @@ var TodoItem = $.nito( {
 ```
 
 - Create reusable components with jQuery or Zepto
-- Designed for pure update functions, driven by minimal state
+- Designed for pure updates, driven by minimal state
 - One simple factory, a few functions, <500 lines
 - Not a framework - never gets in the way
-- Just $ and standard JavaScript
 - Pairs well with [Bootstrap](http://getbootstrap.com)
 
 
