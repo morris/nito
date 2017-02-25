@@ -6,21 +6,20 @@
 var ReactDashboard = React.createClass( {
 
   getInitialState: function () {
-    return {
-      elapsed: 0
-    };
+    return { elapsed: 0 };
   },
 
   update: function () {
     this.setState( { elapsed: this.state.elapsed + 1 } );
   },
 
-  render: function() {
+  render: function () {
     var items = this.props.store.data;
 
     return React.createElement( 'div', { className: 'dashboard' },
       items.map( function ( d ) {
-        return React.createElement( ReactItem, { key: d.id, color: d.color, name: d.name, score: d.score } );
+        return React.createElement( ReactItem, { key: d.id, color: d.color,
+          name: d.name, score: d.score } );
       } )
     );
   }
