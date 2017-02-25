@@ -32,7 +32,7 @@
     Comp.prototype = Object.create( $.Comp.prototype );
 
     extend( Comp.prototype, settings, {
-      compClass: Comp,
+      constructor: Comp,
       base: null,
       identify: null,
       id: null
@@ -108,13 +108,13 @@
 
     // component lifecycle
 
-    mount: function ( compClass, data, options ) {
+    mount: function ( constructor, data, options ) {
 
-      if ( typeof compClass !== 'function' || !compClass.id ) {
+      if ( typeof constructor !== 'function' || !constructor.id ) {
         throw new Error( 'Invalid component class' );
       }
 
-      var id = compClass.id;
+      var id = constructor.id;
 
       return this.each( function () {
 
@@ -134,39 +134,39 @@
         }
 
         // create component
-        comps[ id ] = new compClass( el, data, options );
+        comps[ id ] = new constructor( el, data, options );
 
       } );
 
     },
 
-    update: function ( compClass, data ) {
+    update: function ( constructor, data ) {
 
-      return this.eachComp( compClass, function () {
+      return this.eachComp( constructor, function () {
         this.set( data );
       } );
 
     },
 
-    unmount: function ( compClass ) {
+    unmount: function ( constructor ) {
 
-      return this.eachComp( compClass, function () {
+      return this.eachComp( constructor, function () {
         this.unmount();
-        delete this.el.nitoComps[ this.compClass.id ];
+        delete this.el.nitoComps[ this.constructor.id ];
       } );
 
     },
 
     // nesting
 
-    nest: function ( compClass, items, options ) {
+    nest: function ( constructor, items, options ) {
 
-      if ( typeof compClass !== 'function' || !compClass.create || !compClass.id ) {
+      if ( typeof constructor !== 'function' || !constructor.create || !constructor.id ) {
         throw new Error( 'Invalid component class' );
       }
       if ( items && !items.map ) throw new Error( 'Invalid items' );
 
-      var identify = compClass.identify;
+      var identify = constructor.identify;
 
       return this.each( function () {
 
@@ -187,7 +187,7 @@
             comp._sort = Math.abs( index - comp._index );
             comp.set( item );
           } else {
-            comp = compClass.create( item, options )[ 0 ].nitoComps[ compClass.id ];
+            comp = constructor.create( item, options )[ 0 ].nitoComps[ constructor.id ];
             map[ key ] = comp;
             comp._sort = -index;
           }
@@ -243,8 +243,8 @@
 
     },
 
-    nestOne: function ( compClass, item, options ) {
-      return this.nest( compClass, item ? [ item ] : [], options );
+    nestOne: function ( constructor, item, options ) {
+      return this.nest( constructor, item ? [ item ] : [], options );
     },
 
     // manipulation
@@ -443,7 +443,7 @@
       // for each component mounted on the given elements,
       // serialize data into attribute for transmission
       return this.eachComp( function () {
-        var id = this.compClass.id;
+        var id = this.constructor.id;
         if ( typeof id === 'string' ) {
           this.$el.attr( deliverAttr + id, JSON.stringify( this.data ) );
         }
@@ -455,11 +455,11 @@
       return $( '<div></div>' ).append( this ).html();
     },
 
-    eachComp: function ( compClass, fn ) {
+    eachComp: function ( constructor, fn ) {
 
-      if ( compClass && fn ) {
+      if ( constructor && fn ) {
 
-        var id = compClass.id;
+        var id = constructor.id;
         return this.each( function () {
           var comp = this.nitoComps && this.nitoComps[ id ];
           if ( comp ) fn.call( comp );
@@ -467,7 +467,7 @@
 
       }
 
-      fn = fn || compClass;
+      fn = fn || constructor;
 
       return this.each( function () {
         each( this.nitoComps || {}, fn );
