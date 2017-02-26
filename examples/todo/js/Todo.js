@@ -67,10 +67,10 @@ var Todo = $.nito( {
 
     var action = this.action;
 
-    this.find( 'nav li' ).classes( {
-      active: function () {
-        return $( this ).find( 'a' ).attr( 'href' ).slice( 2 ) === action;
-      }
+    this.find( 'nav li' ).each( function () {
+      $( this ).classes( {
+        active: $( this ).find( 'a' ).attr( 'href' ).slice( 2 ) === action
+      } );
     } );
 
   },
