@@ -2,7 +2,7 @@
   "name": "nito",
   "version": "1.0.0",
   "repository": "https://github.com/morris/nito",
-  "description": "Minimal component library for jQuery, inspired by React and Riot",
+  "description": "A jQuery library to build user interfaces, inspired by React",
   "author": {
     "name": "Morris Brodersen",
     "url": "https://morrisbrodersen.de"
