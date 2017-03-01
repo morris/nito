@@ -23,10 +23,6 @@ var NitoItem = $.nito( {
     '</item>'
   ],
 
-  identify: function ( item ) {
-    return item.id;
-  },
-
   mount: function () {
     this.$name = this.find( '.name' );
     this.$score = this.find( '.score' );

@@ -22,13 +22,27 @@
       <div class="form-inline">
         <div class="form-group">
           <label for="comps">Number of components</label>
-          <input type="text" class="form-control" id="comps" value="100">
+          <input type="text" class="form-control" id="comps" value="100" size="5">
         </div>
         <div class="form-group">
           <label for="rate">Rate of change</label>
-          <input type="text" class="form-control" id="rate" value="0.3">
+          <input type="text" class="form-control" id="rate" value="0.3" size="5">
         </div>
         <button class="btn btn-primary" id="benchmark">Benchmark</button>
+        <button class="btn btn-primary" id="compare-code">Toggle code comparison</button>
+      </div>
+
+      <div class="row" id="code-comparison">
+
+        <div class="col-sm-6">
+          <h2>NitoDashboard.js</h2>
+          <pre><code id="nito-source"></code></pre>
+        </div>
+        <div class="col-sm-6">
+          <h2>ReactDashboard.jsx</h2>
+          <pre><code id="react-source"></code></pre>
+        </div>
+
       </div>
 
       <hr>
@@ -63,61 +77,7 @@
     <script src="js/Store.js"></script>
     <script src="js/NitoDashboard.js"></script>
     <script src="js/ReactDashboard.js"></script>
-
-    <script>
-      var store = new Store();
-      store.change( parseInt( $( '#comps' ).val(), 10 ), 0 );
-
-      var nitoDashboard = NitoDashboard.create( null, store ).appendTo( '#nito' );
-      var reactDashboard = ReactDOM.render(
-        React.createElement( ReactDashboard, { store: store } ),
-        document.getElementById( 'react' )
-      );
-
-      $( '#benchmark' ).on( 'click', function () {
-
-        var suite = new Benchmark.Suite();
-        var comps = parseInt( $( '#comps' ).val(), 10 );
-        var rate = parseFloat( $( '#rate' ).val(), 10 );
-
-        suite.add( 'Nito', function () {
-
-          store.change( comps, rate );
-          nitoDashboard.update();
-
-        } ).add( 'React', function() {
-
-          store.change( comps, rate );
-          reactDashboard.update();
-
-        } ).on( 'cycle', function ( event ) {
-
-          $( '#log' ).append( String( event.target ) + '\n' );
-
-        } ).on( 'complete', function () {
-
-          $( '#log' ).append( 'Fastest is ' + this.filter( 'fastest' )[ 0 ][ 'name' ] + '\n' );
-
-        } ).run( { 'async': true } );
-
-      } );
-
-      var stats = new MemoryStats();
-
-      stats.domElement.style.position = 'fixed';
-      stats.domElement.style.right = '0px';
-      stats.domElement.style.top = '0px';
-
-      document.body.appendChild( stats.domElement );
-
-      function updateStats() {
-        stats.update();
-        requestAnimationFrame( updateStats );
-      }
-
-      updateStats();
-
-    </script>
+    <script src="js/main.js"></script>
 
   </body>
 </html>
