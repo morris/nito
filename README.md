@@ -24,6 +24,8 @@ var Todo = $.nito( {
   },
 
   update: function () {
+    // nest() appends a component for each item
+    // DOM is reconciled and reused under the hood
     this.find( '.items' ).nest( TodoItem, this.data.items, this );
   }
 
@@ -42,24 +44,43 @@ var TodoItem = $.nito( {
     this.on( 'click', this.toggle );
   },
 
+  // Efficient pure update
+  // This is the only place DOM manipulation happens
   update: function () {
+    // Set title and toggle "completed" class
+    // DOM is only manipulated if data has changed since last update
     this.find( '.title' ).ftext( this.data.title );
     this.$el.classes( { completed: this.data.completed } );
   },
 
   toggle: function () {
+    // Change state and trigger a pure update
     this.data.completed = !this.data.completed;
     this.todo.update();
   }
 
 } );
+
+$( 'body' ).append( Todo.create() );
 ```
 
-- Create reusable components with jQuery or Zepto
-- Designed for pure updates, driven by minimal state
-- One simple factory, a few functions, <500 lines
-- Not a framework - never gets in the way
+
+## Motivation
+
+jQuery is a well-designed, proven tool but it lacks structure,
+which is why jQuery-based code often looks like spaghetti
+and developers easily turn to React, Angular and similar frameworks.
+Component thinking and pure updates&mdash;likely
+the most valued features of React&mdash;give
+structure and simplicity, and Nito implements these concepts
+with minimal effort:
+
+- Define **reusable components** with jQuery or Zepto
+- Designed for **pure updates** driven by minimal state
+- One simple class factory, a few functions, <500 lines
+- Not a framework&mdash;never gets in the way
 - Pairs well with [Bootstrap](http://getbootstrap.com)
+- Server-side batteries included
 
 
 ## Examples
@@ -98,7 +119,7 @@ Isomorphic app (server- and client-side) built with Nito on Node.js.
     - Base HTML for components
     - May be a string or an array of strings
     - Arrays will be joined with `\n`
-    - Optional, used in `compClass.create` (see below)
+    - Optional, used in `MyComp.create` (see below)
   - `mount( options )`
     - Called when mounting a component
     - Use `options` for constant mount-time options (e.g. config, parent components, ...)
@@ -119,12 +140,17 @@ Isomorphic app (server- and client-side) built with Nito on Node.js.
     - See `nest`
     - Optional
   - Add more methods and properties as needed
-- Returns the created class
+- Returns the created component class
 
+```js
+var MyComp = $.nito( {
+  // base, mount, update, custom methods, ...
+} );
+```
 
 ## Creating components
 
-#### `compClass.create( data, options )`
+#### `MyComp.create( data, options )`
 
 - Create a component using the component base HTML
 - `data` is passed to `comp.set` and available as `comp.data`. Optional
@@ -133,8 +159,15 @@ Isomorphic app (server- and client-side) built with Nito on Node.js.
   - Use `options` for constant mount-time options (e.g. config, parent components, ...)
 - Return the created element (`$` object)
 
+```js
+var $el = MyComp.create( { title: 'Example' } );
+```
+
 
 ## Component members and methods
+
+You will most likely refer to members and methods from inside components,
+so `comp` will often be `this` instead.
 
 #### `comp.$el` and `comp.el`
 
@@ -159,25 +192,25 @@ Isomorphic app (server- and client-side) built with Nito on Node.js.
 
 ## Mount and update components on existing DOM
 
-#### `$els.mount( compClass, data, options )`
+#### `$els.mount( MyComp, data, options )`
 
-- Mount components on each element in `$els` using `compClass`
+- Mount components on each element in `$els` using `MyComp`
 - `data` is passed to `comp.set`. Optional
 - `options` is passed to `comp.mount`. Optional
 - Components are only created once per class
   - An element may have multiple components, but only one for each class
 - Return `$els`
 
-#### `$els.update( compClass, data )`
+#### `$els.update( MyComp, data )`
 
-- If `compClass` is set, update all `compClass` components mounted on `$els`
+- If `MyComp` is set, update all `MyComp` components mounted on `$els`
 - Otherwise, update all components mounted on `$els`
 - `data` is passed to `comp.set`. Optional
 - Return `$els`
 
-#### `$els.unmount( compClass )`
+#### `$els.unmount( MyComp )`
 
-- If `compClass` is set, unmount all `compClass` components mounted on `$els`
+- If `MyComp` is set, unmount all `MyComp` components mounted on `$els`
 - Otherwise, unmount all components mounted on `$els`
 - Return `$els`
 
@@ -187,15 +220,15 @@ Isomorphic app (server- and client-side) built with Nito on Node.js.
 Efficiently nest components in any DOM element using `nest` or `nestOne`.
 Use these methods in `update`, *not* in `mount`.
 
-#### `$els.nest( compClass, items, options )`
+#### `$els.nest( MyComp, items, options )`
 
 - For each item, create a component of the given class and append to `$els`
 - `items` is an array of `data` objects passed to the components
-- `compClass` should be a component class
+- `MyComp` should be a component class
 - Reconciliation: Existing components are identified with items and reused/updated with given data
   - By default, components are reconciled by item/component index
-  - If the `compClass.identify` function is defined, components are reconciled by keys
-  - New components are created with `compClass.create( data, options )`
+  - If the `MyComp.identify` function is defined, components are reconciled by keys
+  - New components are created with `MyComp.create( data, options )`
   - Existing components are updated with `comp.set( data )`
 - `$els` should only have children generated by `nest`
 - Return array of child components
@@ -207,7 +240,7 @@ $( '<ul></ul>' ).nest( TodoItem, [
 ] );
 ```
 
-#### `$els.nestOne( compClass, item, options )`
+#### `$els.nestOne( MyComp, item, options )`
 
 - Same as `nest`, but for one item
 - Pass falsy item to not nest anything
