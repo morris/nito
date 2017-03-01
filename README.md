@@ -1,8 +1,8 @@
 # Nito
 
-Minimal component library for jQuery, inspired by React and Riot.
-Just an experiment.
-[Or maybe not.](https://cdn.rawgit.com/morris/nito/v1.0.0/examples/nito-vs-react/)
+A jQuery library to build user interfaces,
+inspired by React, in under 500 lines of code.
+[Pretty fast, too.](https://cdn.rawgit.com/morris/nito/v1.0.0/examples/nito-vs-react/)
 
 ```js
 var Todo = $.nito( {
@@ -40,7 +40,7 @@ var TodoItem = $.nito( {
   ],
 
   mount: function ( todo ) {
-    this.todo = todo;
+    this.todo = todo; // parent component
     this.on( 'click', this.toggle );
   },
 
@@ -54,7 +54,7 @@ var TodoItem = $.nito( {
   },
 
   toggle: function () {
-    // Change state and trigger a pure update
+    // Change state and trigger an update
     this.data.completed = !this.data.completed;
     this.todo.update();
   }
