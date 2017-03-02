@@ -4,6 +4,7 @@
 
 - Renamed `loop` to `nest`
 - Renamed `nest` to `nestOne`
+- Removed `find` in favor of `data-ref` elements
 - Removed `weld` in favor of `ftext`, `fhtml`
 - Removed `values` in favor of `serializeData`, `fill`, `fillDef`, `fval`, `fdef`
 - Removed `Comp.mount`, `Comp.appendTo`, `Comp.deliver` in favor of their `$.fn` variants

@@ -10,7 +10,7 @@ var Todo = $.nito( {
   base: [
     '<div>',
       '<h1>Todo</h1>',
-      '<ul class="items"></ul>',
+      '<ul data-ref="items"></ul>',
     '</div>'
   ],
 
@@ -26,7 +26,7 @@ var Todo = $.nito( {
   update: function () {
     // nest() appends a component for each item
     // DOM is reconciled and reused under the hood
-    this.find( '.items' ).nest( TodoItem, this.data.items, this );
+    this.$items.nest( TodoItem, this.data.items, this );
   }
 
 } );
@@ -35,7 +35,7 @@ var TodoItem = $.nito( {
 
   base: [
     '<li>',
-      '<strong class="title"></strong>',
+      '<strong data-ref="title"></strong>',
     '</li>'
   ],
 
@@ -49,7 +49,7 @@ var TodoItem = $.nito( {
   update: function () {
     // Set title and toggle "completed" class
     // DOM is only manipulated if data has changed since last update
-    this.find( '.title' ).ftext( this.data.title );
+    this.$title.ftext( this.data.title );
     this.$el.classes( { completed: this.data.completed } );
   },
 
@@ -119,6 +119,7 @@ Isomorphic app (server- and client-side) built with Nito on Node.js.
     - Base HTML for components
     - May be a string or an array of strings
     - Arrays will be joined with `\n`
+    - Elements with `data-ref="myref"` attributes will be available as `comp.$myref`
     - Optional, used in `MyComp.create` (see below)
   - `mount( options )`
     - Called when mounting a component
@@ -179,15 +180,15 @@ so `comp` will often be `this` instead.
 - Call `comp.update()`
 - Return `comp`
 
-#### `comp.find( selector )`
-
-- Shortcut to `comp.$el.find`
-
 #### `comp.on( event, [selector,] handler )`
 
 - Shortcut to `comp.$el.on`
 - `handler` is bound to `comp`, *not* to the element
 - Return `comp`
+
+#### Referenced Elements
+
+- Base HTML elements with `data-ref="myref"` attributes will be available as `comp.$myref`
 
 
 ## Mount and update components on existing DOM
