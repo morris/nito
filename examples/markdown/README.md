@@ -13,4 +13,4 @@ cd nito/examples/markdown
 node run.js
 ```
 
-Then open http://localhost:3000 in browser.
+Then go to http://localhost:3000
