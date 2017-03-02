@@ -4,16 +4,15 @@ module.exports = $.nito( {
 
   base: [
     '<li class="nav-item">',
-      '<a class="title"></a>',
+      '<a class="title" data-ref="title"></a>',
     '</li>'
   ],
 
   update: function () {
-    this.find( '.title' ).ftext( this.data.title );
+    this.$title.ftext( this.data.title ).attr( 'href', '/' + this.data.id );
     this.$el.classes( {
       active: this.data.active
     } );
-    this.find( 'a' ).attr( 'href', '/' + this.data.id );
   }
 
 } );

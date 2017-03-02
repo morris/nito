@@ -4,18 +4,21 @@ var Todo = $.nito( {
     '<div class="todo">',
       '<nav class="navbar navbar-default">',
         '<ul class="nav navbar-nav">',
-          '<li><a href="#/">All</a></li>',
-          '<li><a href="#/active">Active</a></li>',
-          '<li><a href="#/completed">Completed</a></li>',
+          '<li data-ref="nav"><a href="#/">All</a></li>',
+          '<li data-ref="nav"><a href="#/active">Active</a></li>',
+          '<li data-ref="nav"><a href="#/completed">Completed</a></li>',
         '</ul>',
-        '<p class="navbar-text left"></p>',
-        '<p class="navbar-form"><button class="btn btn-primary sort">Sort</button> <button class="btn btn-warning clear">Clear completed</button></p>',
+        '<p class="navbar-text" data-ref="left"></p>',
+        '<p class="navbar-form">',
+          '<button class="btn btn-primary sort">Sort</button> ',
+          '<button class="btn btn-warning clear" data-ref="clear">Clear completed</button>',
+        '</p>',
       '</nav>',
       '<div class="line">',
         '<div class="check">&gt;</div>',
         '<input type="text" class="block add" placeholder="What needs to be done?" autofocus>',
       '</div>',
-      '<ul class="items"></ul>',
+      '<ul class="items" data-ref="items"></ul>',
     '</div>'
   ],
 
@@ -57,17 +60,17 @@ var Todo = $.nito( {
     this.route();
 
     // $el.nest reconciles with existing DOM
-    this.find( 'ul.items' ).nest( TodoItem, this.items, this );
+    this.$items.nest( TodoItem, this.items, this );
 
     var left = this.left().length;
     var items = left === 1 ? 'item' : 'items';
 
-    this.find( '.left' ).fhtml( '<strong>' + left + '</strong> ' + items + ' left' );
-    this.find( '.clear' ).classes( { hidden: left === this.data.items.length } );
+    this.$left.fhtml( '<strong>' + left + '</strong> ' + items + ' left' );
+    this.$clear.classes( { hidden: left === this.data.items.length } );
 
     var action = this.action;
 
-    this.find( 'nav li' ).each( function () {
+    this.$nav.each( function () {
       $( this ).classes( {
         active: $( this ).find( 'a' ).attr( 'href' ).slice( 2 ) === action
       } );

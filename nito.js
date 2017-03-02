@@ -55,6 +55,7 @@
   $.Comp = function ( el, data, options ) {
     this.el = el;
     this.$el = $( el );
+    if ( el ) this.parseRefs( el );
 
     // for $.fn.nest
     this._sort = 0;
@@ -96,8 +97,12 @@
 
     },
 
-    find: function () {
-      return this.$el.find.apply( this.$el, arguments );
+    parseRefs: function ( el ) {
+      var ref = el.getAttribute && el.getAttribute( 'data-ref' );
+      if ( ref ) this[ '$' + ref ] = $( el ).add( this[ '$' + ref ] );
+      for ( var i = 0, l = el.childNodes.length; i < l; ++i ) {
+        this.parseRefs( el.childNodes[ i ] );
+      }
     }
 
   } );
@@ -439,7 +444,6 @@
     // util
 
     deliver: function () {
-
       // for each component mounted on the given elements,
       // serialize data into attribute for transmission
       return this.eachComp( function () {
@@ -448,7 +452,6 @@
           this.$el.attr( deliverAttr + id, JSON.stringify( this.data ) );
         }
       } );
-
     },
 
     outerHtml: function () {
@@ -458,13 +461,11 @@
     eachComp: function ( constructor, fn ) {
 
       if ( constructor && fn ) {
-
         var id = constructor.id;
         return this.each( function () {
           var comp = this.nitoComps && this.nitoComps[ id ];
           if ( comp ) fn.call( comp );
         } );
-
       }
 
       fn = fn || constructor;

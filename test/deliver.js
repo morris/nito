@@ -50,8 +50,8 @@ QUnit.module( 'deliver', function () {
 
     $( html ).mount( Div ).eachComp( function () {
       assert.equal( this.data.length, 3 );
-      assert.equal( this.find( 'p' ).length, 3 );
-      this.find( 'p' ).trigger( 'test' );
+      assert.equal( this.$el.find( 'p' ).length, 3 );
+      this.$el.find( 'p' ).trigger( 'test' );
       assert.equal( test, 3 );
     } );
 

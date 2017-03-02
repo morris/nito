@@ -6,20 +6,20 @@ module.exports = $.nito( {
   base: [
     '<div class="page">',
       '<h2>',
-        '<span class="title"></span> ',
+        '<span data-ref="title"></span> ',
         '<button class="edit btn btn-default">Edit</button> ',
         '<button class="remove btn btn-default">Remove</button> ',
         '<button class="save btn btn-default">Save</button> ',
       '</h2>',
-      '<div class="body"></div>',
+      '<div data-ref="body"></div>',
       '<form class="form">',
         '<div class="form-group">',
           '<label class="control-label">Title</label>',
-          '<input class="form-control" type="text" name="title">',
+          '<input class="form-control" type="text" name="title" data-ref="input">',
         '</div>',
         '<div class="form-group">',
           '<label class="control-label">Body</label>',
-          '<textarea class="form-control" rows="20" type="text" name="body"></textarea>',
+          '<textarea class="form-control" rows="20" type="text" name="body" data-ref="input"></textarea>',
         '</div>',
       '</form>',
     '</div>'
@@ -41,9 +41,9 @@ module.exports = $.nito( {
       editing: this.editing,
       notEditing: !this.editing
     } );
-    this.find( '.title' ).ftext( this.data.title );
-    this.find( '.body' ).fhtml( marked( this.data.body ) );
-    this.find( 'input, textarea' ).fill( this.data );
+    this.$title.ftext( this.data.title );
+    this.$body.fhtml( marked( this.data.body ) );
+    this.$input.fill( this.data );
   },
 
   edit: function () {

@@ -18,15 +18,10 @@ var NitoItem = $.nito( {
 
   base: [
     '<div class="item">',
-      '<strong class="name"></strong><br>',
-      'S<span class="score"></span>',
+      '<strong data-ref="name"></strong><br>',
+      'S<span data-ref="score"></span>',
     '</item>'
   ],
-
-  mount: function () {
-    this.$name = this.find( '.name' );
-    this.$score = this.find( '.score' );
-  },
 
   update: function () {
     var item = this.data;

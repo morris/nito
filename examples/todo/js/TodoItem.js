@@ -2,8 +2,10 @@ var TodoItem = $.nito( {
 
   base: [
     '<li class="line item">',
-      '<div class="check"><input type="checkbox" name="completed"></div>',
-      '<div class="title"></div>',
+      '<div class="check">',
+        '<input type="checkbox" name="completed" data-ref="completed">',
+      '</div>',
+      '<div class="title" data-ref="title"></div>',
       '<input type="text" class="block" name="title"> ',
       '<div class="controls">',
         '<button class="btn btn-danger destroy">&times;</button>',
@@ -62,16 +64,15 @@ var TodoItem = $.nito( {
   },
 
   update: function () {
+
     var item = this.data;
-
-    this.find( '.title' ).ftext( item.title );
-
+    this.$title.ftext( item.title );
     this.$el.classes( {
       completed: item.completed,
       editing: this.editing
     } );
+    this.$completed.fval( item.completed );
 
-    this.find( '[name=completed]' ).fval( item.completed );
   }
 
 } );

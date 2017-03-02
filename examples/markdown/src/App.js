@@ -7,9 +7,9 @@ module.exports = $.nito( {
   base: [
     '<div class="app" id="app">',
       '<p><button class="btn btn-default create">New Page</button></p>',
-      '<ul class="nav nav-tabs">',
+      '<ul class="nav nav-tabs" data-ref="nav">',
       '</ul>',
-      '<div class="active-page">',
+      '<div data-ref="activePage">',
       '</div>',
     '</div>'
   ],
@@ -32,7 +32,7 @@ module.exports = $.nito( {
 
     var path = process.browser ? env.location.pathname : env.url;
 
-    this.find( '.nav' ).nest( NavItem, this.data.pages.map( function ( page ) {
+    this.$nav.nest( NavItem, this.data.pages.map( function ( page ) {
       return {
         title: page.title,
         id: page.id,
@@ -40,7 +40,7 @@ module.exports = $.nito( {
       };
     } ), this );
 
-    this.find( '.active-page' ).nest( Page, this.data.pages.filter( function ( page ) {
+    this.$activePage.nest( Page, this.data.pages.filter( function ( page ) {
       return '/' + page.id === path;
     } ), this );
   },
