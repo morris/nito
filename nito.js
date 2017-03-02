@@ -440,8 +440,6 @@
     // util
 
     deliver: function () {
-      // for each component mounted on the given elements,
-      // serialize data into attribute for transmission
       return this.eachComp( function () {
         var id = this.constructor.id;
         if ( typeof id === 'string' ) {
