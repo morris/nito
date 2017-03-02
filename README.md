@@ -24,7 +24,7 @@ var Todo = $.nito( {
   },
 
   update: function () {
-    // nest() appends a component for each item
+    // nest() appends a TodoItem component for each item
     // DOM is reconciled and reused under the hood
     this.$items.nest( TodoItem, this.data.items, this );
   }
@@ -67,19 +67,19 @@ $( 'body' ).append( Todo.create() );
 
 ## Motivation
 
-jQuery is a well-designed, proven tool but it lacks structure,
-which is why jQuery-based code often looks like spaghetti
-and developers easily turn to React, Angular and similar frameworks.
-Component thinking and pure updates&mdash;likely
-the most valued features of React&mdash;give
-structure and simplicity, and Nito implements these concepts
-with minimal effort:
+jQuery is an exceptionally well-designed tool but
+jQuery-based code often lacks structure, which is why
+developers often favor React, Angular and similar frameworks.
+Component thinking and pure updates (likely the most
+valuable features of React) give structure and simplicity,
+and Nito enables these concepts on top of the most used JavaScript library ever:
 
 - Define **reusable components** with jQuery or Zepto
 - Designed for **pure updates** driven by minimal state
 - One simple class factory, a few functions, <500 lines
 - Not a framework&mdash;never gets in the way
 - Pairs well with [Bootstrap](http://getbootstrap.com)
+- ES2015, no build steps required
 - Server-side batteries included
 
 
