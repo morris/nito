@@ -11,7 +11,7 @@ module.exports = $.nito( {
         '<button class="remove btn btn-default">Remove</button> ',
         '<button class="save btn btn-default">Save</button> ',
       '</h2>',
-      '<div data-ref="body"></div>',
+      '<div class="body" data-ref="body"></div>',
       '<form class="form">',
         '<div class="form-group">',
           '<label class="control-label">Title</label>',
@@ -57,7 +57,7 @@ module.exports = $.nito( {
 
   save: function () {
     this.editing = false;
-    this.app.save( this.data, this.find( 'input, textarea' ).serializeData() );
+    this.app.save( this.data, this.$input.serializeData() );
   }
 
 } );
