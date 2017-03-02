@@ -17,7 +17,6 @@
   var extend = Object.assign || $.extend;
   var isArray = Array.isArray || $.isArray;
   var each = $.each;
-  var deliverAttr = 'data-nito-';
 
   // component class factory
 
@@ -127,13 +126,11 @@
 
         // mount component only once
         var comps = el.nitoComps = el.nitoComps || {};
-        var comp = comps[ id ];
-
-        if ( comp ) return;
+        if ( comps[ id ] ) return;
 
         // get serialized data from attribute, if any
         try {
-          if ( !data ) data = JSON.parse( $( el ).attr( deliverAttr + id ) || null );
+          if ( !data ) data = JSON.parse( $( el ).attr( 'data-nito-' + id ) || null );
         } catch ( ex ) {
           if ( typeof console === 'object' ) console.warn( ex );
         }
@@ -358,9 +355,8 @@
 
         var el = this;
         var tagName = el.tagName;
-        var type = tagName === 'INPUT' ? el.type : tagName;
 
-        switch ( type ) {
+        switch ( tagName === 'INPUT' ? el.type : tagName ) {
         case 'SELECT':
           var multiple = el.multiple && isArray( value );
 
@@ -449,7 +445,7 @@
       return this.eachComp( function () {
         var id = this.constructor.id;
         if ( typeof id === 'string' ) {
-          this.$el.attr( deliverAttr + id, JSON.stringify( this.data ) );
+          this.$el.attr( 'data-nito-' + id, JSON.stringify( this.data ) );
         }
       } );
     },
