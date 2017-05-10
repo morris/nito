@@ -16,72 +16,53 @@
   var isArray = Array.isArray || $.isArray;
   var each = $.each;
 
-  // $ extensions
+  // $.fn extensions
 
   extend( $.fn, {
 
-    // component lifecycle
+    // updates
 
-    mount: function ( func ) {
-
-      return this.each( function () {
-
-        func.call( this );
-
-      } );
-
-    },
-
-    // fast event triggers
-
-    triggerUpdate: function () {
-
-    },
-
-    triggerData: function ( data ) {
-
+    update: function () {
+      return this.trigger( 'update' );
     },
 
     // nesting
 
-    nest: function ( items, fn ) {
+    nest: function ( el, items ) {
 
-      if ( items && typeof items.map !== 'function' ) {
-        throw new Error( 'nest expects items with a forEach function' );
+      var $el = $( el ).first();
+
+      if ( $el.length === 0 ) {
+        throw new Error( 'nest expects a prototype element' );
       }
-      if ( typeof fn !== 'function' ) {
-        throw new Error( 'nest expects a function' );
+
+      if ( !isArray( items ) ) {
+        throw new Error( 'nest expects an item array' );
       }
 
       return this.each( function () {
 
         var container = this;
         var children = container.children;
-        var index = 0;
 
-        // reconcile items with existing components via index or identify()
-        ( items || [] ).forEach( function ( item ) {
-
-          var comp = children[ index++ ];
-          if ( !comp ) {
-            comp = fn( item );
-            container.appendChild( $( comp )[ 0 ] );
-          }
-          $( comp ).triggerData( item );
-
-        } );
-
-        // remove obsolete components
-        while ( index < children.length ) {
+        while ( items.length < children.length ) {
           container.removeChild( container.lastChild );
         }
+
+        while ( items.length > children.length ) {
+          $el.clone( true ).appendTo( container ).trigger( 'mount' );
+        }
+
+        items.forEach( function ( item, index ) {
+          $( children[ index ] ).data( 'item', item ).update();
+        } );
 
       } );
 
     },
 
-    nestOne: function ( fn, item ) {
-      return this.nest( fn, item ? [ item ] : [] );
+    nestOne: function ( el, item ) {
+      return this.nest( el, item ? [ item ] : [] );
     },
 
     // manipulation
@@ -89,12 +70,10 @@
     classes: function ( classes ) {
 
       return this.each( function () {
-
         var el = this, $el = $( el );
         each( classes, function ( name, condition ) {
           $el.toggleClass( name, !!condition );
         } );
-
       } );
 
     },
@@ -271,7 +250,7 @@
 
     },
 
-    // util
+    // utility
 
     outerHtml: function () {
       return $( '<div></div>' ).append( this ).html();
@@ -279,7 +258,25 @@
 
   } );
 
+  // $ extensions
+
   extend( $, {
+
+    parseUrl: function ( url ) {
+      return $( '<a></a>' ).attr( 'href', url )[ 0 ];
+    },
+
+    parseQuery: function ( query ) {
+      return ( query || '' )
+        .replace( /^[?#]/, '' )
+        .split( '&' )
+        .reduce( function ( params, param ) {
+          var split = param.split( '=' );
+          params[ split[ 0 ] ] = decodeURIComponent( split[ 1 ] || '' )
+            .replace( /\+/g, ' ' );
+          return params;
+        }, {} );
+    },
 
     parseName: function ( name ) {
       return name.replace( /\]/g, '' ).split( /\[/g ).map( function ( part ) {
@@ -294,6 +291,12 @@
       return value + '';
     }
 
+  } );
+
+  // special events
+
+  $.event.special.update = extend( {}, $.event.special.update, {
+    noBubble: true
   } );
 
   return $;

@@ -1,78 +1,65 @@
-var TodoItem = $.nito( {
+function TodoItem() {
 
-  base: [
-    '<li class="line item">',
-      '<div class="check">',
-        '<input type="checkbox" name="completed" data-ref="completed">',
-      '</div>',
-      '<div class="title" data-ref="title"></div>',
-      '<input type="text" class="block" name="title"> ',
-      '<div class="controls">',
-        '<button class="btn btn-danger destroy">&times;</button>',
-      '</div>',
-    '</li>'
-  ],
+  var $el = $( this );
+  var $app = $el.closest( '.todo' );
+  var store = $app.data( 'store' );
+  var $title = $el.find( '.title' );
+  var $completed = $el.find( '[name=completed]' );
+  var item;
+  var editing = false;
 
-  identify: function ( item ) {
-    return item.id;
-  },
+  $el.on( 'click', '.check', function ( e ) {
+    store.check( item, !item.completed );
+  } );
 
-  mount: function ( app ) {
+  $el.on( 'dblclick', function ( e ) {
+    editing = true;
+    update();
+    $el.find( '[name=title]' ).val( item.title ).focus();
+  } );
 
-    this.app = app;
-    this.editing = false;
+  $el.on( 'blur', '[name=title]', function ( e ) {
+    editing = false;
+    store.title( item, e.target.value.trim() );
+  } );
 
-    this.on( 'click', '.check', function ( e ) {
-      this.app.check( this.data, !this.data.completed );
-    } );
+  $el.on( 'keydown', '[name=title]', function ( e ) {
 
-    this.on( 'dblclick', function ( e ) {
-      this.editing = true;
-      this.update();
-      this.find( '[name=title]' ).val( this.data.title ).focus();
-    } );
+    var input = e.target;
 
-    this.on( 'blur', '[name=title]', function ( e ) {
-      this.editing = false;
-      this.app.title( this.data, e.target.value.trim() );
-    } );
+    switch ( e.which ) {
+    case ESCAPE_KEY:
+      e.preventDefault();
+      input.value = item.title;
+      $( input ).blur();
+      break;
+    case ENTER_KEY:
+      e.preventDefault();
+      $( input ).blur();
+      break;
+    }
 
-    this.on( 'keydown', '[name=title]', function ( e ) {
+  } );
 
-      var input = e.target;
+  $el.on( 'click', '.destroy', function () {
+    store.destroy( item );
+  } );
 
-      switch ( e.which ) {
-      case ESCAPE_KEY:
-        e.preventDefault();
-        input.value = this.data.title;
-        $( input ).blur();
-        break;
+  $el.on( 'update', update );
 
-      case ENTER_KEY:
-        e.preventDefault();
-        $( input ).blur();
-        break;
+  function update() {
 
-      }
+    item = $el.data( 'item' );
 
-    } );
-
-    this.on( 'click', '.destroy', function () {
-      this.app.destroy( this.data );
-    } );
-
-  },
-
-  update: function () {
-
-    var item = this.data;
-    this.$title.ftext( item.title );
-    this.$el.classes( {
+    $title.ftext( item.title );
+    $el.classes( {
       completed: item.completed,
-      editing: this.editing
+      editing: editing
     } );
-    this.$completed.fval( item.completed );
+    $completed.fval( item.completed );
 
   }
 
-} );
+}
+
+var $TodoItem = $( '#templates > ul >.item' ).one( 'mount', TodoItem );

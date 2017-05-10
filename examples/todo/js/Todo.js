@@ -1,189 +1,169 @@
-var Todo = $.nito( {
+function Todo() {
 
-  base: [
-    '<div class="todo">',
-      '<nav class="navbar navbar-default">',
-        '<ul class="nav navbar-nav">',
-          '<li data-ref="nav"><a href="#/">All</a></li>',
-          '<li data-ref="nav"><a href="#/active">Active</a></li>',
-          '<li data-ref="nav"><a href="#/completed">Completed</a></li>',
-        '</ul>',
-        '<p class="navbar-text" data-ref="left"></p>',
-        '<p class="navbar-form">',
-          '<button class="btn btn-primary sort">Sort</button> ',
-          '<button class="btn btn-warning clear" data-ref="clear">Clear completed</button>',
-        '</p>',
-      '</nav>',
-      '<div class="line">',
-        '<div class="check">&gt;</div>',
-        '<input type="text" class="block add" placeholder="What needs to be done?" autofocus>',
-      '</div>',
-      '<ul class="items" data-ref="items"></ul>',
-    '</div>'
-  ],
+  var $el = $( this );
+  var $items = $el.find( '> .items' );
+  var $left = $el.find( '.left' );
+  var $clear = $el.find( '.clear' );
+  var $nav = $el.find( '.nav' );
 
-  mount: function () {
+  var data;
+  var items;
+  var action;
 
-    this.load();
+  $el.data( 'store', {
+    add: add,
+    check: check,
+    title: title,
+    sort: sort,
+    clear: clear,
+    destroy: destroy
+  } );
 
-    this.on( 'keydown', 'input.add', function ( e ) {
+  $el.on( 'keydown', 'input.add', function ( e ) {
 
-      var input = e.target;
+    var input = e.target;
 
-      switch ( e.which ) {
-      case ESCAPE_KEY:
-        e.preventDefault();
-        input.value = '';
-        break;
+    switch ( e.which ) {
+    case ESCAPE_KEY:
+      e.preventDefault();
+      input.value = '';
+      break;
+    case ENTER_KEY:
+      add( input.value );
+      e.preventDefault();
+      input.value = '';
+      break;
+    }
 
-      case ENTER_KEY:
-        this.add( input.value );
+  } );
 
-        e.preventDefault();
-        input.value = '';
-        break;
+  $el.on( 'click', '.sort', sort );
+  $el.on( 'click', '.clear', clear );
 
-      }
+  $( window ).on( 'hashchange', update );
 
-    } );
+  load();
+  update();
 
-    this.on( 'click', '.sort', this.sort );
-    this.on( 'click', '.clear', this.clear );
+  function update() {
 
-    $( window ).on( 'hashchange', this.update.bind( this ) );
-
-  },
-
-  update: function () {
-
-    this.store();
-    this.route();
+    store();
+    route();
 
     // $el.nest reconciles with existing DOM
-    this.$items.nest( TodoItem, this.items, this );
+    $items.nest( $TodoItem, items );
 
-    var left = this.left().length;
-    var items = left === 1 ? 'item' : 'items';
+    var l = left().length;
+    var i = left === 1 ? 'item' : 'items';
 
-    this.$left.fhtml( '<strong>' + left + '</strong> ' + items + ' left' );
-    this.$clear.classes( { hidden: left === this.data.items.length } );
+    $left.fhtml( '<strong>' + l + '</strong> ' + i + ' left' );
+    $clear.classes( { hidden: l === data.items.length } );
 
-    var action = this.action;
-
-    this.$nav.each( function () {
+    $nav.each( function () {
       $( this ).classes( {
         active: $( this ).find( 'a' ).attr( 'href' ).slice( 2 ) === action
       } );
     } );
 
-  },
+  }
 
-  route: function () {
+  // routing
 
-    // routing
-    this.action = location.hash.slice( 2 );
+  function route() {
 
-    switch ( this.action ) {
+    action = location.hash.slice( 2 );
 
+    switch ( action ) {
     case 'active':
-      this.items = this.left();
+      items = left();
       break;
-
     case 'completed':
-      this.items = this.completed();
+      items = completed();
       break;
-
     default:
-      this.items = this.data.items;
-
+      items = data.items;
     }
 
-  },
+  }
 
-  // move these into a "store". if you must...
+  // store
 
-  add: function ( title ) {
-
+  function add( title ) {
     title = title.trim();
     if ( title.length === 0 ) return;
 
-    this.data.items.push( {
-      id: this.data.nextId,
+    data.items.push( {
+      id: data.nextId,
       title: title,
       completed: false
     } );
-    ++this.data.nextId;
-    this.update();
+    ++data.nextId;
+    update();
+  }
 
-  },
-
-  check: function ( item, completed ) {
+  function check( item, completed ) {
     item.completed = completed;
-    this.update();
-  },
+    update();
+  }
 
-  destroy: function ( item ) {
-    var items = this.data.items;
+  function destroy( item ) {
+    var items = data.items;
     items.splice( items.indexOf( item ), 1 );
-    this.update();
-  },
+    update();
+  }
 
-  title: function ( item, title ) {
+  function title( item, title ) {
     item.title = title;
-    this.update();
-  },
+    update();
+  }
 
-  sort: function () {
-
-    this.data.items.sort( function ( a, b ) {
+  function sort() {
+    data.items.sort( function ( a, b ) {
       return a.title.localeCompare( b.title );
     } );
-    this.update();
+    update();
+  }
 
-  },
+  function clear() {
+    data.items = left();
+    update();
+  }
 
-  clear: function () {
-    this.data.items = this.left();
-    this.update();
-  },
-
-  left: function () {
-
-    return this.data.items.filter( function ( item ) {
+  function left() {
+    return data.items.filter( function ( item ) {
       return !item.completed;
     } );
+  }
 
-  },
-
-  completed: function () {
-
-    return this.data.items.filter( function ( item ) {
+  function completed() {
+    return data.items.filter( function ( item ) {
       return item.completed;
     } );
-
-  },
+  }
 
   // persistence
 
-  load: function () {
+  function load() {
     try {
-      this.data = JSON.parse( localStorage.todo );
+      data = JSON.parse( localStorage.todo );
     } catch ( ex ) {}
 
     // default data
-    this.data = this.data || {
+    data = data || {
       items: [],
       nextId: 1
     };
-  },
+  }
 
-  store: function () {
+  function store() {
     try {
-      localStorage.todo = JSON.stringify( this.data );
+      localStorage.todo = JSON.stringify( data );
     } catch ( ex ) {}
   }
 
-} );
+}
+
+var $Todo = $( '#templates > .todo' ).one( 'mount', Todo );
 
 var ENTER_KEY = 13;
 var ESCAPE_KEY = 27;
