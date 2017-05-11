@@ -1,12 +1,10 @@
 function Todo() {
 
-  console.log( 'mount Todo' );
-
   var $el = $( this );
   var $items = $el.find( '> .items' );
   var $left = $el.find( '.left' );
   var $clear = $el.find( '.clear' );
-  var $nav = $el.find( '.nav' );
+  var $nav = $el.find( '.nav li' );
 
   var data;
   var items;
@@ -21,7 +19,7 @@ function Todo() {
     destroy: destroy
   } );
 
-  $el.mount( '.item', Todo );
+  $el.mount( '.item', TodoItem );
 
   $el.on( 'keydown', 'input.add', function ( e ) {
 
@@ -44,17 +42,16 @@ function Todo() {
   $el.on( 'click', '.sort', sort );
   $el.on( 'click', '.clear', clear );
 
+  $el.on( 'update', update );
   $( window ).on( 'hashchange', update );
 
   load();
-  update();
 
   function update() {
 
     store();
     route();
 
-    $el.find( '.item' ).mount( TodoItem );
     $items.nest( items );
 
     var l = left().length;

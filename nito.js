@@ -19,9 +19,40 @@
 
     // mounting
 
-    mount: function ( selector, fn ) {
+    mount: function ( selector, fn, once ) {
+
+      if ( !once ) this.addClass( '_mount' );
+
       return this.each( function () {
-        this.mounts
+
+        $( this ).find( selector ).each( function () {
+          var mounted = this.mounted = this.mounted || [];
+          if ( mounted.indexOf( fn ) === -1 ) {
+            mounted.push( fn );
+            fn.call( this, this );
+            $( this ).update();
+          }
+        } );
+
+        if ( !once ) {
+
+          var mounts = this.mounts = this.mounts || [];
+          mounts.push( {
+            selector: selector,
+            fn: fn
+          } );
+
+        }
+
+      } );
+
+    },
+
+    update: function () {
+      return this.each( function () {
+        if ( $.updateQueue.indexOf( this ) === -1 ) {
+          $.updateQueue.push( this );
+        }
       } );
     },
 
@@ -49,7 +80,7 @@
         }
 
         items.forEach( function ( item, index ) {
-          $( children[ index ] ).data( 'item', item ).triggerAsync( 'update' );
+          $( children[ index ] ).data( 'item', item ).update();
         } );
 
       } );
@@ -255,16 +286,6 @@
       return $els;
     },
 
-    eachOnce: function ( fn ) {
-      return this.each( function () {
-        var applied = this.applied = this.applied || [];
-        if ( applied.indexOf( fn ) === -1 ) {
-          applied.push( fn );
-          fn.call( this, this );
-        }
-      } );
-    },
-
     outerHtml: function () {
       return $( '<div></div>' ).append( this ).html();
     }
@@ -302,23 +323,6 @@
       if ( value === true ) return 'on';
       if ( isArray( value ) ) return value.map( toValue );
       return value + '';
-    },
-
-    // mostly internal
-
-    eventLoop: function () {
-      $.mount( $.document );
-    },
-
-    document: $.document || document,
-
-    mount: function ( el ) {
-      $.each( el.mounts, function ( mount ) {
-        $( el ).find( mount.selector ).eachOnce( mount.fn );
-      } );
-      for ( var i = 0; i < children.length; ++i ) {
-
-      }
     }
 
   } );
@@ -329,9 +333,30 @@
     noBubble: true
   } );
 
-  // start update loop
+  // start mount and update loop
 
-  $.updateInterval = $.updateInterval || setInterval( $.updateLoop, 16 );
+  $.updateQueue = [];
+
+  $.updateLoopId = $.updateLoopId || setInterval( function () {
+
+    var roots = document.getElementsByClassName( '_mount' );
+
+    for ( var i = 0, l = roots.length; i < l; ++i ) {
+      var root = roots[ i ];
+      var mounts = root.mounts || [];
+      for ( var ii = 0, ll = mounts.length; ii < ll; ++ii ) {
+        var mount = mounts[ ii ];
+        $( root ).mount( mount.selector, mount.fn, true );
+      }
+    }
+
+    for ( var j = 0, k = $.updateQueue.length; j < k; ++j ) {
+      $( $.updateQueue[ j ] ).trigger( 'update' );
+    }
+
+    $.updateQueue = [];
+
+  }, 0 );
 
   return $;
 

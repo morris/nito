@@ -1,33 +1,25 @@
-var NitoDashboard = $.nito( {
+function NitoDashboard() {
 
-  base: [
-    '<div class="dashboard"></div>'
-  ],
+  var $el = $( this );
+  var store = $el.data( 'store' );
 
-  mount: function ( store ) {
-    this.store = store;
-  },
+  $el.on( 'update', function () {
+    $el.nest( store.data );
+  } );
 
-  update: function () {
-    this.$el.nest( NitoItem, this.store.data, this );
-  }
+}
 
-} );
+function NitoItem() {
 
-var NitoItem = $.nito( {
+  var $el = $( this );
+  var $name = $el.find( '.name' );
+  var $score = $el.find( '.score' );
 
-  base: [
-    '<div class="item">',
-      '<strong data-ref="name"></strong><br>',
-      'S<span data-ref="score"></span>',
-    '</item>'
-  ],
+  $el.on( 'update', function () {
+    var item = $el.data( 'item' );
+    $name.ftext( item.name );
+    $score.ftext( item.score );
+    $el.css( 'color', item.color );
+  } );
 
-  update: function () {
-    var item = this.data;
-    this.$name.ftext( item.name );
-    this.$score.ftext( item.score );
-    this.$el.css( 'color', item.color );
-  }
-
-} );
+}

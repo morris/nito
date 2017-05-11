@@ -3,7 +3,10 @@
 var store = new Store();
 store.change( parseInt( $( '#comps' ).val(), 10 ), 0 );
 
-var nitoDashboard = NitoDashboard.create( null, store ).appendTo( '#nito' );
+var nitoDashboard = $( '#nito .dashboard' ).data( 'store', store );
+$( '#nito' ).mount( '.dashboard', NitoDashboard );
+$( '#nito' ).mount( '.dashboard .item', NitoItem );
+
 var reactDashboard = ReactDOM.render(
   React.createElement( ReactDashboard, { store: store } ),
   document.getElementById( 'react' )
