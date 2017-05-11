@@ -4,64 +4,64 @@ A jQuery library to build user interfaces,
 inspired by React, in under 500 lines of code.
 [Pretty fast, too.](https://cdn.rawgit.com/morris/nito/v1.0.0/examples/nito-vs-react/)
 
-```js
-var Todo = $.nito( {
+```html
+<div class="todo">
+  <h1>Todo</h1>
+  <ul class="items">
+    <li class="item">
+      <strong class="title"></strong>
+    </li>
+  </ul>
+</div>
 
-  base: [
-    '<div>',
-      '<h1>Todo</h1>',
-      '<ul data-ref="items"></ul>',
-    '</div>'
-  ],
+<script>
+$( document ).mount( '.todo', Todo );
+$( document ).mount( '.todo .item', Todo );
 
-  mount: function () {
-    this.data = {
-      items: [
-        { title: 'Get Nito', completed: false },
-        { title: 'Create something', completed: false }
-      ]
-    };
-  },
+function Todo() {
 
-  update: function () {
-    // nest() appends a TodoItem component for each item
+  var $todo = $( this );
+  var $items = $todo.find( '.items' );
+
+  var data = {
+    items: [
+      { title: 'Get Nito', completed: false },
+      { title: 'Create something', completed: false }
+    ]
+  };
+
+  $todo.on( 'update', function () {
+    // nest() appends a copy of the first child for each item
     // DOM is reconciled and reused under the hood
-    this.$items.nest( TodoItem, this.data.items, this );
-  }
+    $items.nest( data.items );
+  } );
 
-} );
+}
 
-var TodoItem = $.nito( {
+function TodoItem() {
 
-  base: [
-    '<li>',
-      '<strong data-ref="title"></strong>',
-    '</li>'
-  ],
+  var $item = $( this );
+  var $todo = $item.closest( '.todo' );
+  var data;
 
-  mount: function ( todo ) {
-    this.todo = todo; // parent component
-    this.on( 'click', this.toggle );
-  },
+  $item.on( 'click', function () {
+    // Change state and trigger an update
+    data.completed = !data.completed;
+    $todo.update();
+  } );
 
   // Efficient pure update
-  // This is the only place DOM manipulation happens
-  update: function () {
+  // The "update" event should be the only place DOM where manipulation happens
+  $item.on( 'update', function () {
     // Set title and toggle "completed" class
     // DOM is only manipulated if data has changed since last update
-    this.$title.ftext( this.data.title );
-    this.$el.classes( { completed: this.data.completed } );
-  },
+    data = $item.data( 'item' );
+    $title.ftext( data.title );
+    $item.classes( { completed: data.completed } );
+  } );
 
-  toggle: function () {
-    // Change state and trigger an update
-    this.data.completed = !this.data.completed;
-    this.todo.update();
-  }
-
-} );
-
-$( 'body' ).append( Todo.create() );
+}
+</script>
 ```
 
 
@@ -129,7 +129,7 @@ Isomorphic app (server- and client-side) built with Nito on Node.js.
   - `update()`
     - Updates the component
     - Has to be called explicitly (except for components rendered with `nest`/`nestOne`)
-    - Use `this.data` to update the component
+    - Use `data` to update the component
     - Optional
   - `unmount()`
     - Called when unmounting a component

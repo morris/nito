@@ -1,8 +1,10 @@
 function TodoItem() {
 
+  console.log( 'mounted' );
+
   var $el = $( this );
-  var $app = $el.closest( '.todo' );
-  var store = $app.data( 'store' );
+  var $todo = $el.closest( '.todo' );
+  var store = $todo.data( 'store' );
   var $title = $el.find( '.title' );
   var $completed = $el.find( '[name=completed]' );
   var item;
@@ -61,5 +63,3 @@ function TodoItem() {
   }
 
 }
-
-var $TodoItem = $( '#templates > ul >.item' ).one( 'mount', TodoItem );

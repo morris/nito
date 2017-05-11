@@ -11,42 +11,38 @@
 
     <div class="container">
       <h1>Todo <small>built with <a href="https://github.com/morris/nito">Nito</a></small></h1>
-      <div id="main"></div>
-    </div>
-
-    <div id="templates" hidden>
-      <div class="todo">
-        <nav class="navbar navbar-default">
-          <ul class="nav navbar-nav">
-            <li data-ref="nav"><a href="#/">All</a></li>
-            <li data-ref="nav"><a href="#/active">Active</a></li>
-            <li data-ref="nav"><a href="#/completed">Completed</a></li>
+      <div id="main">
+        <div class="todo">
+          <nav class="navbar navbar-default">
+            <ul class="nav navbar-nav">
+              <li data-ref="nav"><a href="#/">All</a></li>
+              <li data-ref="nav"><a href="#/active">Active</a></li>
+              <li data-ref="nav"><a href="#/completed">Completed</a></li>
+            </ul>
+            <p class="navbar-text" data-ref="left"></p>
+            <p class="navbar-form">
+              <button class="btn btn-primary sort">Sort</button>
+              <button class="btn btn-warning clear" data-ref="clear">Clear completed</button>
+            </p>
+          </nav>
+          <div class="line">
+            <div class="check">&gt;</div>
+            <input type="text" class="block add" placeholder="What needs to be done?" autofocus>
+          </div>
+          <ul class="items">
+            <li class="line item">
+              <div class="check">
+                <input type="checkbox" name="completed">
+              </div>
+              <div class="title"></div>
+              <input type="text" class="block" name="title">
+              <div class="controls">
+                <button class="btn btn-danger destroy">&times;</button>
+              </div>
+            </li>
           </ul>
-          <p class="navbar-text" data-ref="left"></p>
-          <p class="navbar-form">
-            <button class="btn btn-primary sort">Sort</button>
-            <button class="btn btn-warning clear" data-ref="clear">Clear completed</button>
-          </p>
-        </nav>
-        <div class="line">
-          <div class="check">&gt;</div>
-          <input type="text" class="block add" placeholder="What needs to be done?" autofocus>
         </div>
-        <ul class="items"></ul>
       </div>
-
-      <ul>
-        <li class="line item">
-          <div class="check">
-            <input type="checkbox" name="completed">
-          </div>
-          <div class="title"></div>
-          <input type="text" class="block" name="title">
-          <div class="controls">
-            <button class="btn btn-danger destroy">&times;</button>
-          </div>
-        </li>
-      </ul>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
@@ -55,7 +51,7 @@
     <script src="js/TodoItem.js"></script>
 
     <script>
-    $( '#main' ).nestOne( $Todo, {} );
+    $( '.todo' ).mount( Todo );
     </script>
 
   </body>

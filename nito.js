@@ -14,27 +14,28 @@
 
   var extend = Object.assign || $.extend;
   var isArray = Array.isArray || $.isArray;
-  var each = $.each;
-
-  // $.fn extensions
 
   extend( $.fn, {
 
-    // updates
+    // lifecycle
 
     update: function () {
-      return this.trigger( 'update' );
+      this.trigger( 'update' );
+    },
+
+    mount: function ( fn ) {
+      return this.each( function () {
+        var mounted = this.mounted = this.mounted || [];
+        if ( mounted.indexOf( fn ) === -1 ) {
+          mounted.push( fn );
+          fn.call( this, this );
+        }
+      } );
     },
 
     // nesting
 
-    nest: function ( el, items ) {
-
-      var $el = $( el ).first();
-
-      if ( $el.length === 0 ) {
-        throw new Error( 'nest expects a prototype element' );
-      }
+    nest: function ( items ) {
 
       if ( !isArray( items ) ) {
         throw new Error( 'nest expects an item array' );
@@ -44,13 +45,15 @@
 
         var container = this;
         var children = container.children;
+        var nestElement = container.nestElement =
+          container.nestElement || children[ 0 ];
 
         while ( items.length < children.length ) {
           container.removeChild( container.lastChild );
         }
 
         while ( items.length > children.length ) {
-          $el.clone( true ).appendTo( container ).trigger( 'mount' );
+          container.appendChild( nestElement.cloneNode( true ) );
         }
 
         items.forEach( function ( item, index ) {
@@ -71,7 +74,7 @@
 
       return this.each( function () {
         var el = this, $el = $( el );
-        each( classes, function ( name, condition ) {
+        $.each( classes, function ( name, condition ) {
           $el.toggleClass( name, !!condition );
         } );
       } );
@@ -257,8 +260,6 @@
     }
 
   } );
-
-  // $ extensions
 
   extend( $, {
 

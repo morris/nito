@@ -50,8 +50,8 @@ function Todo() {
     store();
     route();
 
-    // $el.nest reconciles with existing DOM
-    $items.nest( $TodoItem, items );
+    $el.find( '.item' ).mount( TodoItem );
+    $items.nest( items );
 
     var l = left().length;
     var i = left === 1 ? 'item' : 'items';
@@ -162,8 +162,6 @@ function Todo() {
   }
 
 }
-
-var $Todo = $( '#templates > .todo' ).one( 'mount', Todo );
 
 var ENTER_KEY = 13;
 var ESCAPE_KEY = 27;
