@@ -16,7 +16,7 @@ inspired by React, in under 500 lines of code.
 
 <script>
 $( document ).mount( '.todo', Todo );
-$( document ).mount( '.todo .item', Todo );
+$( document ).mount( '.todo .item', TodoItem );
 
 function Todo() {
 
@@ -51,7 +51,7 @@ function TodoItem() {
   } );
 
   // Efficient pure update
-  // The "update" event should be the only place DOM where manipulation happens
+  // The "update" event should be the only place with DOM manipulation
   $item.on( 'update', function () {
     // Set title and toggle "completed" class
     // DOM is only manipulated if data has changed since last update

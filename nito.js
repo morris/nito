@@ -17,25 +17,17 @@
 
   extend( $.fn, {
 
-    // lifecycle
+    // mounting
 
-    update: function () {
-      this.trigger( 'update' );
-    },
-
-    mount: function ( fn ) {
+    mount: function ( selector, fn ) {
       return this.each( function () {
-        var mounted = this.mounted = this.mounted || [];
-        if ( mounted.indexOf( fn ) === -1 ) {
-          mounted.push( fn );
-          fn.call( this, this );
-        }
+        this.mounts
       } );
     },
 
     // nesting
 
-    nest: function ( items ) {
+    nest: function ( items, el ) {
 
       if ( !isArray( items ) ) {
         throw new Error( 'nest expects an item array' );
@@ -46,7 +38,7 @@
         var container = this;
         var children = container.children;
         var nestElement = container.nestElement =
-          container.nestElement || children[ 0 ];
+          el && $( el )[ 0 ] || container.nestElement || children[ 0 ];
 
         while ( items.length < children.length ) {
           container.removeChild( container.lastChild );
@@ -57,15 +49,15 @@
         }
 
         items.forEach( function ( item, index ) {
-          $( children[ index ] ).data( 'item', item ).update();
+          $( children[ index ] ).data( 'item', item ).triggerAsync( 'update' );
         } );
 
       } );
 
     },
 
-    nestOne: function ( el, item ) {
-      return this.nest( el, item ? [ item ] : [] );
+    nestOne: function ( item, el ) {
+      return this.nest( item ? [ item ] : [], el );
     },
 
     // manipulation
@@ -255,6 +247,24 @@
 
     // utility
 
+    triggerAsync: function ( type, data ) {
+      var $els = this;
+      setTimeout( function () {
+        $els.trigger( type, data );
+      }, 0 );
+      return $els;
+    },
+
+    eachOnce: function ( fn ) {
+      return this.each( function () {
+        var applied = this.applied = this.applied || [];
+        if ( applied.indexOf( fn ) === -1 ) {
+          applied.push( fn );
+          fn.call( this, this );
+        }
+      } );
+    },
+
     outerHtml: function () {
       return $( '<div></div>' ).append( this ).html();
     }
@@ -262,6 +272,8 @@
   } );
 
   extend( $, {
+
+    // utility
 
     parseUrl: function ( url ) {
       return $( '<a></a>' ).attr( 'href', url )[ 0 ];
@@ -290,6 +302,23 @@
       if ( value === true ) return 'on';
       if ( isArray( value ) ) return value.map( toValue );
       return value + '';
+    },
+
+    // mostly internal
+
+    eventLoop: function () {
+      $.mount( $.document );
+    },
+
+    document: $.document || document,
+
+    mount: function ( el ) {
+      $.each( el.mounts, function ( mount ) {
+        $( el ).find( mount.selector ).eachOnce( mount.fn );
+      } );
+      for ( var i = 0; i < children.length; ++i ) {
+
+      }
     }
 
   } );
@@ -299,6 +328,10 @@
   $.event.special.update = extend( {}, $.event.special.update, {
     noBubble: true
   } );
+
+  // start update loop
+
+  $.updateInterval = $.updateInterval || setInterval( $.updateLoop, 16 );
 
   return $;
 

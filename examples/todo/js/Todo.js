@@ -1,5 +1,7 @@
 function Todo() {
 
+  console.log( 'mount Todo' );
+
   var $el = $( this );
   var $items = $el.find( '> .items' );
   var $left = $el.find( '.left' );
@@ -18,6 +20,8 @@ function Todo() {
     clear: clear,
     destroy: destroy
   } );
+
+  $el.mount( '.item', Todo );
 
   $el.on( 'keydown', 'input.add', function ( e ) {
 
