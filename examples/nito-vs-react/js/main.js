@@ -20,17 +20,23 @@ $( '#benchmark' ).on( 'click', function () {
   var comps = parseInt( $( '#comps' ).val(), 10 );
   var rate = parseFloat( $( '#rate' ).val(), 10 );
 
-  suite.add( 'Nito', function () {
+  suite.add( 'Nito', function ( deferred ) {
 
     store.change( comps, rate );
     nitoDashboard.update();
+    requestAnimationFrame( function () {
+      deferred.resolve();
+    } );
 
-  } ).add( 'React', function() {
+  }, { defer: true } ).add( 'React', function ( deferred ) {
 
     store.change( comps, rate );
     reactDashboard.update();
+    requestAnimationFrame( function () {
+      deferred.resolve();
+    } );
 
-  } ).on( 'cycle', function ( event ) {
+  }, { defer: true } ).on( 'cycle', function ( event ) {
 
     $( '#log' ).append( String( event.target ) + '\n' );
 

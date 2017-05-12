@@ -27,7 +27,7 @@
 
       return this.each( function () {
 
-        $( this ).find( selector ).each( function () {
+        $( selector, this ).each( function () {
           var mounted = this.mounted = this.mounted || [];
           if ( mounted.indexOf( fn ) === -1 ) {
             mounted.push( fn );
@@ -280,12 +280,13 @@
 
     // utility
 
-    triggerAsync: function ( type, data ) {
-      var $els = this;
-      setTimeout( function () {
-        $els.trigger( type, data );
-      }, 0 );
-      return $els;
+    triggerNext: function ( type, data ) {
+      $.eventQueue.push( {
+        $target: this,
+        type: type,
+        data: data
+      } );
+      return this;
     },
 
     outerHtml: function () {
@@ -340,11 +341,15 @@
 
     updateQueue: [],
 
+    eventQueue: [],
+
     update: function () {
 
+      // keep everything mounted
       var roots = document.getElementsByClassName( '_mount' );
+      var i, l, q;
 
-      for ( var i = 0, l = roots.length; i < l; ++i ) {
+      for ( i = 0, l = roots.length; i < l; ++i ) {
         var root = roots[ i ];
         var mounts = root.mounts || [];
         for ( var ii = 0, ll = mounts.length; ii < ll; ++ii ) {
@@ -353,11 +358,22 @@
         }
       }
 
-      for ( var j = 0, k = $.updateQueue.length; j < k; ++j ) {
-        $( $.updateQueue[ j ] ).trigger( 'update' );
+      // trigger queued events
+      q = $.eventQueue;
+      $.eventQueue = [];
+
+      for ( i = 0, l = q.length; i < l; ++i ) {
+        var entry = q[ i ];
+        entry.$target.trigger( entry.type, entry.data );
       }
 
+      // trigger updates
+      q = $.updateQueue;
       $.updateQueue = [];
+
+      for ( i = 0, l = q.length; i < l; ++i ) {
+        $( q[ i ] ).trigger( 'update' );
+      }
 
     }
 
