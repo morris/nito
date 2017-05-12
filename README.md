@@ -15,8 +15,8 @@ inspired by React, in under 500 lines of code.
 </div>
 
 <script>
-$( document ).mount( '.todo', Todo );
-$( document ).mount( '.todo .item', TodoItem );
+$( 'body' ).mount( '.todo', Todo );
+$( 'body' ).mount( '.todo .item', TodoItem );
 
 function Todo( $el ) {
 
