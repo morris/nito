@@ -23,7 +23,7 @@
 
     mount: function ( selector, fn, once ) {
 
-      if ( !once ) this.addClass( '_mount' );
+      if ( !once ) this.addClass( 'mount-root' );
 
       return this.each( function () {
 
@@ -280,7 +280,7 @@
 
     // utility
 
-    triggerNext: function ( type, data ) {
+    dispatch: function ( type, data ) {
       $.eventQueue.push( {
         $target: this,
         type: type,
@@ -339,22 +339,27 @@
 
     // update loop, internal
 
+    mountRoots: document.getElementsByClassName( 'mount-root' ),
+
     updateQueue: [],
 
     eventQueue: [],
 
     update: function () {
 
-      // keep everything mounted
-      var roots = document.getElementsByClassName( '_mount' );
       var i, l, q;
 
-      for ( i = 0, l = roots.length; i < l; ++i ) {
-        var root = roots[ i ];
+      // keep everything mounted
+      for ( i = 0, l = $.mountRoots.length; i < l; ++i ) {
+        var root = $.mountRoots[ i ];
         var mounts = root.mounts || [];
         for ( var ii = 0, ll = mounts.length; ii < ll; ++ii ) {
           var mount = mounts[ ii ];
-          $( root ).mount( mount.selector, mount.fn, true );
+          try {
+            $( root ).mount( mount.selector, mount.fn, true );
+          } catch ( ex ) {
+            console.warn( ex.stack );
+          }
         }
       }
 
@@ -364,7 +369,11 @@
 
       for ( i = 0, l = q.length; i < l; ++i ) {
         var entry = q[ i ];
-        entry.$target.trigger( entry.type, entry.data );
+        try {
+          entry.$target.trigger( entry.type, entry.data );
+        } catch ( ex ) {
+          console.warn( ex.stack );
+        }
       }
 
       // trigger updates
@@ -372,7 +381,11 @@
       $.updateQueue = [];
 
       for ( i = 0, l = q.length; i < l; ++i ) {
-        $( q[ i ] ).trigger( 'update' );
+        try {
+          $( q[ i ] ).trigger( 'update' );
+        } catch ( ex ) {
+          console.warn( ex.stack );
+        }
       }
 
     }

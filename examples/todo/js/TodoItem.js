@@ -1,5 +1,7 @@
 function TodoItem() {
 
+  console.log( 'mount TodoItem' );
+
   var $el = $( this );
   var $todo = $el.closest( '.todo' );
   var store = $todo.data( 'store' );
@@ -48,6 +50,8 @@ function TodoItem() {
   $el.on( 'update', update );
 
   function update() {
+
+    console.log( 'update TodoItem' );
 
     item = $el.data( 'item' );
 

@@ -1,5 +1,7 @@
 function Todo() {
 
+  console.log( 'mount Todo' );
+
   var $el = $( this );
   var $items = $el.find( '> .items' );
   var $left = $el.find( '.left' );
@@ -48,6 +50,8 @@ function Todo() {
   load();
 
   function update() {
+
+    console.log( 'update Todo' );
 
     store();
     route();
