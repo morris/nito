@@ -1,8 +1,7 @@
-function Todo() {
+function Todo( $el ) {
 
   console.log( 'mount Todo' );
 
-  var $el = $( this );
   var $items = $el.find( '> .items' );
   var $left = $el.find( '.left' );
   var $clear = $el.find( '.clear' );

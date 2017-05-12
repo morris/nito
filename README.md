@@ -18,10 +18,9 @@ inspired by React, in under 500 lines of code.
 $( document ).mount( '.todo', Todo );
 $( document ).mount( '.todo .item', TodoItem );
 
-function Todo() {
+function Todo( $el ) {
 
-  var $todo = $( this );
-  var $items = $todo.find( '.items' );
+  var $items = $el.find( '.items' );
 
   var data = {
     items: [
@@ -30,7 +29,7 @@ function Todo() {
     ]
   };
 
-  $todo.on( 'update', function () {
+  $el.on( 'update', function () {
     // nest() appends a copy of the first child for each item
     // DOM is reconciled and reused under the hood
     $items.nest( data.items );
@@ -38,13 +37,12 @@ function Todo() {
 
 }
 
-function TodoItem() {
+function TodoItem( $el ) {
 
-  var $item = $( this );
-  var $todo = $item.closest( '.todo' );
+  var $todo = $el.closest( '.todo' );
   var data;
 
-  $item.on( 'click', function () {
+  $el.on( 'click', function () {
     // Change state and trigger an update
     data.completed = !data.completed;
     $todo.update();
@@ -52,12 +50,12 @@ function TodoItem() {
 
   // Efficient pure update
   // The "update" event should be the only place with DOM manipulation
-  $item.on( 'update', function () {
+  $el.on( 'update', function () {
     // Set title and toggle "completed" class
     // DOM is only manipulated if data has changed since last update
-    data = $item.data( 'item' );
+    data = $el.data( 'item' );
     $title.ftext( data.title );
-    $item.classes( { completed: data.completed } );
+    $el.classes( { completed: data.completed } );
   } );
 
 }

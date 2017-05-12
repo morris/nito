@@ -31,8 +31,7 @@
           var mounted = this.mounted = this.mounted || [];
           if ( mounted.indexOf( fn ) === -1 ) {
             mounted.push( fn );
-            fn.call( this, this );
-            $( this ).update();
+            fn.call( this, $( this ).update() );
           }
         } );
 

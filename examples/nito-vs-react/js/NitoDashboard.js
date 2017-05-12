@@ -1,6 +1,5 @@
-function NitoDashboard() {
+function NitoDashboard( $el ) {
 
-  var $el = $( this );
   var store = $el.data( 'store' );
 
   $el.on( 'update', function () {
@@ -9,9 +8,8 @@ function NitoDashboard() {
 
 }
 
-function NitoItem() {
+function NitoItem( $el ) {
 
-  var $el = $( this );
   var $name = $el.find( '.name' );
   var $score = $el.find( '.score' );
 

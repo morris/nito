@@ -1,8 +1,7 @@
-function TodoItem() {
+function TodoItem( $el ) {
 
   console.log( 'mount TodoItem' );
 
-  var $el = $( this );
   var $todo = $el.closest( '.todo' );
   var store = $todo.data( 'store' );
   var $title = $el.find( '.title' );
