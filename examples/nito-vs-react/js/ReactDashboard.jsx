@@ -3,7 +3,7 @@ var ReactDashboard = React.createClass( {
   render: function () {
     return <div className='dashboard'>
       {
-        this.props.store.data.map( function ( d ) {
+        this.props.store.get().map( function ( d ) {
           return <ReactItem key={d.id} color={d.color}
             name={d.name} score={d.score} />;
         } )

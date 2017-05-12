@@ -6,7 +6,7 @@ var ReactDashboard = React.createClass( {
 
   render: function () {
     return React.createElement( 'div', { className: 'dashboard' },
-      this.props.store.data.map( function ( d ) {
+      this.props.store.get().map( function ( d ) {
         return React.createElement( ReactItem, {
           key: d.id, color: d.color,
           name: d.name, score: d.score

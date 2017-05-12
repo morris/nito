@@ -4,7 +4,7 @@ function NitoDashboard() {
   var store = $el.data( 'store' );
 
   $el.on( 'update', function () {
-    $el.nest( store.data );
+    $el.nest( store.get() );
   } );
 
 }

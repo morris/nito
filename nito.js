@@ -7,11 +7,13 @@
   } else if ( typeof module === 'object' && module.exports ) {
     module.exports = factory;
   } else {
-    factory( root.$ );
+    factory( root );
   }
 
-} )( this, function ( $ ) {
+} )( this, function ( root ) {
 
+  var $ = root.$;
+  var document = root.document;
   var extend = Object.assign || $.extend;
   var isArray = Array.isArray || $.isArray;
 
@@ -323,6 +325,40 @@
       if ( value === true ) return 'on';
       if ( isArray( value ) ) return value.map( toValue );
       return value + '';
+    },
+
+    nextFrame: ( root.requestAnimationFrame ||
+      root.webkitRequestAnimationFrame ||
+      root.mozRequestAnimationFrame ||
+      root.msRequestAnimationFrame ||
+      root.setImmediate ||
+      function ( fn ) {
+        return setTimeout( fn, 0 );
+      } ).bind( root ),
+
+    // update loop, internal
+
+    updateQueue: [],
+
+    update: function () {
+
+      var roots = document.getElementsByClassName( '_mount' );
+
+      for ( var i = 0, l = roots.length; i < l; ++i ) {
+        var root = roots[ i ];
+        var mounts = root.mounts || [];
+        for ( var ii = 0, ll = mounts.length; ii < ll; ++ii ) {
+          var mount = mounts[ ii ];
+          $( root ).mount( mount.selector, mount.fn, true );
+        }
+      }
+
+      for ( var j = 0, k = $.updateQueue.length; j < k; ++j ) {
+        $( $.updateQueue[ j ] ).trigger( 'update' );
+      }
+
+      $.updateQueue = [];
+
     }
 
   } );
@@ -333,30 +369,14 @@
     noBubble: true
   } );
 
-  // start mount and update loop
+  // start update loop
 
-  $.updateQueue = [];
+  function updateLoop() {
+    $.updateId = $.nextFrame( updateLoop );
+    $.update();
+  }
 
-  $.updateLoopId = $.updateLoopId || setInterval( function () {
-
-    var roots = document.getElementsByClassName( '_mount' );
-
-    for ( var i = 0, l = roots.length; i < l; ++i ) {
-      var root = roots[ i ];
-      var mounts = root.mounts || [];
-      for ( var ii = 0, ll = mounts.length; ii < ll; ++ii ) {
-        var mount = mounts[ ii ];
-        $( root ).mount( mount.selector, mount.fn, true );
-      }
-    }
-
-    for ( var j = 0, k = $.updateQueue.length; j < k; ++j ) {
-      $( $.updateQueue[ j ] ).trigger( 'update' );
-    }
-
-    $.updateQueue = [];
-
-  }, 0 );
+  updateLoop();
 
   return $;
 

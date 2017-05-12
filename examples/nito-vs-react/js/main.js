@@ -1,6 +1,6 @@
 // store
 
-var store = new Store();
+var store = Store();
 store.change( parseInt( $( '#comps' ).val(), 10 ), 0 );
 
 var nitoDashboard = $( '#nito .dashboard' ).data( 'store', store );
@@ -44,7 +44,7 @@ $( '#benchmark' ).on( 'click', function () {
 
 // stats
 
-var stats = new MemoryStats();
+var stats = new Stats();
 
 stats.domElement.style.position = 'fixed';
 stats.domElement.style.right = '0px';
@@ -52,8 +52,17 @@ stats.domElement.style.top = '0px';
 
 document.body.appendChild( stats.domElement );
 
+var memoryStats = new MemoryStats();
+
+memoryStats.domElement.style.position = 'fixed';
+memoryStats.domElement.style.right = '0px';
+memoryStats.domElement.style.top = '50px';
+
+document.body.appendChild( memoryStats.domElement );
+
 function updateStats() {
   stats.update();
+  memoryStats.update();
   requestAnimationFrame( updateStats );
 }
 

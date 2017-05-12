@@ -1,11 +1,14 @@
-var Store = function () {
+function Store() {
 
-  this.data = [];
+  var data = [];
   var nextId = 1;
 
-  this.change = function ( size, rate ) {
+  function get() {
+    return data;
+  }
 
-    var data = this.data;
+  function change( size, rate ) {
+
     var i, item;
 
     size = Math.round( size + ( Math.random() - 0.5 ) * size * rate );
@@ -35,7 +38,7 @@ var Store = function () {
       data.splice( to, 0, item );
     }
 
-  };
+  }
 
   function random( arr ) {
     return Math.floor( arr.length * Math.random() );
@@ -52,4 +55,9 @@ var Store = function () {
     };
   }
 
-};
+  return {
+    change: change,
+    get: get
+  };
+
+}
