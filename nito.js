@@ -21,7 +21,10 @@
 
     // mounting
 
-    mount: function ( selector, fn, once ) {
+    mount: function ( selector, fn ) {
+      if ( typeof fn !== 'function' ) {
+        throw new Error( 'mount expects a function' );
+      }
       return this.addClass( 'mount-root' ).each( function () {
         var mounts = this.mounts = this.mounts || [];
         mounts.push( {
