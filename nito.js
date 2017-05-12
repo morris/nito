@@ -22,31 +22,13 @@
     // mounting
 
     mount: function ( selector, fn, once ) {
-
-      if ( !once ) this.addClass( 'mount-root' );
-
-      return this.each( function () {
-
-        $( selector, this ).each( function () {
-          var mounted = this.mounted = this.mounted || [];
-          if ( mounted.indexOf( fn ) === -1 ) {
-            mounted.push( fn );
-            fn.call( this, $( this ).update() );
-          }
+      return this.addClass( 'mount-root' ).each( function () {
+        var mounts = this.mounts = this.mounts || [];
+        mounts.push( {
+          selector: selector,
+          fn: fn
         } );
-
-        if ( !once ) {
-
-          var mounts = this.mounts = this.mounts || [];
-          mounts.push( {
-            selector: selector,
-            fn: fn
-          } );
-
-        }
-
       } );
-
     },
 
     update: function () {
@@ -350,16 +332,33 @@
 
       // keep everything mounted
       for ( i = 0, l = $.mountRoots.length; i < l; ++i ) {
+
         var root = $.mountRoots[ i ];
         var mounts = root.mounts || [];
+
         for ( var ii = 0, ll = mounts.length; ii < ll; ++ii ) {
+
           var mount = mounts[ ii ];
-          try {
-            $( root ).mount( mount.selector, mount.fn, true );
-          } catch ( ex ) {
-            console.warn( ex.stack );
+          var $targets = $( mount.selector, root );
+          var fn = mount.fn;
+
+          for ( var iii = 0, lll = $targets.length; iii < lll; ++iii ) {
+
+            var target = $targets[ iii ];
+            var mounted = target.mounted = target.mounted || [];
+            if ( mounted.indexOf( fn ) === -1 ) {
+              try {
+                mounted.push( fn );
+                fn.call( target, $( target ).update() );
+              } catch ( ex ) {
+                console.warn( ex.stack );
+              }
+            }
+
           }
+
         }
+
       }
 
       // trigger queued events
