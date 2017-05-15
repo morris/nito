@@ -7,39 +7,47 @@
   } else if ( typeof module === 'object' && module.exports ) {
     module.exports = factory;
   } else {
-    factory( root );
+    factory( root, root.$ );
   }
 
-} )( this, function ( root ) {
+} )( this, function ( window, $ ) {
 
-  var $ = root.$;
-  var document = root.document;
   var extend = Object.assign || $.extend;
   var isArray = Array.isArray || $.isArray;
 
   extend( $.fn, {
 
-    // mounting
+    // mounting and updating
 
     mount: function ( selector, fn ) {
+
       if ( typeof fn !== 'function' ) {
         throw new Error( 'mount expects a function' );
       }
-      return this.addClass( 'mount-root' ).each( function () {
+
+      return this.addClass( 'mount-scope' ).each( function () {
+
         var mounts = this.mounts = this.mounts || [];
+
         mounts.push( {
           selector: selector,
           fn: fn
         } );
+
       } );
+
     },
 
     update: function () {
+
       return this.each( function () {
+
         if ( $.updateQueue.indexOf( this ) === -1 ) {
           $.updateQueue.push( this );
         }
+
       } );
+
     },
 
     // nesting
@@ -82,10 +90,13 @@
     classes: function ( classes ) {
 
       return this.each( function () {
+
         var el = this, $el = $( el );
+
         $.each( classes, function ( name, condition ) {
           $el.toggleClass( name, !!condition );
         } );
+
       } );
 
     },
@@ -93,10 +104,12 @@
     fhtml: function ( html ) {
 
       return this.each( function () {
+
         if ( html === null ) html = ''; // Support: IE
         if ( this.lastHtml !== html ) {
           this.innerHTML = this.lastHtml = html;
         }
+
       } );
 
     },
@@ -104,9 +117,11 @@
     ftext: function ( text ) {
 
       return this.each( function () {
+
         if ( this.lastText !== text ) {
           this.textContent = this.lastText = text;
         }
+
       } );
 
     },
@@ -147,12 +162,12 @@
       return this.each( function () {
 
         var value = data;
+
         $.parseName( this.name || '' ).forEach( function ( part ) {
           if ( value && part !== '' ) value = value[ part ];
         } );
-        if ( value === data ) value = '';
 
-        $( this ).fval( value, def );
+        $( this ).fval( value === data ? '' : value, def );
 
       } );
 
@@ -186,10 +201,12 @@
           var multiple = el.multiple && isArray( value );
 
           $( el ).children().each( function () {
+
             var optionValue = this.getAttribute( 'value' ) || this.textContent;
             this[ selectedProp ] = multiple ?
               value.indexOf( optionValue ) >= 0 :
               value === optionValue;
+
           } );
 
           break;
@@ -265,12 +282,15 @@
     // utility
 
     dispatch: function ( type, data ) {
+
       $.eventQueue.push( {
         $target: this,
         type: type,
         data: data
       } );
+
       return this;
+
     },
 
     outerHtml: function () {
@@ -288,6 +308,7 @@
     },
 
     parseQuery: function ( query ) {
+
       return ( query || '' )
         .replace( /^[?#]/, '' )
         .split( '&' )
@@ -297,6 +318,7 @@
             .replace( /\+/g, ' ' );
           return params;
         }, {} );
+
     },
 
     parseName: function ( name ) {
@@ -312,43 +334,38 @@
       return value + '';
     },
 
-    nextFrame: ( root.requestAnimationFrame ||
-      root.webkitRequestAnimationFrame ||
-      root.mozRequestAnimationFrame ||
-      root.msRequestAnimationFrame ||
-      root.setImmediate ||
+    nextFrame: ( window.requestAnimationFrame ||
+      window.webkitRequestAnimationFrame ||
+      window.mozRequestAnimationFrame ||
+      window.msRequestAnimationFrame ||
+      window.setImmediate ||
       function ( fn ) {
         return setTimeout( fn, 0 );
-      } ).bind( root ),
+      } ).bind( window ),
 
     // update loop, internal
 
-    mountRoots: document.getElementsByClassName( 'mount-root' ),
-
-    updateQueue: [],
-
-    eventQueue: [],
-
     update: function () {
+
+      if ( $.autoUpdate ) $.nextFrame( $.update );
 
       var i, l, q;
 
       // keep everything mounted
-      for ( i = 0, l = $.mountRoots.length; i < l; ++i ) {
 
-        var root = $.mountRoots[ i ];
+      for ( i = 0, l = $.mountScopes.length; i < l; ++i ) {
+        var root = $.mountScopes[ i ];
         var mounts = root.mounts || [];
 
         for ( var ii = 0, ll = mounts.length; ii < ll; ++ii ) {
-
           var mount = mounts[ ii ];
           var $targets = $( mount.selector, root );
           var fn = mount.fn;
 
           for ( var iii = 0, lll = $targets.length; iii < lll; ++iii ) {
-
             var target = $targets[ iii ];
             var mounted = target.mounted = target.mounted || [];
+
             if ( mounted.indexOf( fn ) === -1 ) {
               try {
                 mounted.push( fn );
@@ -357,11 +374,8 @@
                 console.warn( ex.stack );
               }
             }
-
           }
-
         }
-
       }
 
       // trigger queued events
@@ -389,24 +403,27 @@
         }
       }
 
-    }
+    },
+
+    mountScopes: window.document.getElementsByClassName( 'mount-scope' ),
+
+    updateQueue: $.updateQueue || [],
+
+    eventQueue: $.eventQueue || [],
+
+    autoUpdate: 'autoUpdate' in $ ? $.autoUpdate : true
 
   } );
 
   // special events
 
-  $.event.special.update = extend( {}, $.event.special.update, {
+  $.event.special.update = extend( $.event.special.update || {}, {
     noBubble: true
   } );
 
   // start update loop
 
-  function updateLoop() {
-    $.updateId = $.nextFrame( updateLoop );
-    $.update();
-  }
-
-  updateLoop();
+  $.update();
 
   return $;
 

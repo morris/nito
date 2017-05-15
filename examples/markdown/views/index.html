@@ -4,17 +4,52 @@
     <meta charset="utf-8">
     <title>Markdown Editor built with Nito</title>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/app.css">
   </head>
   <body>
 
-    <div class="container">
+    <div class="container" id="main">
       <h1>Markdown Editor <small>built with <a href="https://github.com/morris/nito">Nito</a></small></h1>
-      <!-- APP -->
     </div>
 
-    <script src="js/bundle.js"></script>
+    <div id="templates" hidden>
+      <div class="app">
+        <p><button class="btn btn-default create">New Page</button></p>
+        <ul class="nav nav-tabs">
+        </ul>
+        <div class="active-page">
+        </div>
+      </div>
+
+      <ul>
+        <li class="nav-item">
+          <a class="title" data-ref="title"></a>
+        </li>
+      </ul>
+
+      <div class="page">
+        <h2>
+          <span class="title"></span> ,
+          <button class="edit btn btn-default">Edit</button> ,
+          <button class="remove btn btn-default">Remove</button> ,
+          <button class="save btn btn-default">Save</button> ,
+        </h2>
+        <div class="body"></div>
+        <form class="form">
+          <div class="form-group">
+            <label class="control-label">Title</label>
+            <input class="form-control input" type="text" name="title">
+          </div>
+          <div class="form-group">
+            <label class="control-label">Body</label>
+            <textarea class="form-control input" rows="20" type="text" name="body"></textarea>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="/js/bundle.js"></script>
 
   </body>
 </html>

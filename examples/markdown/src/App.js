@@ -1,87 +1,83 @@
-var $ = require( './dollar' );
 var NavItem = require( './NavItem' );
 var Page = require( './Page' );
 
-module.exports = $.nito( {
+module.exports = App;
 
-  base: [
-    '<div class="app" id="app">',
-      '<p><button class="btn btn-default create">New Page</button></p>',
-      '<ul class="nav nav-tabs" data-ref="nav">',
-      '</ul>',
-      '<div data-ref="activePage">',
-      '</div>',
-    '</div>'
-  ],
+function App( $el ) {
 
-  id: 'app',
+  console.log( 'mount App' );
 
-  mount: function ( env ) {
-    this.env = env;
-    this.data = { pages: [] };
-    this.on( 'click', '.create', this.create );
-    this.on( 'click', 'a', this.navigate );
-    if ( process.browser ) {
-      $( env ).on( 'popstate', this.update.bind( this ) );
-    }
-  },
+  var $ = $el.constructor;
+  var $nav = $el.find( '.nav' );
+  var $activePage = $el.find( '.activePage' );
+  var data = { pages: [] };
 
-  update: function () {
-    var env = this.env;
-    var data = this.data;
+  $el.mount( '.nav-item', NavItem );
+  $el.mount( '.page', Page );
 
-    var path = process.browser ? env.location.pathname : env.url;
+  $el.on( 'click', 'a', function ( e ) {
+    var $a = $( e.target );
+    history.pushState( {}, '', $a.attr( 'href' ) );
+    e.preventDefault();
+    $el.update();
+  } );
 
-    this.$nav.nest( NavItem, this.data.pages.map( function ( page ) {
+  $el.on( 'click', '.create', function () {
+    $el.dispatch( 'create-page' );
+  } );
+
+  $el.on( 'create-page', function () {
+    data.pages.push( {
+      id: uuid(),
+      title: 'Untitled',
+      body: '> What is bravery, without a dash of recklessness?'
+    } );
+    persist();
+  } );
+
+  $el.on( 'save-page', function ( e, page ) {
+    $.extend( pages.filter( function ( p ) {
+      return p.id === page.id;
+    } ), data );
+    persist();
+  } );
+
+  $el.on( 'remove-page', function ( e, page ) {
+    var pages = data.pages;
+    pages.splice( pages.indexOf( page ), 1 );
+    persist();
+  } );
+
+  $el.on( 'update', function () {
+    var path = $.window.location.pathname;
+
+    $nav.nest( data.pages.map( function ( page ) {
       return {
         title: page.title,
         id: page.id,
         active: '/' + page.id === path
       };
-    } ), this );
+    } ), '#templates .nav-item' );
 
-    this.$activePage.nest( Page, this.data.pages.filter( function ( page ) {
+    $activePage.nest( data.pages.filter( function ( page ) {
       return '/' + page.id === path;
-    } ), this );
-  },
+    } ), '#templates .page' );
+  } );
 
-  navigate: function ( e ) {
-    var $a = $( e.target );
-    history.pushState( {}, '', $a.attr( 'href' ) );
-    e.preventDefault();
-    this.update();
-  },
+  $( $.window ).on( 'popstate', function () {
+    $el.update();
+  } );
 
-  create: function () {
-    this.data.pages.push( {
-      id: this.uuid(),
-      title: 'Untitled',
-      body: '> What is bravery, without a dash of recklessness?'
-    } );
-    this.persist();
-  },
+  function persist() {
+    $.post( '/', JSON.stringify( data ) );
+    $el.update();
+  }
 
-  remove: function ( page ) {
-    var pages = this.data.pages;
-    pages.splice( pages.indexOf( page ), 1 );
-    this.persist();
-  },
-
-  save: function ( page, data ) {
-    $.extend( page, data );
-    this.persist();
-  },
-
-  persist: function () {
-    $.post( '/', JSON.stringify( this.data ) );
-    this.update();
-  },
-
-  uuid: function () {
+  function uuid() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace( /[xy]/g, function ( c ) {
       var r = Math.random() * 16 | 0, v = c === 'x' ? r : ( r & 0x3 | 0x8 );
       return v.toString( 16 );
     } );
   }
 
-} );
+}

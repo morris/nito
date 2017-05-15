@@ -48,7 +48,6 @@ function TodoItem( $el ) {
     $todo.update();
   } );
 
-  // Efficient pure update
   // The "update" event should be the only place with DOM manipulation
   $el.on( 'update', function () {
     // Set title and toggle "completed" class
@@ -72,7 +71,7 @@ Component thinking and pure updates (likely the most
 valuable features of React) give structure and simplicity,
 and Nito enables these concepts on top of the most used JavaScript library ever:
 
-- Define **reusable components** with jQuery or Zepto
+- Define **reusable components** with jQuery
 - Designed for **pure updates** driven by minimal state
 - One simple class factory, a few functions, <500 lines
 - Not a framework&mdash;never gets in the way

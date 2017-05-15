@@ -1,30 +1,54 @@
-var browserify = require( 'browserify' );
 var fs = require( 'fs' );
+var path = require( 'path' );
 var express = require( 'express' );
+var domino = require( 'domino' );
+var jQuery = require( 'jquery' );
+var nito  = require( '../../../' );
 var App = require( './App' );
 
-var index = fs.readFileSync( 'views/index.html' ).toString();
+var index = fs.readFileSync( 'views/index.html' );
 
-var server = express();
+var app = express();
 
-server.use( express.static( '.' ) );
+console.log( require.resolve( 'bootstrap' ) );
 
-server.get( '/*', function ( req, res ) {
+app.use( '/', express.static( '.' ) );
+app.use( '/', express.static(
+  path.dirname( path.dirname( require.resolve( 'bootstrap' ) ) )
+) );
+
+app.get( '/*', function ( req, res, next ) {
+
+  var window = domino.createWindow( index, req.url );
+  var $ = nito( window, jQuery( window ) );
+
   fs.readFile( 'data.json', function ( err, json ) {
-    var data = err ? null : JSON.parse( json.toString() );
-    var html = App.create( data, req ).deliver().outerHtml();
-    res.end( index.replace( '<!-- APP -->', html ) );
+    if ( err ) return next( err );
+
+    $( '#main' )
+      .data( 'wakeup', JSON.parse( json ) )
+      .mount( '.app', App )
+      .append( $( '#templates .app' ) );
+
+    console.log( $.mountScopes );
+
+    $( '.app' ).dispatch( 'create-page' );
+
+    $.nextFrame( function () {
+      var data = JSON.parse( json );
+      res.end( window.document.innerHTML );
+    } );
   } );
 } );
 
 // persistence
-server.post( '/', function ( req, res ) {
+app.post( '/', function ( req, res, next ) {
   var data = fs.createWriteStream( 'data.json' );
   req.pipe( data ).on( 'finish', function () {
     res.set( 'Content-Type', 'application/json' ).end( '{ ok: true }' );
-  } );
+  } ).on( 'error', next );
 } );
 
-server.listen( 3000, function () {
-  console.log( 'http://localhost:3000' );
+var server = app.listen( process.env.PORT || 3000 ).on( 'listening', function () {
+  console.log( 'See http://localhost:' + server.address().port );
 } );

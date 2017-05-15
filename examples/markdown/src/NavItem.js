@@ -1,18 +1,15 @@
-var $ = require( './dollar' );
+module.exports = NavItem;
 
-module.exports = $.nito( {
+function NavItem( $el ) {
 
-  base: [
-    '<li class="nav-item">',
-      '<a class="title" data-ref="title"></a>',
-    '</li>'
-  ],
+  var $title = $el.find( '.title' );
 
-  update: function () {
-    this.$title.ftext( this.data.title ).attr( 'href', '/' + this.data.id );
-    this.$el.classes( {
-      active: this.data.active
+  $el.on( 'update', function () {
+    var data = $el.data( 'item' );
+    $title.ftext( data.title ).attr( 'href', '/' + data.id );
+    $el.classes( {
+      active: data.active
     } );
-  }
+  } );
 
-} );
+}

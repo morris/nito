@@ -1,4 +1,6 @@
-var $ = require( './dollar' );
+window.$ = require( 'jquery' );
+require( '../../../' )( window );
+
 var App = require( './App' );
 
-$( '#app' ).mount( App, null, window );
+$( '#main' ).mount( '.app', App ).append( $( '#templates .app' ) );
