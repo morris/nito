@@ -23,14 +23,12 @@ app.get( '/*', function ( req, res, next ) {
   var $ = nito( window, jQuery( window ) );
 
   fs.readFile( 'data.json', function ( err, json ) {
-    if ( err ) return next( err );
+    if ( err ) json = '{}';
 
     $( '#main' )
       .data( 'wakeup', JSON.parse( json ) )
       .mount( '.app', App )
       .append( $( '#templates .app' ) );
-
-    console.log( $.mountScopes );
 
     $( '.app' ).dispatch( 'create-page' );
 

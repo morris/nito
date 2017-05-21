@@ -21,8 +21,8 @@
 
     mount: function ( selector, fn ) {
 
-      if ( typeof fn !== 'function' ) {
-        throw new Error( 'mount expects a function' );
+      if ( typeof selector !== 'string' || typeof fn !== 'function' ) {
+        throw new Error( 'mount expects a selector string and a function' );
       }
 
       return this.addClass( 'mount-scope' ).each( function () {
@@ -47,6 +47,20 @@
         }
 
       } );
+
+    },
+
+    // events
+
+    dispatch: function ( type, data ) {
+
+      $.eventQueue.push( {
+        $target: this,
+        type: type,
+        data: data
+      } );
+
+      return this;
 
     },
 
@@ -135,7 +149,7 @@
       this.serializeArray().forEach( function ( entry ) {
 
         var current = data;
-        var path = parseName( entry.name );
+        var path = $.parseName( entry.name );
         var name = path[ 0 ];
 
         for ( var i = 0, l = path.length - 1; i < l; ++i ) {
@@ -281,18 +295,6 @@
 
     // utility
 
-    dispatch: function ( type, data ) {
-
-      $.eventQueue.push( {
-        $target: this,
-        type: type,
-        data: data
-      } );
-
-      return this;
-
-    },
-
     outerHtml: function () {
       return $( '<div></div>' ).append( this ).html();
     }
@@ -330,7 +332,7 @@
     toValue: function ( value ) {
       if ( value === null || value === undefined || value === false ) return '';
       if ( value === true ) return 'on';
-      if ( isArray( value ) ) return value.map( toValue );
+      if ( isArray( value ) ) return value.map( $.toValue );
       return value + '';
     },
 
@@ -379,6 +381,7 @@
       }
 
       // trigger queued events
+
       q = $.eventQueue;
       $.eventQueue = [];
 
@@ -392,6 +395,7 @@
       }
 
       // trigger updates
+
       q = $.updateQueue;
       $.updateQueue = [];
 
@@ -405,7 +409,7 @@
 
     },
 
-    mountScopes: window.document.getElementsByClassName( 'mount-scope' ),
+    mountScopes: $.mountScopes || window.document.getElementsByClassName( 'mount-scope' ),
 
     updateQueue: $.updateQueue || [],
 
