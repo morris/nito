@@ -14,6 +14,7 @@
     "build": "node node_modules/uglify-js/bin/uglifyjs --compress --mangle --comments /^!/ --output nito.min.js nito.js"
   },
   "devDependencies": {
+    "bootstrap": "^3.3.7",
     "browserify": "^14.1.0",
     "domino": "^1.0.28",
     "express": "^4.15.0",
@@ -21,8 +22,5 @@
     "jshint": "^2.9.4",
     "marked": "^0.3.6",
     "uglify-js": "^2.8.5"
-  },
-  "dependencies": {
-    "bootstrap": "^3.3.7"
   }
 }
