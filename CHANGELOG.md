@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.0.0-beta
+
+- Redesign for an event-based, functional, and declarative API
+
 ## v1.0.0
 
 - Renamed `loop` to `nest`

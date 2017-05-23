@@ -31,7 +31,7 @@ function Todo( $el ) {
 
   $el.on( 'update', function () {
     // nest() appends a copy of the first child for each item
-    // DOM is reconciled and reused under the hood
+    // DOM is reused under the hood
     $items.nest( data.items );
   } );
 
@@ -64,14 +64,13 @@ function TodoItem( $el ) {
 
 ## Motivation
 
-jQuery is an exceptionally well-designed tool but
-jQuery-based code often lacks structure, which is why
-developers often favor React, Angular and similar frameworks.
+jQuery is a well-designed tool but $-based code often lacks structure,
+which is why developers often favor React, Angular and similar frameworks.
 Component thinking and pure updates (likely the most
 valuable features of React) give structure and simplicity,
 and Nito enables these concepts on top of the most used JavaScript library ever:
 
-- Define **reusable components** with jQuery
+- Define **reusable components and behaviors** with jQuery
 - Designed for **pure updates** driven by minimal state
 - One simple class factory, a few functions, <500 lines
 - Not a framework&mdash;never gets in the way
@@ -99,126 +98,45 @@ Isomorphic app (server- and client-side) built with Nito on Node.js.
 
 ```html
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-<script src="https://cdn.rawgit.com/morris/nito/v1.0.0/nito.min.js"></script>
+<script src="https://cdn.rawgit.com/morris/nito/v2.0.0/nito.min.js"></script>
 ```
 
 
-## Defining components
+## Mounting, updating, events
 
-#### `$.nito( settings )`
+Nito allows to declare behaviors of elements now or in the future.
+Additionally, using `update` events for complete and pure
+UI updates and DOM manipulation simplifies reasoning about the interface state
+at any point in time.
 
-- Create a component class
-- `settings` is an object that defines the prototype of the components
-  - `id`
-    - Component identifier
-    - Optional. Mandatory for server-side/shared components
-  - `base`
-    - Base HTML for components
-    - May be a string or an array of strings
-    - Arrays will be joined with `\n`
-    - Elements with `data-ref="myref"` attributes will be available as `comp.$myref`
-    - Optional, used in `MyComp.create` (see below)
-  - `mount( options )`
-    - Called when mounting a component
-    - Use `options` for constant mount-time options (e.g. config, parent components, ...)
-    - Define event handlers here
-    - Optional
-  - `update()`
-    - Updates the component
-    - Has to be called explicitly (except for components rendered with `nest`/`nestOne`)
-    - Use `data` to update the component
-    - Optional
-  - `unmount()`
-    - Called when unmounting a component
-    - Optional
-  - `identify( item )`
-    - Generates keys from items in `nest`
-    - Keys are used for component reconciliation
-    - Must return a distinct, truthy string or number per `nest`
-    - See `nest`
-    - Optional
-  - Add more methods and properties as needed
-- Returns the created component class
+#### `$scope.mount( selector, fn )`
 
-```js
-var MyComp = $.nito( {
-  // base, mount, update, custom methods, ...
-} );
-```
+- Ensure that any element under `$scope` matching `selector` is mounted
+  with `fn` exactly once, **now and in the future**
+- `fn` is called on each matching element with `$el`
+- This also applies to elements appended in the future
+- Mounting may take place immediately or in the next frame
+- Return `$scope`
 
-## Creating components
+#### `$els.update()`
 
-#### `MyComp.create( data, options )`
-
-- Create a component using the component base HTML
-- `data` is passed to `comp.set` and available as `comp.data`. Optional
-  - Use `data` for variable data/state
-- `options` is passed to `comp.mount`. Optional
-  - Use `options` for constant mount-time options (e.g. config, parent components, ...)
-- Return the created element (`$` object)
-
-```js
-var $el = MyComp.create( { title: 'Example' } );
-```
-
-
-## Component members and methods
-
-You will most likely refer to members and methods from inside components,
-so `comp` will often be `this` instead.
-
-#### `comp.$el` and `comp.el`
-
-- jQuery object and DOM element pointing to the root element of the component, if any
-
-#### `comp.set( data )`
-
-- If `data` is truthy, set `data` as `comp.data`
-- Call `comp.update()`
-- Return `comp`
-
-#### `comp.on( event, [selector,] handler )`
-
-- Shortcut to `comp.$el.on`
-- `handler` is bound to `comp`, *not* to the element
-- Return `comp`
-
-#### Referenced Elements
-
-- Base HTML elements with `data-ref="myref"` attributes will be available as `comp.$myref`
-
-
-## Mount and update components on existing DOM
-
-#### `$els.mount( MyComp, data, options )`
-
-- Mount components on each element in `$els` using `MyComp`
-- `data` is passed to `comp.set`. Optional
-- `options` is passed to `comp.mount`. Optional
-- Components are only created once per class
-  - An element may have multiple components, but only one for each class
+- Enqueue an `update` event on each element in `$els`
+- Elements only receive one `update` event per frame
 - Return `$els`
 
-#### `$els.update( MyComp, data )`
+### `$els.dispatch( type, data )`
 
-- If `MyComp` is set, update all `MyComp` components mounted on `$els`
-- Otherwise, update all components mounted on `$els`
-- `data` is passed to `comp.set`. Optional
+- Enqueue an event
+- The event is triggered in the next frame
+- Useful in cases where mounting might not be done
 - Return `$els`
-
-#### `$els.unmount( MyComp )`
-
-- If `MyComp` is set, unmount all `MyComp` components mounted on `$els`
-- Otherwise, unmount all components mounted on `$els`
-- Return `$els`
-
 
 ## Nesting components
 
 Efficiently nest components in any DOM element using `nest` or `nestOne`.
-Use these methods in `update`, *not* in `mount`.
+Use these methods on `update`, *not* at mount-time.
 
-#### `$els.nest( MyComp, items, options )`
+#### `$els.nest( items, base )`
 
 - For each item, create a component of the given class and append to `$els`
 - `items` is an array of `data` objects passed to the components
@@ -238,7 +156,7 @@ $( '<ul></ul>' ).nest( TodoItem, [
 ] );
 ```
 
-#### `$els.nestOne( MyComp, item, options )`
+#### `$els.nestOne( item, base )`
 
 - Same as `nest`, but for one item
 - Pass falsy item to not nest anything
@@ -325,13 +243,7 @@ $( '[name]' ).fill( {
 - Return `$els`
 
 
-## Server-side helpers
-
-#### `$els.deliver()`
-
-- Serialize all component data in `$els` into attributes
-- Use before transferring element HTML from server to client
-- Return `$els`
+## Utility
 
 #### `$els.outerHtml()`
 
