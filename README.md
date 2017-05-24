@@ -1,8 +1,7 @@
 # Nito
 
-A jQuery library to build user interfaces,
-inspired by React, in under 500 lines of code.
-[Pretty fast, too.](https://cdn.rawgit.com/morris/nito/v1.0.0/examples/nito-vs-react/)
+A jQuery library to build user interfaces.
+Functional, declarative, structured, in under 500 lines of code.
 
 ```html
 <div class="todo">
@@ -14,50 +13,59 @@ inspired by React, in under 500 lines of code.
   </ul>
 </div>
 
-<script>
-$( 'body' ).mount( '.todo', Todo );
-$( 'body' ).mount( '.todo .item', TodoItem );
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://cdn.rawgit.com/morris/nito/v2.0.0/nito.min.js"></script>
 
+<script>
+// Components or behaviors are defined as functions
 function Todo( $el ) {
 
-  var $items = $el.find( '.items' );
+  var items = [
+    { title: 'Get Nito', completed: false },
+    { title: 'Create something', completed: false }
+  ];
 
-  var data = {
-    items: [
-      { title: 'Get Nito', completed: false },
-      { title: 'Create something', completed: false }
-    ]
-  };
+  $el.on( 'update', update );
+  $el.on( 'todo-toggle', toggle );
 
-  $el.on( 'update', function () {
-    // nest() appends a copy of the first child for each item
-    // DOM is reused under the hood
-    $items.nest( data.items );
-  } );
+  function update() {
+    // The "update" event should be the only place with DOM manipulation
+    // Repeat item HTML for each item, reusing existing DOM
+    $el.find( '.items' ).nest( items );
+  }
+
+  function toggle( e, item ) {
+    // Modify data and trigger pure update
+    item.completed = !item.completed;
+    $el.update();
+  }
 
 }
 
 function TodoItem( $el ) {
 
-  var $todo = $el.closest( '.todo' );
-  var data;
+  $el.on( 'update', update );
+  $el.on( 'click', toggle );
 
-  $el.on( 'click', function () {
-    // Change state and trigger an update
-    data.completed = !data.completed;
-    $todo.update();
-  } );
-
-  // The "update" event should be the only place with DOM manipulation
-  $el.on( 'update', function () {
+  function update() {
     // Set title and toggle "completed" class
-    // DOM is only manipulated if data has changed since last update
-    data = $el.data( 'item' );
-    $title.ftext( data.title );
-    $el.classes( { completed: data.completed } );
-  } );
+    // DOM is only manipulated if item has changed since last update
+    var item = $el.data( 'item' );
+    $el.find( '.title' ).ftext( item.title );
+    $el.classes( { completed: item.completed } );
+  }
+
+  function toggle() {
+    $el.trigger( 'todo-toggle', $el.data( 'item' ) );
+  }
 
 }
+
+// Declarative mounting of behaviors:
+// Ensure Todo is called on each .todo element, now and in the future
+// Ensure TodoItem is called on each .todo .item element, now and in the future
+$( 'body' ).mount( '.todo', Todo );
+$( 'body' ).mount( '.todo .item', TodoItem );
 </script>
 ```
 
@@ -65,15 +73,13 @@ function TodoItem( $el ) {
 ## Motivation
 
 jQuery is a well-designed tool but $-based code often lacks structure,
-which is why developers often favor React, Angular and similar frameworks.
-Component thinking and pure updates (likely the most
-valuable features of React) give structure and simplicity,
-and Nito enables these concepts on top of the most used JavaScript library ever:
+which is why developers favor React, Angular and similar frameworks.
+Using a **declarative approach** and opting for **pure updates**, Nito
+enables structure and simplicity on top of jQuery:
 
-- Define **reusable components and behaviors** with jQuery
-- Designed for **pure updates** driven by minimal state
-- One simple class factory, a few functions, <500 lines
-- Not a framework&mdash;never gets in the way
+- Define components and their behaviors declaratively
+- Designed for pure functional updates driven by minimal state
+- A library in less than 500 lines, not a framework&mdash;never gets in the way
 - Pairs well with [Bootstrap](http://getbootstrap.com)
 - ES2015, no build steps required
 - Server-side batteries included
@@ -81,39 +87,28 @@ and Nito enables these concepts on top of the most used JavaScript library ever:
 
 ## Examples
 
-### [Todo](https://cdn.rawgit.com/morris/nito/v1.0.0/examples/todo/)
+### [Todo](https://cdn.rawgit.com/morris/nito/v2.0.0/examples/todo/)
 
 A simple client-side todo app with TodoMVC-like features.
-
-### [Nito vs. React](https://cdn.rawgit.com/morris/nito/v1.0.0/examples/nito-vs-react/)
-
-Structural comparison of the two libraries, including benchmark.
 
 ### [Markdown Editor](https://github.com/morris/nito/tree/master/examples/markdown)
 
 Isomorphic app (server- and client-side) built with Nito on Node.js.
 
 
-## Getting started
+## Core
 
-```html
-<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-<script src="https://cdn.rawgit.com/morris/nito/v2.0.0/nito.min.js"></script>
-```
-
-
-## Mounting, updating, events
-
-Nito allows to declare behaviors of elements now or in the future.
-Additionally, using `update` events for complete and pure
-UI updates and DOM manipulation simplifies reasoning about the interface state
+At its core, Nito allows to declare the behavior of elements
+**now and in the future**.
+Additionally, using `update` events for pure UI updates and
+any DOM manipulation simplifies reasoning about the interface state
 at any point in time.
 
 #### `$scope.mount( selector, fn )`
 
 - Ensure that any element under `$scope` matching `selector` is mounted
   with `fn` exactly once, **now and in the future**
-- `fn` is called on each matching element with `$el`
+- `fn` is called on each matching element, with `$( el )` as its only argument
 - This also applies to elements appended in the future
 - Mounting may take place immediately or in the next frame
 - Return `$scope`
@@ -121,39 +116,34 @@ at any point in time.
 #### `$els.update()`
 
 - Enqueue an `update` event on each element in `$els`
-- Elements only receive one `update` event per frame
+- Elements receive at most one `update` event per frame
 - Return `$els`
 
-### `$els.dispatch( type, data )`
+#### `$els.dispatch( type, data )`
 
-- Enqueue an event
-- The event is triggered in the next frame
-- Useful in cases where mounting might not be done
+- Trigger an event in the next frame
+- Useful in situations where mounting may not be safely finished
 - Return `$els`
 
-## Nesting components
 
-Efficiently nest components in any DOM element using `nest` or `nestOne`.
-Use these methods on `update`, *not* at mount-time.
+## Nesting
+
+Efficiently nest elements in any container using `nest` or `nestOne`.
+Use these functions on `update`, *not* at mount-time.
 
 #### `$els.nest( items, base )`
 
-- For each item, create a component of the given class and append to `$els`
-- `items` is an array of `data` objects passed to the components
-- `MyComp` should be a component class
-- Reconciliation: Existing components are identified with items and reused/updated with given data
-  - By default, components are reconciled by item/component index
-  - If the `MyComp.identify` function is defined, components are reconciled by keys
-  - New components are created with `MyComp.create( data, options )`
-  - Existing components are updated with `comp.set( data )`
+- Nest a `base` element for each item
+- Each element gets `$el.data( 'item' )` set to the corresponding entry in `items`
+- If `base` is omitted, cache the first child in the container as `base`
 - `$els` should only have children generated by `nest`
 - Return `$els`
 
 ```js
-$( '<ul></ul>' ).nest( TodoItem, [
+$( '<ul></ul>' ).nest( [
   { title: 'Write code', done: true },
   { title: 'Write readme', done: false }
-] );
+], '<li class="item"></li>' );
 ```
 
 #### `$els.nestOne( item, base )`
@@ -163,12 +153,10 @@ $( '<ul></ul>' ).nest( TodoItem, [
 - Return `$els`
 
 
-## Updating components
+## Manipulation
 
 The following methods are helpful and/or speed optimized
-for usage in component `update` methods.
-
-### Basics
+for usage on `update` events.
 
 #### `$els.classes( map )`
 
@@ -196,7 +184,8 @@ $( '.form-group' ).classes( {
 - Faster than `$els.text`
 - Return `$els`
 
-### Forms
+
+## Forms
 
 #### `$els.serializeData()`
 
@@ -241,11 +230,3 @@ $( '[name]' ).fill( {
 
 - Reset each form or individual form control in `$els` (without children)
 - Return `$els`
-
-
-## Utility
-
-#### `$els.outerHtml()`
-
-- Return outer HTML of `$els`
-- Use to transfer element HTML from server to client

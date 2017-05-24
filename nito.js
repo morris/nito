@@ -291,12 +291,6 @@
 
       } );
 
-    },
-
-    // utility
-
-    outerHtml: function () {
-      return $( '<div></div>' ).append( this ).html();
     }
 
   } );
