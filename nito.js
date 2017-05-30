@@ -3,11 +3,17 @@
 ;( function ( root, factory ) {
 
   if ( typeof define === 'function' && define.amd ) {
+
     define( [], function () { return factory; } );
+
   } else if ( typeof module === 'object' && module.exports ) {
+
     module.exports = factory;
+
   } else {
+
     factory( root, root.$ );
+
   }
 
 } )( this, function ( window, $ ) {
@@ -17,7 +23,7 @@
 
   extend( $.fn, {
 
-    // mounting and updating
+    // core
 
     mount: function ( selector, fn ) {
 
@@ -49,8 +55,6 @@
       } );
 
     },
-
-    // events
 
     dispatch: function ( type, data ) {
 
@@ -413,15 +417,11 @@
 
   } );
 
-  // special events
+  // disable update bubbling
 
   $.event.special.update = extend( $.event.special.update || {}, {
     noBubble: true
   } );
-
-  // start update loop
-
-  $.update();
 
   return $;
 
