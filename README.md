@@ -3,39 +3,53 @@
 A jQuery library to build user interfaces.
 Functional, declarative, structured, in under 500 lines of code.
 
-jQuery is a well-designed tool but $-based code often lacks structure.
+jQuery is a well-designed tool but jQuery-based code often lacks structure.
 By establishing a **declarative approach** with **pure updates**,
 Nito enables structure and simplicity on top of jQuery.
 
-It's really just a set of helpers and a declarative mindset 
+**Nito is not a framework.** It's just a set of helpers and
+a particular mindset making jQuery applications modular and maintainable.
+
 
 ## Quick Tour
 
-
-
-```html
-<div class="todo">
-  <h1>Todo</h1>
-  <ul class="items">
-    <li class="item">
-      <strong class="title"></strong>
-    </li>
-  </ul>
-</div>
-```
-
-Setting up Nito is as simple as including jQuery:
+Setting up Nito is as simple as including jQuery,
+no build steps or polyfills required:
 
 ```html
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script src="https://cdn.rawgit.com/morris/nito/v2.0.0/nito.min.js"></script>
 ```
 
-Use jQuery to define behaviors by simple functions:
+With Nito, HTML is just HTML&mdash;no sugar required.
+Use semantic classes and templates as needed.
+
+For example, a todo app's base HTML could look like this:
+
+```html
+<div class="todo">
+  <h1>Todo</h1>
+  <ul class="items">
+    <li class="item"> <!-- This <li> is a template used by .nest() -->
+      <strong class="title">Example item</strong>
+    </li>
+  </ul>
+</div>
+```
+
+We can now add behavior by defining simple functions accepting jQuery objects.
+These *mount* functions can do anything to setup the behavior but should
+follow a few conventions:
+
+- Minimize state and keep it outside the DOM
+- Only do DOM manipulation on an `update` event
+- Make the `update` handler *pure*, e.g. independent of prior state and complete
+- Change state on application events and trigger updates with `.update()`
 
 ```js
 function Todo( $el ) {
 
+  // some state, minimized and outside the DOM
   var items = [
     { title: 'Get Nito', completed: false },
     { title: 'Create something', completed: false }
@@ -51,7 +65,7 @@ function Todo( $el ) {
   }
 
   function toggle( e, item ) {
-    // Modify data and trigger pure update
+    // Modify state and trigger pure update
     item.completed = !item.completed;
     $el.update();
   }
@@ -78,14 +92,27 @@ function TodoItem( $el ) {
 }
 ```
 
-Functions can be declaratively mounted by selectors.
-For example, the following ensures that any elemenets matching
-`.todo` and `.todo .item` are
+Note the `nest` helper which repeats the `<li>` template for each given item.
+The `classes` and `ftext` helpers apply changes softly,
+e.g. only if the existing DOM differs.
+
+Also note how the definitions are entirely decoupled from the current document,
+and don't do anything by themselves.
+To take effect we have to *mount* them on elements in the document:
 
 ```js
 $( 'body' ).mount( '.todo', Todo );
 $( 'body' ).mount( '.todo .item', TodoItem );
 ```
+
+Mounting is *declarative*:
+The above ensures that any elements matching `.todo` and `.todo .item`
+are mounted with `Todo` and `TodoItem` exactly once,
+*regardless of how and when they are added to the document.*
+
+This is key to make jQuery modules viable.
+Functionality can be entirely wrapped in mount functions&mdash;mounting
+and updating happens automatically under the hood.
 
 
 ## Examples
@@ -94,15 +121,11 @@ $( 'body' ).mount( '.todo .item', TodoItem );
 
 A simple client-side todo app with TodoMVC-like features.
 
-### [Markdown Editor](https://github.com/morris/nito/tree/master/examples/markdown)
-
-Isomorphic app (server- and client-side) built with Nito on Node.js.
-
 
 ## Core
 
 At its core, Nito allows to declare the behavior of elements
-**now and in the future**.
+*now and in the future.*
 Additionally, using `update` events for pure UI updates and
 any DOM manipulation simplifies reasoning about the interface state
 at any point in time.
@@ -110,7 +133,7 @@ at any point in time.
 #### `$scope.mount( selector, fn )`
 
 - Ensure that any element under `$scope` matching `selector` is mounted
-  with `fn` exactly once, **now and in the future**
+  with `fn` exactly once, *now and in the future*
 - `fn` is called on each matching element, with `$( el )` as its only argument
 - This also applies to elements appended in the future
 - Mounting may take place immediately or in the next frame
