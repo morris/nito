@@ -7,8 +7,8 @@ jQuery is a well-designed tool but jQuery-based code often lacks structure.
 By establishing a **declarative approach** with **pure updates**,
 Nito enables structure and simplicity on top of jQuery.
 
-**Nito is not a framework.** It's just a set of helpers and
-a particular mindset making jQuery applications modular and maintainable.
+**Nito is not a framework.** It's a set of helpers and
+a particular mindset that makes jQuery applications modular and maintainable.
 
 
 ## Quick Tour
@@ -23,7 +23,6 @@ no build steps or polyfills required:
 
 With Nito, HTML is just HTML&mdash;no sugar required.
 Use semantic classes and templates as needed.
-
 For example, a todo app's base HTML could look like this:
 
 ```html
