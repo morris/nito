@@ -8,13 +8,12 @@ By establishing a **declarative approach** with **pure updates**,
 Nito enables structure and simplicity on top of jQuery.
 
 **Nito is not a framework.** It's a set of helpers and
-a particular mindset that makes jQuery applications modular and maintainable.
+conventions that make jQuery applications modular and maintainable.
 
 
 ## Quick Tour
 
-Setting up Nito is as simple as including jQuery,
-no build steps or polyfills required:
+Setting up Nito is as simple as including jQuery:
 
 ```html
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>

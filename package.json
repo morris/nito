@@ -15,12 +15,12 @@
   },
   "devDependencies": {
     "bootstrap": "^3.3.7",
-    "browserify": "^14.1.0",
+    "browserify": "^14.4.0",
     "domino": "^1.0.28",
-    "express": "^4.15.0",
-    "jquery": "^3.1.1",
+    "express": "^4.15.3",
+    "jquery": "^3.2.1",
     "jshint": "^2.9.4",
     "marked": "^0.3.6",
-    "uglify-js": "^2.8.5"
+    "uglify-js": "^3.0.15"
   }
 }

@@ -12,11 +12,13 @@
 
   } else {
 
-    factory( root, root.$ );
+    factory( root, root.$, true );
 
   }
 
-} )( this, function ( window, $ ) {
+} )( this, function ( window, $, autoUpdate ) {
+
+  if ( $.update ) return $;
 
   var extend = Object.assign || $.extend;
   var isArray = Array.isArray || $.isArray;
@@ -33,9 +35,8 @@
 
       return this.addClass( 'mount-scope' ).each( function () {
 
-        var mounts = this.mounts = this.mounts || [];
-
-        mounts.push( {
+        this.mounts = this.mounts || [];
+        this.mounts.push( {
           selector: selector,
           fn: fn
         } );
@@ -407,13 +408,13 @@
 
     },
 
-    mountScopes: $.mountScopes || window.document.getElementsByClassName( 'mount-scope' ),
+    mountScopes: window.document.getElementsByClassName( 'mount-scope' ),
 
-    updateQueue: $.updateQueue || [],
+    updateQueue: [],
 
-    eventQueue: $.eventQueue || [],
+    eventQueue: [],
 
-    autoUpdate: 'autoUpdate' in $ ? $.autoUpdate : true
+    autoUpdate: autoUpdate
 
   } );
 
@@ -422,6 +423,10 @@
   $.event.special.update = extend( $.event.special.update || {}, {
     noBubble: true
   } );
+
+  // start update loop
+
+  if ( autoUpdate ) $.update();
 
   return $;
 
