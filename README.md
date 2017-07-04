@@ -35,13 +35,13 @@ For example, a todo app's base HTML could look like this:
 </div>
 ```
 
-We can now add behavior by defining simple functions accepting jQuery objects.
-These *mount* functions can do anything to setup the behavior but should
-follow a few conventions:
+We can now add behavior by defining *mount* functions.
+These functions can do anything to setup behavior
+but should follow a few conventions:
 
 - Minimize state and keep it outside the DOM
 - Only do DOM manipulation on an `update` event
-- Make the `update` handler *pure*, e.g. independent of prior state and complete
+- Make the `update` handler *pure*, i.e. independent of prior state and complete
 - Change state on application events and trigger updates with `.update()`
 
 ```js
@@ -92,7 +92,7 @@ function TodoItem( $el ) {
 
 Note the `nest` helper which repeats the `<li>` template for each given item.
 The `classes` and `ftext` helpers apply changes softly,
-e.g. only if the existing DOM differs.
+i.e. only if the existing DOM differs.
 
 Also note how the definitions are entirely decoupled from the current document,
 and don't do anything by themselves.

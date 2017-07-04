@@ -2,7 +2,7 @@
   "name": "nito",
   "version": "2.0.0-beta",
   "repository": "https://github.com/morris/nito",
-  "description": "A jQuery library to build user interfaces, inspired by React",
+  "description": "A jQuery library to build user interfaces",
   "author": {
     "name": "Morris Brodersen",
     "url": "https://morrisbrodersen.de"
@@ -11,7 +11,8 @@
   "main": "nito.js",
   "scripts": {
     "lint": "node node_modules/jshint/bin/jshint nito.js",
-    "build": "node node_modules/uglify-js/bin/uglifyjs --compress --mangle --comments /^!/ --output nito.min.js nito.js"
+    "build": "node node_modules/uglify-js/bin/uglifyjs --compress --mangle --comments /^!/ --output nito.min.js nito.js",
+    "test": "open test/jquery.html"
   },
   "devDependencies": {
     "bootstrap": "^3.3.7",
@@ -19,8 +20,8 @@
     "domino": "^1.0.28",
     "express": "^4.15.3",
     "jquery": "^3.2.1",
-    "jshint": "^2.9.4",
+    "jshint": "^2.9.5",
     "marked": "^0.3.6",
-    "uglify-js": "^3.0.15"
+    "uglify-js": "^3.0.23"
   }
 }
