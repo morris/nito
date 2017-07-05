@@ -1,8 +1,8 @@
 {
   "name": "nito",
-  "version": "2.0.0-beta",
+  "version": "2.0.0",
   "repository": "https://github.com/morris/nito",
-  "description": "A jQuery library to build user interfaces",
+  "description": "A jQuery library for building user interfaces",
   "author": {
     "name": "Morris Brodersen",
     "url": "https://morrisbrodersen.de"

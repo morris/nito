@@ -1,14 +1,10 @@
 # Nito
 
-A jQuery library to build user interfaces.
-Functional, declarative, structured, in under 500 lines of code.
+**A jQuery library for building user interfaces.**
 
-jQuery is a well-designed tool but jQuery-based code often lacks structure.
-By establishing a **declarative approach** with **pure updates**,
-Nito enables structure and simplicity on top of jQuery.
-
-**Nito is not a framework.** It's a set of helpers and
-conventions that make jQuery applications modular and maintainable.
+By establishing a *declarative approach* with *pure updates*,
+Nito's helpers and conventions that make jQuery applications
+modular and maintainable.
 
 
 ## Quick Tour

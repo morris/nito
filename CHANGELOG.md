@@ -1,6 +1,6 @@
 # Changelog
 
-## v2.0.0-beta
+## v2.0.0
 
 - Redesign for an event-based, functional, and declarative API
 
