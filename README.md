@@ -120,7 +120,9 @@ and updating happens automatically under the hood.
 A simple client-side todo app with TodoMVC-like features.
 
 
-## Core
+## Reference
+
+### Core
 
 At its core, Nito allows to declare the behavior of elements
 *now and in the future.*
@@ -150,7 +152,7 @@ at any point in time.
 - Return `$els`
 
 
-## Nesting
+### Nesting
 
 Efficiently nest elements in any container using `nest` or `nestOne`.
 Use these functions on `update`, *not* at mount-time.
@@ -177,7 +179,7 @@ $( '<ul></ul>' ).nest( [
 - Return `$els`
 
 
-## Manipulation
+### Manipulation
 
 The following methods are helpful and/or speed optimized
 for usage on `update` events.
@@ -209,7 +211,7 @@ $( '.form-group' ).classes( {
 - Return `$els`
 
 
-## Forms
+### Forms
 
 #### `$els.serializeData()`
 
