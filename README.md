@@ -3,7 +3,7 @@
 **A jQuery library for building user interfaces.**
 
 By establishing a *declarative approach* with *pure updates*,
-Nito's helpers and conventions that make jQuery applications
+Nito's helpers and conventions make jQuery applications
 modular and maintainable.
 
 
